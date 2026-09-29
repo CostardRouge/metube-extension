@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MeTube Sender – Settings</title>
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="options.css" />
+    <script type="module" src="options.js"></script>
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-head">
+        <img src="../icons/icon-48.png" alt="" width="36" height="36" />
+        <div>
+          <h1>MeTube Sender</h1>
+          <p class="muted">Send YouTube links to your self-hosted MeTube.</p>
+        </div>
+      </header>
+
+      <form id="form" novalidate>
+        <section class="card">
+          <h2>Server</h2>
+          <div class="field">
+            <label for="baseUrl">MeTube URL</label>
+            <input id="baseUrl" type="url" placeholder="https://metube.example.com" autocomplete="url" spellcheck="false" />
+            <p class="hint">Include the path prefix if MeTube is served under one, e.g. <code>https://example.com/metube</code>.</p>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="username">Username</label>
+              <input id="username" type="text" autocomplete="username" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label for="password">Password</label>
+              <div class="password">
+                <input id="password" type="password" autocomplete="current-password" />
+                <button type="button" id="toggle-password" class="icon-btn" title="Show password" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <p class="hint">Sent as HTTP Basic auth (e.g. Traefik <code>basicAuth</code>) with every request. Leave both empty if MeTube isn't behind auth.</p>
+        </section>
+
+        <section class="card">
+          <h2>Download defaults</h2>
+          <div class="field">
+            <span class="field-label" id="type-label">Download type</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="type-label">
+              <label><input type="radio" name="downloadType" value="video" /><span>Video</span></label>
+              <label><input type="radio" name="downloadType" value="audio" /><span>Audio</span></label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="format">Format</label>
+              <select id="format"></select>
+            </div>
+            <div class="field">
+              <label for="quality">Quality</label>
+              <select id="quality"></select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="folder">Folder <span class="muted">(optional)</span></label>
+            <input id="folder" type="text" placeholder="e.g. youtube" spellcheck="false" />
+            <p class="hint">Sub-folder of MeTube's download directory. Needs <code>CUSTOM_DIRS</code> on the server (and <code>CREATE_CUSTOM_DIRS</code> for folders that don't exist yet).</p>
+          </div>
+          <p class="hint">"Audio only (m4a)" in the context menu and the popup always uses M4A at best quality, into the same folder.</p>
+        </section>
+
+        <div id="status" class="notice" role="status" hidden></div>
+
+        <div class="actions">
+          <button type="button" id="test" class="btn">Test connection</button>
+          <button type="submit" id="save" class="btn primary">Save</button>
+        </div>
+      </form>
+
+      <footer class="page-foot muted">
+        Saving asks for permission to access your MeTube host. Settings, password included, are stored only in this
+        browser's extension storage.
+      </footer>
+    </main>
+  </body>
+</html>

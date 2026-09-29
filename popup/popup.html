@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>MeTube</title>
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="popup.css" />
+    <script type="module" src="popup.js"></script>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="brand">
+        <img src="../icons/icon-32.png" alt="" width="18" height="18" />
+        <span>MeTube</span>
+      </div>
+      <button id="open-metube" class="icon-btn" title="Open MeTube" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 4h6v6" /><path d="M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+        </svg>
+      </button>
+      <button id="open-options" class="icon-btn" title="Settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3" />
+          <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" />
+        </svg>
+      </button>
+    </header>
+
+    <main>
+      <section id="setup" class="notice warn setup" hidden>
+        <div>MeTube isn't configured yet.</div>
+        <button id="setup-btn" class="btn primary">Open settings</button>
+      </section>
+
+      <div id="notice" class="notice" role="status" hidden>
+        <span id="notice-text"></span>
+        <button id="notice-close" class="icon-btn notice-close" title="Dismiss">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </div>
+
+      <section class="current">
+        <div class="current-meta">
+          <div class="label">Current page</div>
+          <div id="page-title" class="title">—</div>
+          <div id="page-url" class="url muted"></div>
+        </div>
+        <button id="send-page" class="btn" disabled>Send page</button>
+      </section>
+
+      <section class="links">
+        <div class="links-head">
+          <span id="count" class="muted">Scanning page…</span>
+          <span class="spacer"></span>
+          <button id="select-all" class="link-btn" disabled>All</button>
+          <button id="select-none" class="link-btn" disabled>None</button>
+        </div>
+        <ul id="list" class="list" hidden></ul>
+        <div id="empty" class="empty muted" hidden></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-options">
+        <label class="toggle">
+          <input type="checkbox" id="audio-only" />
+          <span>Audio only (m4a)</span>
+        </label>
+        <div id="defaults" class="defaults muted"></div>
+      </div>
+      <button id="send-selected" class="btn primary" disabled>Send selected</button>
+    </footer>
+  </body>
+</html>
