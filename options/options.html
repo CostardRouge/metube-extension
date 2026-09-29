@@ -70,7 +70,49 @@
             <input id="folder" type="text" placeholder="e.g. youtube" spellcheck="false" />
             <p class="hint">Sub-folder of MeTube's download directory. Needs <code>CUSTOM_DIRS</code> on the server (and <code>CREATE_CUSTOM_DIRS</code> for folders that don't exist yet).</p>
           </div>
-          <p class="hint">"Audio only (m4a)" in the context menu and the popup always uses M4A at best quality, into the same folder.</p>
+          <p class="hint">Used by the popup (whose "Audio only" toggle uses M4A at best quality) and by the player when it adds a video. Every download goes into this folder.</p>
+        </section>
+
+        <section class="card" id="menu-card">
+          <h2>Right-click menu</h2>
+          <div class="field">
+            <span class="field-label" id="menu-layout-label">Layout</span>
+            <div class="segmented" role="radiogroup" aria-labelledby="menu-layout-label" id="menu-layout"></div>
+            <p class="hint" id="menu-layout-help"></p>
+          </div>
+          <div class="field">
+            <span class="field-label">Show MeTube on</span>
+            <div class="checks" id="menu-contexts"></div>
+          </div>
+
+          <div class="block" id="menu-video">
+            <div class="block-head" id="menu-video-head"></div>
+            <div class="chips" id="menu-video-choices"></div>
+            <label class="inline-select">One click <span id="menu-video-oneclick"></span></label>
+          </div>
+          <div class="block" id="menu-audio">
+            <div class="block-head" id="menu-audio-head"></div>
+            <div class="chips" id="menu-audio-choices"></div>
+            <label class="inline-select">One click <span id="menu-audio-oneclick"></span></label>
+          </div>
+          <div class="block" id="menu-subs">
+            <div class="block-head" id="menu-subs-head"></div>
+            <p class="hint">Languages: <span id="menu-subs-langs"></span>. One download per language; set them under <b>Subtitle languages</b>.</p>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Other entries</span>
+            <div class="checks one-column" id="menu-extras"></div>
+          </div>
+
+          <div class="menu-preview">
+            <div class="preview-head">
+              <span class="field-label">Preview</span>
+              <div class="segmented small" role="radiogroup" aria-label="Right-click on" id="menu-preview-context"></div>
+            </div>
+            <div class="preview-stage" id="menu-preview"></div>
+            <p class="hint" id="menu-preview-caption"></p>
+          </div>
         </section>
 
         <section class="card">
@@ -92,6 +134,13 @@
             <button type="button" id="change-shortcut" class="btn">Change shortcut</button>
           </div>
           <p class="hint">On a YouTube video page, the shortcut (or the popup's <b>Play</b> button) opens the video from MeTube in an overlay.</p>
+          <div class="field">
+            <label class="check"><input type="checkbox" id="endScreen" /><span>When a video ends, offer to delete it from MeTube</span></label>
+            <p class="hint">
+              The player's trash button deletes it at any time. MeTube only erases the file from disk if it runs with
+              <code>DELETE_FILE_ON_TRASHCAN=ask</code> (see the README); otherwise only its entry goes away.
+            </p>
+          </div>
         </section>
 
         <div id="status" class="notice" role="status" hidden></div>

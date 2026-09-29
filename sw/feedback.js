@@ -33,16 +33,19 @@ export function notify(title, message) {
   }
 }
 
-/** @param {{url: string, ok: boolean, error?: string}[]} results */
-export async function report(results, { audio }) {
+/**
+ * @param {{url: string, ok: boolean, error?: string}[]} results
+ * @param {{label?: string}} options  What was sent, e.g. "audio" or "720p · MP4".
+ */
+export async function report(results, { label = '' } = {}) {
   const sent = results.filter((r) => r.ok);
   const failed = results.filter((r) => !r.ok);
-  const suffix = audio ? ' (audio)' : '';
+  const suffix = label ? ` (${label})` : '';
 
   await chrome.storage.session.set({
     lastResult: {
       at: Date.now(),
-      audio,
+      label,
       total: results.length,
       sent: sent.length,
       failed: failed.map(({ url, error }) => ({ url, error })),
@@ -51,7 +54,7 @@ export async function report(results, { audio }) {
 
   if (!failed.length) {
     setBadge(String(sent.length), BADGE_COLORS.ok, 8000);
-    notify(`Sent to MeTube${suffix}`, sent.length === 1 ? sent[0].url : `${sent.length} links queued for download.`);
+    notify(`Sent to MeTube${suffix}`, sent.length === 1 ? sent[0].url : `${sent.length} downloads queued.`);
     return;
   }
 

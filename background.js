@@ -13,18 +13,21 @@ function logError(err) {
 }
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
-  createMenus();
+  createMenus().catch(logError);
   syncAuthRule().catch(logError);
   if (reason === chrome.runtime.OnInstalledReason.INSTALL) chrome.runtime.openOptionsPage();
 });
 chrome.runtime.onStartup.addListener(() => {
-  createMenus();
+  createMenus().catch(logError);
   syncAuthRule().catch(logError);
 });
 
-// Credentials or URL changed: rebuild the player's auth rule.
+// Settings saved: rebuild the menus (their entries come from the settings)
+// and the player's auth rule (URL, credentials).
 chrome.storage.onChanged.addListener((changes, area) => {
-  if (area === 'local' && changes.settings) syncAuthRule().catch(logError);
+  if (area !== 'local' || !changes.settings) return;
+  createMenus().catch(logError);
+  syncAuthRule().catch(logError);
 });
 
 chrome.contextMenus.onClicked.addListener(onMenuClicked);
