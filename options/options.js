@@ -1,4 +1,5 @@
 import { CATALOG, coerceOptions, loadSettings, parseBaseUrl, parseSubtitleLangs, saveSettings } from '../lib/config.js';
+import { createMenuEditor } from './menu-editor.js';
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -11,6 +12,8 @@ const els = {
   quality: $('quality'),
   folder: $('folder'),
   subtitleLangs: $('subtitleLangs'),
+  endScreen: $('endScreen'),
+  menuCard: $('menu-card'),
   shortcut: $('shortcut'),
   changeShortcut: $('change-shortcut'),
   status: $('status'),
@@ -21,6 +24,8 @@ const els = {
 // Last format/quality picked for each type, so flipping Video ⇄ Audio
 // doesn't lose the other side's choice.
 const lastChoice = {};
+let menuEditor = null;
+let shortcutText = '';
 
 function currentType() {
   return els.form.elements.downloadType.value || 'video';
@@ -53,6 +58,8 @@ function readForm(baseUrl) {
     ...coerceOptions({ downloadType: currentType(), format: els.format.value, quality: els.quality.value }),
     folder: els.folder.value.trim(),
     subtitleLangs: parseSubtitleLangs(els.subtitleLangs.value).langs.join(','),
+    endScreen: els.endScreen.checked,
+    menu: menuEditor.value(),
   };
 }
 
@@ -70,6 +77,8 @@ async function renderShortcut() {
   const shortcut = commands.find((c) => c.name === 'toggle-overlay')?.shortcut;
   els.shortcut.textContent = shortcut || 'Not set';
   els.shortcut.classList.toggle('muted', !shortcut);
+  shortcutText = shortcut ?? '';
+  menuEditor?.refresh();
 }
 
 function showStatus(message, kind) {
@@ -205,6 +214,9 @@ function wireEvents() {
     save(chrome.permissions.request({ origins: [parsed.originPattern] }), parsed);
   });
 
+  // The menu preview lists the subtitle languages.
+  els.subtitleLangs.addEventListener('input', () => menuEditor.refresh());
+
   // Arc redirects chrome://extensions/shortcuts to its own page.
   els.changeShortcut.addEventListener('click', () => chrome.tabs.create({ url: 'chrome://extensions/shortcuts' }));
   // Pick up a shortcut changed in the other tab.
@@ -218,6 +230,11 @@ async function init() {
   els.password.value = settings.password;
   els.folder.value = settings.folder;
   els.subtitleLangs.value = settings.subtitleLangs.split(',').join(', ');
+  els.endScreen.checked = settings.endScreen;
+  menuEditor = createMenuEditor(els.menuCard, settings.menu, {
+    langs: () => parseSubtitleLangs(els.subtitleLangs.value).langs,
+    shortcut: () => shortcutText,
+  });
   const { downloadType } = coerceOptions(settings);
   els.form.elements.downloadType.value = downloadType;
   renderChoices(settings.format, settings.quality);

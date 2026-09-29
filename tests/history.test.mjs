@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { describeProgress, fileUrl, findDownload, subtitleUrls } from '../lib/history.js';
+import { describeProgress, fileUrl, findDownload, formatSize, subtitleUrls } from '../lib/history.js';
 
 const ID = 'dQw4w9WgXcQ';
 const BASE = 'https://metube.example.com/mt';
@@ -109,4 +109,11 @@ test('preferActive follows a re-added download over the stale finished entry', (
   history.queue = [];
   history.done.push(item({ status: 'finished', filename: 'new.mp4', timestamp: 9 }));
   assert.equal(findDownload(history, ID, { preferActive: true }).item.filename, 'new.mp4');
+});
+
+test('formatSize', () => {
+  assert.equal(formatSize(1_234_567_890), '1.2 GB');
+  assert.equal(formatSize(734_003_200), '734 MB');
+  assert.equal(formatSize(512), '512 B');
+  assert.equal(formatSize(null), '');
 });

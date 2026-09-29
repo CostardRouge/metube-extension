@@ -3,7 +3,7 @@
 
 import { downloadOptions, parseSubtitleLangs } from '../lib/config.js';
 import { fileUrl, findDownload, subtitleUrls } from '../lib/history.js';
-import { addDownload, fetchText, getHistory, probeFile } from '../lib/metube.js';
+import { MeTubeError, addDownload, deleteDownload, fetchText, getHistory, probeFile } from '../lib/metube.js';
 import { watchVideoId } from '../lib/youtube.js';
 import { BADGE_COLORS, notify, setBadge } from './feedback.js';
 import { requireSettings } from './settings.js';
@@ -44,8 +44,21 @@ function checkMeTubeUrl(settings, url) {
 
 // What the overlay needs from a history item.
 function publicItem(item) {
-  const { title, status, percent, speed, eta, msg, error, download_type: downloadType, filename } = item;
-  return { title, status, percent, speed, eta, msg, error, downloadType, filename };
+  const {
+    title,
+    status,
+    percent,
+    speed,
+    eta,
+    msg,
+    error,
+    download_type: downloadType,
+    filename,
+    quality,
+    format,
+    size,
+  } = item;
+  return { title, status, percent, speed, eta, msg, error, downloadType, filename, quality, format, size };
 }
 
 export const OVERLAY_HANDLERS = {
@@ -97,7 +110,36 @@ export const OVERLAY_HANDLERS = {
       // A proxy may answer 200 with an HTML page: keep real WebVTT only.
       tracks: wanted
         .map(({ lang }, i) => ({ lang, text: texts[i] }))
-        .filter(({ text }) => text && /^﻿?WEBVTT/.test(text)),
+        .filter(({ text }) => text && /^\uFEFF?WEBVTT/.test(text)),
     };
+  },
+
+  /**
+   * Delete the video from MeTube: its entry, and its files if the server
+   * allows it. Then check whether the file is really gone: MeTube keeps files
+   * unless it runs with DELETE_FILE_ON_TRASHCAN=ask (or true).
+   * The entry is looked up again here: the page only names the video.
+   */
+  async 'overlay:delete'({ videoId }) {
+    checkVideoId(videoId);
+    const settings = await requireSettings();
+    const found = findDownload(await getHistory(settings), videoId);
+    if (found.state !== 'finished' && found.state !== 'error') {
+      throw new MeTubeError('metube', "This video isn't among MeTube's finished downloads anymore.");
+    }
+    const file = found.state === 'finished' ? fileUrl(settings.baseUrl, found.item) : null;
+    await deleteDownload(settings, found.item.url);
+
+    // true: gone; false: still served; null: unknown (no file, or check failed).
+    let fileRemoved = null;
+    if (file) {
+      try {
+        await probeFile(settings, file);
+        fileRemoved = false;
+      } catch (err) {
+        if (err.code === 'file_missing') fileRemoved = true;
+      }
+    }
+    return { ok: true, fileRemoved, size: found.item.size ?? null };
   },
 };

@@ -1,53 +1,82 @@
-// Right-click menus: send a link, the YouTube links in a selection, or the page.
+// Right-click menus, built from the settings (see lib/menu.js): the MeTube
+// entry on pages, links, selections and the video player, and the extension
+// icon's own menu.
 
+import { loadSettings, parseSubtitleLangs } from '../lib/config.js';
+import { buildMenuItems, menuDownloads, parseMenuItemId } from '../lib/menu.js';
 import { dedupeLinks, findYouTubeUrlsInText, normalizeUrl, parseYouTubeUrl } from '../lib/youtube.js';
 import { reportNothing } from './feedback.js';
-import { sendUrls } from './send.js';
+import { toggleOverlay } from './overlay.js';
+import { sendDownloads } from './send.js';
 
-const ALL_CONTEXTS = ['link', 'selection', 'page'];
+async function playerShortcut() {
+  const commands = (await chrome.commands?.getAll()) ?? [];
+  return commands.find((command) => command.name === 'toggle-overlay')?.shortcut ?? '';
+}
 
-const MENU_ITEMS = [
-  { id: 'root', title: 'MeTube', contexts: ALL_CONTEXTS },
-  { id: 'send-link', parentId: 'root', title: 'Send to MeTube', contexts: ['link'] },
-  { id: 'send-selection', parentId: 'root', title: 'Send YouTube links in selection', contexts: ['selection'] },
-  { id: 'send-page', parentId: 'root', title: 'Send this page to MeTube', contexts: ['page'] },
-  { id: 'separator', parentId: 'root', type: 'separator', contexts: ALL_CONTEXTS },
-  { id: 'audio', parentId: 'root', title: 'Audio only (m4a)', contexts: ALL_CONTEXTS },
-  { id: 'audio-link', parentId: 'audio', title: 'Send link', contexts: ['link'] },
-  { id: 'audio-selection', parentId: 'audio', title: 'Send YouTube links in selection', contexts: ['selection'] },
-  { id: 'audio-page', parentId: 'audio', title: 'Send this page', contexts: ['page'] },
-];
-
-export async function createMenus() {
+async function rebuild() {
+  const settings = await loadSettings();
+  const items = buildMenuItems(settings.menu, {
+    langs: parseSubtitleLangs(settings.subtitleLangs).langs,
+    shortcut: await playerShortcut(),
+  });
   await chrome.contextMenus.removeAll();
-  for (const item of MENU_ITEMS) {
-    chrome.contextMenus.create(item, () => void chrome.runtime.lastError);
+  for (const item of items) {
+    chrome.contextMenus.create(item, () => {
+      if (chrome.runtime.lastError) console.warn(`Menu item ${item.id}:`, chrome.runtime.lastError.message);
+    });
   }
 }
 
-export function onMenuClicked(info, tab) {
-  const [group, action] = String(info.menuItemId).split('-');
-  if (!action) return;
-  handleMenuClick(action, info, tab, group === 'audio').catch((err) => console.error(err));
+let rebuilding = Promise.resolve();
+
+/** (Re)create every item from the saved settings; calls run one after another. */
+export function createMenus() {
+  rebuilding = rebuilding.then(rebuild, rebuild);
+  return rebuilding;
 }
 
-export async function handleMenuClick(action, info, tab, audio) {
-  let urls = [];
-  if (action === 'link') urls = [normalizeUrl(info.linkUrl)];
-  if (action === 'page') urls = [normalizeUrl(info.pageUrl || tab?.url)];
-  if (action === 'selection') urls = await collectSelectionUrls(info, tab);
-  urls = urls.filter(Boolean);
+export function onMenuClicked(info, tab) {
+  handleMenuClick(info, tab).catch((err) => console.error(err));
+}
 
+export async function handleMenuClick(info, tab) {
+  const entry = parseMenuItemId(info.menuItemId);
+  if (entry.action === 'settings') return chrome.runtime.openOptionsPage();
+  if (entry.action === 'open') return openMeTube();
+  if (entry.action === 'play') return toggleOverlay(tab);
+
+  const settings = await loadSettings();
+  const download = menuDownloads(entry, settings.menu, parseSubtitleLangs(settings.subtitleLangs).langs);
+  if (!download) return;
+
+  // The extension icon's menu acts on the current tab.
+  const urls = (entry.toolbar ? [normalizeUrl(tab?.url)] : await targetUrls(info, tab)).filter(Boolean);
   if (!urls.length) {
     await reportNothing(
-      action === 'selection'
+      !entry.toolbar && info.selectionText
         ? 'No YouTube links found in the selection.'
         : 'This is not an http(s) URL MeTube can download.',
     );
     return;
   }
-  const results = await sendUrls(urls, { audio });
+  const results = await sendDownloads(urls, () => download.downloads, { label: download.label });
   if (results.some((r) => r.code === 'config')) chrome.runtime.openOptionsPage();
+}
+
+async function openMeTube() {
+  const { baseUrl } = await loadSettings();
+  if (baseUrl) chrome.tabs.create({ url: `${baseUrl}/` });
+  else chrome.runtime.openOptionsPage();
+}
+
+/** What a right-click is about: the links in a selection, a link, or the page. */
+async function targetUrls(info, tab) {
+  if (info.selectionText) return collectSelectionUrls(info, tab);
+  if (info.linkUrl) return [normalizeUrl(info.linkUrl)];
+  // Inside a YouTube player embedded in another site: that video, not the page.
+  if (info.frameUrl && parseYouTubeUrl(info.frameUrl)) return [normalizeUrl(info.frameUrl)];
+  return [normalizeUrl(info.pageUrl || tab?.url)];
 }
 
 // Injected into the page: returns the hrefs of <a> elements intersecting the

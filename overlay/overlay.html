@@ -16,6 +16,11 @@
       <header class="head">
         <img src="../icons/icon-32.png" alt="" width="18" height="18" />
         <h1 id="title" class="title">MeTube</h1>
+        <button id="delete" class="icon-btn danger" title="Delete from MeTube (Del)" aria-label="Delete from MeTube" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" />
+          </svg>
+        </button>
         <button id="open-metube-head" class="icon-btn" title="Open MeTube">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 4h6v6" /><path d="M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
@@ -37,6 +42,23 @@
             <button id="open-options" class="btn" hidden>Open settings</button>
             <button id="open-metube" class="btn" hidden>Open MeTube</button>
           </div>
+        </section>
+
+        <section id="end-screen" class="end-screen" aria-labelledby="end-title" hidden>
+          <svg class="end-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" /><path d="M8 12.5l2.5 2.5L16 9.5" />
+          </svg>
+          <h2 id="end-title">Video finished</h2>
+          <p id="end-text"></p>
+          <div class="end-actions">
+            <button id="end-delete" class="btn danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>
+              Delete from MeTube
+            </button>
+            <button id="end-replay" class="btn">Watch again</button>
+            <button id="end-keep" class="btn ghost">Keep and close</button>
+          </div>
+          <div class="end-hint">Del to delete · Esc to close</div>
         </section>
 
         <media-controller
@@ -79,11 +101,34 @@
       </div>
 
       <footer class="foot muted">
-        <span>Space play/pause · ←/→ 5s · F fullscreen · C subtitles · M mute · Esc close</span>
+        <span>Space play/pause · ←/→ 5s · F fullscreen · C subtitles · M mute · Del delete · Esc close</span>
         <span id="subtitle-info"></span>
       </footer>
 
       <div id="toast" class="toast" role="status" hidden></div>
+
+      <dialog id="confirm" class="confirm" aria-labelledby="confirm-title">
+        <form method="dialog">
+          <div class="confirm-head">
+            <div class="confirm-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>
+            </div>
+            <h2 id="confirm-title">Delete this video from MeTube?</h2>
+          </div>
+          <div class="confirm-file">
+            <div id="confirm-name" class="confirm-name"></div>
+            <div id="confirm-meta" class="muted"></div>
+          </div>
+          <p>The file is erased from the server and the video leaves MeTube's list. This can't be undone: to watch it again, it has to be downloaded again.</p>
+          <div class="confirm-actions">
+            <button value="cancel" id="confirm-cancel" class="btn">Cancel</button>
+            <button value="delete" class="btn danger">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>
+              Delete
+            </button>
+          </div>
+        </form>
+      </dialog>
     </div>
   </body>
 </html>

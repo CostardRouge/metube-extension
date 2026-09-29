@@ -13,11 +13,15 @@ function failure(url, err) {
 }
 
 /**
- * Send URLs to MeTube, then report through the badge and a notification.
+ * Queue downloads in MeTube, then report through the badge and a notification.
  * @param {string[]} urls  Already normalized.
+ * @param {(settings: object) => object[]} optionsFor  The /add options for each
+ *   URL: one request per entry (e.g. one per subtitle language). The default
+ *   folder is added unless an entry sets its own.
+ * @param {{label?: string}} [feedback]  What is sent, for the notification.
  * @returns {Promise<{url: string, ok: boolean, error?: string, code?: string}[]>}
  */
-export async function sendUrls(urls, { audio = false } = {}) {
+export async function sendDownloads(urls, optionsFor, { label = '' } = {}) {
   setBadge('…', BADGE_COLORS.busy);
 
   let settings;
@@ -25,21 +29,23 @@ export async function sendUrls(urls, { audio = false } = {}) {
     settings = await requireSettings();
   } catch (err) {
     const results = urls.map((url) => failure(url, err));
-    await report(results, { audio });
+    await report(results, { label });
     return results;
   }
 
-  const options = downloadOptions(settings, { audio });
-  const results = new Array(urls.length);
+  const folder = String(settings.folder ?? '').trim();
+  const perUrl = optionsFor(settings);
+  const jobs = urls.flatMap((url) => perUrl.map((options) => ({ url, options: { folder, ...options } })));
+  const results = new Array(jobs.length);
   let fatal = null;
   let next = 0;
 
   // Small worker pool; once an error is known to affect every request
-  // (bad credentials, host down…) the remaining URLs are not attempted.
+  // (bad credentials, host down…) the remaining ones are not attempted.
   async function worker() {
-    while (next < urls.length) {
+    while (next < jobs.length) {
       const index = next++;
-      const url = urls[index];
+      const { url, options } = jobs[index];
       if (fatal) {
         results[index] = failure(url, fatal);
         continue;
@@ -53,10 +59,15 @@ export async function sendUrls(urls, { audio = false } = {}) {
       }
     }
   }
-  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, urls.length) }, worker));
+  await Promise.all(Array.from({ length: Math.min(CONCURRENCY, jobs.length) }, worker));
 
-  await report(results, { audio });
+  await report(results, { label });
   return results;
+}
+
+/** Send with the default options (or the popup's "Audio only" preset). */
+export function sendUrls(urls, { audio = false } = {}) {
+  return sendDownloads(urls, (settings) => [downloadOptions(settings, { audio })], { label: audio ? 'audio' : '' });
 }
 
 // Message handlers for the popup and the options page.

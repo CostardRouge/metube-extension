@@ -4,7 +4,7 @@
 // worker. The <video> gets its Authorization header from the
 // declarativeNetRequest rule (sw/auth-rule.js).
 
-import { describeProgress } from '../lib/history.js';
+import { describeProgress, formatSize } from '../lib/history.js';
 import { loadSettings } from '../lib/config.js';
 
 const POLL_MS = 2000;
@@ -32,6 +32,16 @@ const els = {
   video: $('video'),
   subtitleInfo: $('subtitle-info'),
   toast: $('toast'),
+  delete: $('delete'),
+  endScreen: $('end-screen'),
+  endText: $('end-text'),
+  endDelete: $('end-delete'),
+  endReplay: $('end-replay'),
+  endKeep: $('end-keep'),
+  confirm: $('confirm'),
+  confirmName: $('confirm-name'),
+  confirmMeta: $('confirm-meta'),
+  confirmCancel: $('confirm-cancel'),
 };
 
 const params = new URLSearchParams(location.search);
@@ -42,6 +52,9 @@ let pollTimer = null;
 let added = false;
 let absentPolls = 0;
 let retryAction = null;
+// The finished download being played (the lookup result), if any.
+let current = null;
+const settingsReady = loadSettings();
 
 /** Message the service worker; its errors come back as {ok: false, error, code}. */
 async function sw(type, payload = {}) {
@@ -70,7 +83,8 @@ function setTitle(title) {
 
 function showStatus(text, { detail = '', percent, busy = true } = {}) {
   els.status.hidden = false;
-  els.status.classList.remove('error');
+  els.status.classList.remove('error', 'ok', 'warn');
+  els.endScreen.hidden = true;
   els.statusSpinner.hidden = !busy;
   els.statusText.textContent = text;
   els.statusDetail.textContent = detail;
@@ -94,6 +108,7 @@ function showError(text, { detail = '', code, retryLabel = 'Retry', retry } = {}
   showStatus(text, { detail, busy: false });
   els.status.classList.add('error');
   els.player.hidden = true;
+  els.delete.hidden = true;
   retryAction = retry ?? null;
   els.retry.hidden = !retry;
   els.retry.textContent = retryLabel;
@@ -226,6 +241,8 @@ async function play(result) {
   els.status.hidden = true;
   player.hidden = false;
   player.focus();
+  current = result;
+  els.delete.hidden = false;
   // Autoplay may be refused without a user gesture: the play button remains.
   video.play().catch(() => {});
   loadSubtitles(result.subtitles);
@@ -275,8 +292,11 @@ els.video.addEventListener('error', () => {
   });
 });
 
-function start() {
-  clearTimeout(pollTimer);
+// Stop streaming the file and drop its subtitles.
+function resetPlayer() {
+  current = null;
+  els.delete.hidden = true;
+  els.endScreen.hidden = true;
   els.player.hidden = true;
   els.video.removeAttribute('src');
   els.video.load();
@@ -284,9 +304,107 @@ function start() {
     URL.revokeObjectURL(track.src);
     track.remove();
   }
+}
+
+function start() {
+  clearTimeout(pollTimer);
+  resetPlayer();
   showStatus('Looking up this video in MeTube…');
   lookup();
 }
+
+// ---------------------------------------------------------------------------
+// Deleting the video from MeTube (header button, Del key, end screen)
+
+// "1080p · MP4 · 1.2 GB · subtitles fr, en"
+function describeFile(item) {
+  const audio = item.downloadType === 'audio';
+  const quality = String(item.quality ?? '');
+  const parts = [];
+  if (quality === 'best') parts.push(audio ? 'Audio · best quality' : 'Best quality');
+  else if (/^\d+$/.test(quality)) parts.push(audio ? `Audio · ${quality} kbps` : `${quality}p`);
+  if (item.format && item.format !== 'any') parts.push(String(item.format).toUpperCase());
+  const size = formatSize(item.size);
+  if (size) parts.push(size);
+  const subtitles = [...els.video.textTracks].map((track) => track.language).filter(Boolean);
+  if (subtitles.length) parts.push(`subtitles ${subtitles.join(', ')}`);
+  return parts.join(' · ');
+}
+
+function askDelete() {
+  if (!current || els.confirm.open) return;
+  els.video.pause();
+  els.confirmName.textContent = current.item?.title || `YouTube video ${videoId}`;
+  els.confirmMeta.textContent = describeFile(current.item ?? {});
+  els.confirm.returnValue = '';
+  els.confirm.showModal();
+  // Focus on Cancel: Enter never deletes by accident. (No autofocus attribute:
+  // Chrome blocks it in a cross-origin frame.)
+  els.confirmCancel.focus();
+}
+
+async function deleteVideo() {
+  if (!current) return;
+  const size = formatSize(current.item?.size);
+  resetPlayer();
+  showStatus('Deleting from MeTube…');
+  let res;
+  try {
+    res = await sw('overlay:delete', { videoId });
+  } catch (err) {
+    showError(err.message, { code: err.code, retry: start });
+    return;
+  }
+  if (res.fileRemoved === false) {
+    // MeTube removed its entry but kept the file (DELETE_FILE_ON_TRASHCAN).
+    showStatus("Removed from MeTube's list, but the server kept the file.", {
+      busy: false,
+      detail: 'MeTube only erases files when it runs with DELETE_FILE_ON_TRASHCAN=ask (or true): see the README.',
+    });
+    els.status.classList.add('warn');
+    retryAction = close;
+    els.retry.textContent = 'Close';
+    els.retry.hidden = false;
+    els.retry.focus();
+    return;
+  }
+  const freed = formatSize(res.size) || size;
+  showStatus('Deleted from MeTube', {
+    busy: false,
+    detail: res.fileRemoved
+      ? `File erased from the server${freed ? ` · ${freed} freed` : ''}.`
+      : "Removed from MeTube's list.",
+  });
+  els.status.classList.add('ok');
+  setTimeout(close, 2500);
+}
+
+els.delete.addEventListener('click', askDelete);
+els.confirm.addEventListener('close', () => {
+  if (els.confirm.returnValue === 'delete') deleteVideo();
+  else els.player.focus();
+});
+
+// At the end, nothing is left to do but delete it, watch it again or keep it.
+els.video.addEventListener('ended', async () => {
+  if (!current || !(await settingsReady).endScreen) return;
+  const size = formatSize(current.item?.size);
+  els.endText.textContent = size ? `It takes ${size} on the server. Delete it now?` : 'Delete it from MeTube now?';
+  els.endScreen.hidden = false;
+  els.endKeep.focus();
+});
+els.video.addEventListener('play', () => {
+  els.endScreen.hidden = true;
+});
+// The end screen's question is the confirmation.
+els.endDelete.addEventListener('click', () => deleteVideo());
+els.endReplay.addEventListener('click', () => {
+  els.endScreen.hidden = true;
+  els.video.currentTime = 0;
+  els.video.play().catch(() => {});
+  els.player.focus();
+});
+els.endKeep.addEventListener('click', () => close());
 
 // ---------------------------------------------------------------------------
 // Closing and keyboard
@@ -309,6 +427,14 @@ function menuOpen() {
 }
 
 document.addEventListener('keydown', (event) => {
+  // The confirmation dialog handles its own keys (Esc cancels it).
+  if (els.confirm.open) return;
+  const modifier = event.ctrlKey || event.metaKey || event.altKey;
+  if ((event.key === 'Delete' || event.key === 'Backspace') && current && !modifier) {
+    event.preventDefault();
+    askDelete();
+    return;
+  }
   if (event.key === 'Escape') {
     // First Esc closes an open player menu, the next one the overlay.
     if (menuOpen() || event.defaultPrevented) return;
@@ -318,12 +444,14 @@ document.addEventListener('keydown', (event) => {
   }
   // Media Chrome's shortcuts only fire with focus inside the player: forward
   // them from the rest of the page (header buttons, backdrop).
-  if (!els.player.hidden && HOTKEYS.has(event.key) && !event.ctrlKey && !event.metaKey && !event.altKey) {
+  // The end screen's buttons keep their own keys (Space, Enter).
+  if (!els.player.hidden && els.endScreen.hidden && HOTKEYS.has(event.key) && !modifier) {
     if (!els.player.contains(event.target)) event.preventDefault();
   }
 });
 
 document.addEventListener('keyup', (event) => {
+  if (els.confirm.open || !els.endScreen.hidden) return;
   if (els.player.hidden || !HOTKEYS.has(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
   if (!els.player.contains(event.target)) els.player.keyboardShortcutHandler(event);
 });
