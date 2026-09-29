@@ -5,11 +5,12 @@ name: Release
 #   git tag v1.1.0
 #   git push origin v1.1.0
 #
-# The tag must point to a commit on main, and match "version" in manifest.json.
+# The tag sets the version (with or without the leading "v"): it's written into the
+# zip's manifest.json. The tag must point to a commit on main.
 # Nothing is released on a plain push.
 on:
   push:
-    tags: ['v[0-9]*']
+    tags: ['v[0-9]*', '[0-9]*']
 
 permissions:
   contents: write
@@ -44,14 +45,17 @@ jobs:
       - name: Build extension zip
         id: build
         run: |
-          zip=$(scripts/build.sh "${GITHUB_REF_NAME#v}")
+          version=${GITHUB_REF_NAME#v}
+          zip=$(scripts/build.sh "$version")
           (cd dist && sha256sum "$(basename "$zip")" > "$(basename "$zip").sha256")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
           echo "zip=$zip" >> "$GITHUB_OUTPUT"
 
       - name: Publish release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          VERSION: ${{ steps.build.outputs.version }}
           ZIP: ${{ steps.build.outputs.zip }}
         run: |
           tag=$GITHUB_REF_NAME
@@ -77,6 +81,6 @@ jobs:
           EOF
           gh release create "$tag" "$ZIP" "$ZIP.sha256" \
             --verify-tag \
-            --title "MeTube Sender $tag" \
+            --title "MeTube Sender v$VERSION" \
             --notes-file dist/notes.md \
             --generate-notes

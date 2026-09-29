@@ -129,7 +129,8 @@ Run the tests (Node 22+, no dependencies to install), then build the zip:
 
 ```sh
 node --test
-scripts/build.sh
+scripts/build.sh          # version from manifest.json
+scripts/build.sh 1.2.0    # or a given version, written into the zip's manifest.json
 ```
 
 The **CI** workflow runs both on every pull request and every push to `main`. The zip it builds
@@ -137,26 +138,29 @@ is attached to the workflow run for 14 days, so you can try a change before it's
 
 ## Releasing
 
-Releases are only created from a version tag; pushing to `main` never publishes one.
+Releases are only created from a version tag; pushing to `main` never publishes one. Tag a
+commit on `main` and push the tag:
 
-1. In a pull request, set `version` in `manifest.json` to the new version (e.g. `1.1.0`), then
-   merge it.
-2. Tag the merge commit on `main` and push the tag:
+```sh
+git checkout main && git pull
+git tag v1.1.0
+git push origin v1.1.0
+```
 
-   ```sh
-   git checkout main && git pull
-   git tag v1.1.0
-   git push origin v1.1.0
-   ```
+The tag is the version: `v1.1.0` and `1.1.0` both release version `1.1.0`. Chrome accepts 1 to 4
+numbers separated by dots (`1`, `1.1`, `1.1.0`, `1.1.0.2`). Give each release a higher version
+than the previous one; the Chrome Web Store, for one, refuses a version that isn't higher.
 
-The **Release** workflow then checks that the tag is on `main` and matches `manifest.json`, runs
-the tests, builds `metube-sender-1.1.0.zip` and publishes a GitHub release with the zip, its
-SHA-256 checksum, install steps and notes generated from the merged pull requests.
+The **Release** workflow then checks that the tag is on `main`, runs the tests, builds
+`metube-sender-1.1.0.zip` with that version written into its `manifest.json`, and publishes a
+GitHub release with the zip, its SHA-256 checksum, install steps and notes generated from the
+merged pull requests. The `version` in the repository's `manifest.json` is only used when you
+load a clone unpacked or run `scripts/build.sh` without a version.
 
-If the workflow fails (for example, the tag doesn't match `manifest.json`), nothing is
-published. Delete the tag (`git push --delete origin v1.1.0 && git tag -d v1.1.0`), fix the
-problem, and tag again.
+If the workflow fails (for example, the tag isn't a valid version), nothing is published. The
+error is shown in the run's summary. Delete the tag
+(`git push --delete origin v1.1.0 && git tag -d v1.1.0`), fix the problem, and tag again.
 
 You can also write the release yourself on GitHub (**Releases → Draft a new release**, with a new
-`v…` tag on `main`). Publishing it creates the tag, which starts the same workflow: it attaches
-the zip and keeps your notes. If the workflow fails, the release stays published without the zip.
+tag on `main`). Publishing it creates the tag, which starts the same workflow: it attaches the
+zip and keeps your notes. If the workflow fails, the release stays published without the zip.
