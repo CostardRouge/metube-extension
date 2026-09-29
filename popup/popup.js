@@ -1,5 +1,5 @@
 import { describeOptions, downloadOptions, loadSettings } from '../lib/config.js';
-import { normalizeUrl, parseYouTubeUrl } from '../lib/youtube.js';
+import { normalizeUrl, parseYouTubeUrl, watchVideoId } from '../lib/youtube.js';
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -13,6 +13,7 @@ const els = {
   pageTitle: $('page-title'),
   pageUrl: $('page-url'),
   sendPage: $('send-page'),
+  playPage: $('play-page'),
   count: $('count'),
   selectAll: $('select-all'),
   selectNone: $('select-none'),
@@ -96,6 +97,7 @@ function updateControls() {
   const checked = boxes.filter((box) => box.checked).length;
 
   els.sendPage.disabled = state.busy || !configured || !state.pageUrl;
+  els.playPage.disabled = !configured;
   els.sendSelected.disabled = state.busy || !configured || checked === 0;
   els.selectAll.disabled = state.busy || boxes.length === 0 || checked === boxes.length;
   els.selectNone.disabled = state.busy || checked === 0;
@@ -123,6 +125,15 @@ function renderCurrentPage() {
   els.pageTitle.title = els.pageTitle.textContent;
   els.pageUrl.textContent = state.pageUrl ? displayUrl(state.pageUrl) : "This page can't be sent to MeTube";
   els.pageUrl.title = state.pageUrl ?? '';
+  els.playPage.hidden = !watchVideoId(tab?.url);
+}
+
+async function playInOverlay() {
+  const res = await chrome.runtime
+    .sendMessage({ type: 'overlay:toggle', tabId: state.tab.id })
+    .catch((err) => ({ ok: false, error: err.message }));
+  if (res?.ok) window.close();
+  else showNotice(res?.error ?? 'The extension background did not answer.', 'error');
 }
 
 function tagFor(item) {
@@ -322,6 +333,7 @@ function wireEvents() {
   });
 
   els.sendPage.addEventListener('click', () => send([state.pageUrl], els.sendPage));
+  els.playPage.addEventListener('click', playInOverlay);
   els.sendSelected.addEventListener('click', () => {
     const urls = checkboxes()
       .filter((box) => box.checked)

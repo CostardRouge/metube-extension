@@ -1,20 +1,37 @@
 // Service worker entry point: registers every listener at startup. The work
-// lives in sw/: menus, sending, feedback. All MeTube requests go through here.
+// lives in sw/: menus, sending, feedback, the overlay player and the auth
+// rule for its media requests. All MeTube requests go through here.
 
+import { syncAuthRule } from './sw/auth-rule.js';
 import { onNotificationClicked } from './sw/feedback.js';
 import { createMenus, onMenuClicked } from './sw/menus.js';
+import { OVERLAY_HANDLERS, onCommand } from './sw/overlay.js';
 import { SEND_HANDLERS } from './sw/send.js';
+
+function logError(err) {
+  console.error(err);
+}
 
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   createMenus();
+  syncAuthRule().catch(logError);
   if (reason === chrome.runtime.OnInstalledReason.INSTALL) chrome.runtime.openOptionsPage();
 });
-chrome.runtime.onStartup.addListener(createMenus);
+chrome.runtime.onStartup.addListener(() => {
+  createMenus();
+  syncAuthRule().catch(logError);
+});
+
+// Credentials or URL changed: rebuild the player's auth rule.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === 'local' && changes.settings) syncAuthRule().catch(logError);
+});
 
 chrome.contextMenus.onClicked.addListener(onMenuClicked);
+chrome.commands.onCommand.addListener(onCommand);
 chrome.notifications?.onClicked?.addListener(onNotificationClicked);
 
-const HANDLERS = { ...SEND_HANDLERS };
+const HANDLERS = { ...SEND_HANDLERS, ...OVERLAY_HANDLERS };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Only this extension's own pages may trigger requests.

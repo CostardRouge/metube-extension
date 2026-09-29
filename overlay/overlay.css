@@ -1,0 +1,188 @@
+/* The overlay page fills YouTube's viewport inside an iframe; YouTube's CSS
+   can't reach it. html/body stay transparent so the backdrop shows through. */
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 7, 10, 0.92);
+}
+
+.dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* 16:9 stage that fits both dimensions, with room for the header and footer. */
+  width: min(1280px, 94vw, (100vh - 110px) * 16 / 9);
+  transform: translate(-50%, -50%);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  flex: 1;
+  min-width: 0;
+  margin: 0 0 0 2px;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.status-text {
+  max-width: 560px;
+  font-size: 15px;
+}
+
+.status.error .status-text {
+  color: var(--error);
+}
+
+.status-detail {
+  max-width: 560px;
+  min-height: 1em;
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+}
+
+.status-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.spinner.big {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+  color: var(--muted);
+}
+
+.progress {
+  width: min(420px, 80%);
+  height: 6px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+
+.progress-bar {
+  width: 0;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* No percentage known yet: a sliding bar. */
+.progress.indeterminate .progress-bar {
+  width: 30%;
+  animation: slide 1.2s ease-in-out infinite;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(340%);
+  }
+}
+
+media-controller {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+  --media-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --media-primary-color: #f2f4f8;
+  --media-secondary-color: transparent;
+  --media-control-background: transparent;
+  --media-control-hover-background: rgba(255, 255, 255, 0.1);
+  --media-range-bar-color: var(--accent);
+  --media-range-track-background: rgba(255, 255, 255, 0.22);
+  --media-menu-background: rgba(22, 25, 32, 0.96);
+  --media-settings-menu-background: rgba(22, 25, 32, 0.96);
+}
+
+media-controller video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Lift subtitles above the control bar while it's visible. */
+media-controller video::-webkit-media-text-track-container {
+  transition: transform 0.2s ease;
+}
+
+media-controller:not([userinactive]) video::-webkit-media-text-track-container,
+media-controller[mediapaused] video::-webkit-media-text-track-container {
+  transform: translateY(-52px);
+}
+
+media-control-bar {
+  width: 100%;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+}
+
+media-time-range {
+  flex: 1;
+}
+
+.foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+  font-size: 12px;
+}
+
+.toast {
+  position: absolute;
+  top: 44px;
+  left: 50%;
+  max-width: 90%;
+  padding: 8px 12px;
+  border: 1px solid rgba(227, 165, 47, 0.45);
+  border-radius: var(--radius);
+  background: rgba(30, 26, 18, 0.95);
+  transform: translateX(-50%);
+  font-size: 12.5px;
+}

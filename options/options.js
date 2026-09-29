@@ -154,8 +154,15 @@ async function save(permission, parsed) {
 
     if (!granted) {
       showStatus(`Saved, but: ${deniedMessage(parsed.origin)}`, 'warn');
-    } else if (parsed.origin.startsWith('http:') && (next.username || next.password)) {
-      showStatus('Saved. Note: over http:// the credentials travel unencrypted.', 'warn');
+    } else if (
+      parsed.origin.startsWith('http:') &&
+      !/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|$)/.test(parsed.origin)
+    ) {
+      const credentials = next.username || next.password ? 'the credentials travel unencrypted, and ' : '';
+      showStatus(
+        `Saved. Note: over http://, ${credentials}the player on YouTube can't load videos (it needs https://).`,
+        'warn',
+      );
     } else {
       showStatus('Saved.', 'ok');
     }
