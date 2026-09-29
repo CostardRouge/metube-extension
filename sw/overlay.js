@@ -1,0 +1,103 @@
+// The overlay player on YouTube watch pages: opening it, and answering the
+// overlay page's requests. Every MeTube call stays in the service worker.
+
+import { downloadOptions, parseSubtitleLangs } from '../lib/config.js';
+import { fileUrl, findDownload, subtitleUrls } from '../lib/history.js';
+import { addDownload, fetchText, getHistory, probeFile } from '../lib/metube.js';
+import { watchVideoId } from '../lib/youtube.js';
+import { BADGE_COLORS, notify, setBadge } from './feedback.js';
+import { requireSettings } from './settings.js';
+
+const VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
+
+/**
+ * Open or close the overlay in a tab. The injected script toggles on every
+ * run and keeps its state in the page's isolated world between runs.
+ */
+export async function toggleOverlay(tab) {
+  if (!tab?.id || !watchVideoId(tab.url)) {
+    const error = 'Open a YouTube video (youtube.com/watch?v=…) to play it from MeTube.';
+    setBadge('!', BADGE_COLORS.warn, 5000);
+    notify('MeTube player', error);
+    return { ok: false, error };
+  }
+  await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content/overlay-host.js'] });
+  return { ok: true };
+}
+
+export async function onCommand(command, tab) {
+  if (command !== 'toggle-overlay') return;
+  const target = tab ?? (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0];
+  await toggleOverlay(target).catch((err) => console.error(err));
+}
+
+function checkVideoId(videoId) {
+  if (!VIDEO_ID_RE.test(String(videoId))) throw new Error('Invalid video ID.');
+}
+
+// The overlay page may only make the service worker fetch files on MeTube.
+function checkMeTubeUrl(settings, url) {
+  if (typeof url !== 'string' || !url.startsWith(`${settings.baseUrl}/`)) {
+    throw new Error('Refusing to fetch a URL outside MeTube.');
+  }
+}
+
+// What the overlay needs from a history item.
+function publicItem(item) {
+  const { title, status, percent, speed, eta, msg, error, download_type: downloadType, filename } = item;
+  return { title, status, percent, speed, eta, msg, error, downloadType, filename };
+}
+
+export const OVERLAY_HANDLERS = {
+  // From the popup's Play button.
+  async 'overlay:toggle'({ tabId }) {
+    return toggleOverlay(await chrome.tabs.get(tabId));
+  },
+
+  /** Where the video stands in MeTube, with file and subtitle URLs once finished. */
+  async 'overlay:lookup'({ videoId, preferActive }) {
+    checkVideoId(videoId);
+    const settings = await requireSettings();
+    const found = findDownload(await getHistory(settings), videoId, { preferActive: Boolean(preferActive) });
+    const result = { ok: true, state: found.state };
+    if (found.item) result.item = publicItem(found.item);
+    if (found.state === 'finished') {
+      result.fileUrl = fileUrl(settings.baseUrl, found.item);
+      result.subtitles = subtitleUrls(settings.baseUrl, found.item, parseSubtitleLangs(settings.subtitleLangs).langs);
+    }
+    return result;
+  },
+
+  /** Queue the video with the default options. Only the ID is sent: no t/list. */
+  async 'overlay:add'({ videoId }) {
+    checkVideoId(videoId);
+    const settings = await requireSettings();
+    await addDownload(settings, `https://www.youtube.com/watch?v=${videoId}`, downloadOptions(settings));
+    return { ok: true };
+  },
+
+  /** Surface 401/404 before <video> tries the file and fails silently. */
+  async 'overlay:probe'({ url }) {
+    const settings = await requireSettings();
+    checkMeTubeUrl(settings, url);
+    await probeFile(settings, url);
+    return { ok: true };
+  },
+
+  /** Subtitle files that exist; missing languages are skipped. */
+  async 'overlay:subtitles'({ tracks }) {
+    const settings = await requireSettings();
+    const wanted = (Array.isArray(tracks) ? tracks : []).filter(({ url }) => {
+      checkMeTubeUrl(settings, url);
+      return url.endsWith('.vtt');
+    });
+    const texts = await Promise.all(wanted.map(({ url }) => fetchText(settings, url)));
+    return {
+      ok: true,
+      // A proxy may answer 200 with an HTML page: keep real WebVTT only.
+      tracks: wanted
+        .map(({ lang }, i) => ({ lang, text: texts[i] }))
+        .filter(({ text }) => text && /^﻿?WEBVTT/.test(text)),
+    };
+  },
+};

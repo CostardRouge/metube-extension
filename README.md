@@ -1,9 +1,12 @@
 # MeTube Sender
 
 A Chrome extension (Manifest V3) that sends YouTube videos, shorts and playlists to your self-hosted
-[MeTube](https://github.com/alexta69/metube) instance. It works in Chrome and in Arc.
+[MeTube](https://github.com/alexta69/metube) instance, and plays MeTube's downloads in an overlay
+on top of YouTube. It works in Chrome and in Arc.
 
-It's plain JavaScript, HTML and CSS: no build step, no dependencies. Load the folder as-is.
+It's plain JavaScript, HTML and CSS with no build step: load the folder as-is. Its one library,
+[Media Chrome](https://github.com/muxinc/media-chrome) for the player, is included in `vendor/`
+(Manifest V3 doesn't allow loading code from the internet).
 
 ## Features
 
@@ -23,6 +26,8 @@ It's plain JavaScript, HTML and CSS: no build step, no dependencies. Load the fo
   as `si`, `pp`, `feature` and `index` are removed. `youtu.be/…`, `m.youtube.com`, `/live/…` and
   `/embed/…` links become the standard `https://www.youtube.com/watch?v=…` form. Links from other
   sites are sent unchanged, since MeTube supports everything yt-dlp does.
+- **Player on YouTube**: on a video page, press **Alt+Shift+M** (or **Play** in the popup) to watch
+  the video from MeTube in an overlay. See [Player on YouTube](#player-on-youtube).
 
 ## Install
 
@@ -52,6 +57,17 @@ folder you'll keep. To run the unreleased code instead, clone this repository.
 Arc usually doesn't show extension notifications. The extension still works: the badge and the
 popup show every result.
 
+### Keyboard shortcut
+
+The player's shortcut is **Alt+Shift+M** (**Option+Shift+M** on a Mac). To change it, or to set it
+if another extension already uses that key:
+
+- Chrome: open `chrome://extensions/shortcuts` and edit **Play the current YouTube video from
+  MeTube**.
+- Arc: open `arc://extensions/shortcuts` and do the same.
+
+The settings page shows the current shortcut, and its **Change shortcut** button opens that page.
+
 ### Updating
 
 Unzip the new release into the same folder, replacing its files (or pull the new code), then
@@ -67,6 +83,7 @@ without your settings.
 | **Username / Password** | Sent as `Authorization: Basic …` with every request, e.g. for Traefik `basicAuth`. Leave both empty if MeTube isn't behind auth. |
 | **Download type / Format / Quality** | Defaults for every send. Video: format Any or MP4, quality Best, 2160p … 240p or Worst. Audio: M4A, MP3 or Opus, with the qualities MeTube accepts for each format. |
 | **Folder** | Optional sub-folder of MeTube's download directory. MeTube must run with `CUSTOM_DIRS=true`, plus `CREATE_CUSTOM_DIRS=true` if the folder doesn't exist yet. |
+| **Subtitle languages** | Languages the player looks for, comma-separated (default `fr, en`). They must match the `subtitleslangs` MeTube downloads (see below). |
 
 When you click **Save**, the browser asks for permission to access your MeTube host. Click
 **Allow**: without it the extension can't reach MeTube. Then click **Test connection**. It calls
@@ -74,6 +91,70 @@ When you click **Save**, the browser asks for permission to access your MeTube h
 
 All settings, including the password, are stored in this browser's extension storage
 (`chrome.storage.local`). They are never sent anywhere except to your MeTube host.
+
+## Player on YouTube
+
+On a `youtube.com/watch?v=…` page, press the shortcut or click **Play** in the popup. The overlay:
+
+1. Pauses YouTube's player and notes where you were.
+2. Looks the video up in MeTube's history, by video ID.
+3. Then, depending on what it finds:
+   - **Already downloaded**: plays the file. If you had watched more than 5 seconds on YouTube,
+     it starts from there.
+   - **Queued or downloading**: shows the progress (refreshed every 2 seconds) and starts
+     playing when the download finishes.
+   - **Not in MeTube**: adds it with your default options, then shows the progress.
+   - **Failed in MeTube**: shows MeTube's error, with **Try again**.
+
+The player has play/pause, seeking, volume, speed (0.5× to 2×, in the **⋯** menu),
+subtitles, picture-in-picture and fullscreen. Keyboard: **Space** or **K** play/pause, **←/→**
+seek 5 seconds, **F** fullscreen, **C** subtitles on/off, **M** mute, **Esc** close.
+
+Esc (or the shortcut again, or a click outside the video) closes the overlay. YouTube stays paused.
+The overlay also closes when you navigate to another video.
+
+The overlay only reads the page's address and the first `<video>` element (to pause it and read
+its position). It doesn't depend on YouTube's page structure, so YouTube redesigns shouldn't break
+it. If there's no `<video>` on the page, the overlay still opens and plays from the beginning.
+
+### MeTube server setup for the player
+
+**Subtitles.** MeTube only writes subtitle files if yt-dlp is told to. Add this to MeTube's
+environment, with the same languages as in the extension's settings:
+
+```
+YTDL_OPTIONS={"writesubtitles": true, "writeautomaticsub": true, "subtitleslangs": ["fr","en"], "subtitlesformat": "vtt"}
+```
+
+yt-dlp then saves `<video name>.<lang>.vtt` next to each video. For each configured language,
+the player loads the matching file if it exists and skips it otherwise. Only videos downloaded
+after this change have subtitles.
+
+**HTTPS.** YouTube is an HTTPS page, and browsers won't load `http://` video inside it. MeTube
+must be reachable over `https://`, for example through Traefik with a certificate. `localhost`
+is the only exception.
+
+**Default download URLs.** The player expects MeTube's standard file URLs:
+`{MeTube URL}/download/…`, or `/audio_download/…` for audio-only downloads. If you changed
+`PUBLIC_HOST_URL` to serve files from elsewhere, the player won't find them.
+
+**Formats.** The browser must be able to play the file. MP4 (H.264/AAC) and WebM play everywhere.
+If you get *can't play this file*, set the default video format to **MP4** in the extension's
+settings.
+
+### How the video gets past basic auth
+
+A `<video>` element can't send an `Authorization` header. The extension adds one with a
+`declarativeNetRequest` rule, which it rebuilds whenever you save the settings. The rule is
+limited to:
+
+- `GET` requests for media,
+- started by the extension's own player,
+- to your MeTube URL.
+
+Requests made by YouTube, or by any other site, never get your credentials. So a web page can't
+use them to add or delete downloads in your MeTube. Every other request, including `/history`,
+`/add` and the subtitle files, is sent by the service worker.
 
 ## How MeTube treats some links
 
@@ -96,6 +177,12 @@ All settings, including the password, are stored in this browser's extension sto
 | *did not answer with JSON* | Something other than MeTube answered, such as a login page from Authelia or Authentik, or a proxy error page. Basic auth is the only login method this extension supports. |
 | *not allowed to access …* | Open the settings and click **Save**, then **Allow**. If no prompt appears, go to the extension's **Details** page → **Site access** and add your MeTube site. |
 | Popup: *Can't scan this page* | Browser pages (`chrome://`, `arc://`, the Web Store) can't be read by extensions. **Send page** still works for normal web pages. |
+| Player: *MeTube couldn't download this video* | MeTube's own error is shown below it (private, age-restricted, removed…). **Try again** re-adds the video. |
+| Player: *the file isn't on the server anymore* | The download was deleted from disk but is still in MeTube's history. **Download again** re-adds it. |
+| Player: *won't load http:// video* | Serve MeTube over HTTPS (see [MeTube server setup](#metube-server-setup-for-the-player)). |
+| Player: *can't play this file* | The browser doesn't support the file's format. Set the default video format to **MP4**. |
+| Player: no subtitles | Check `YTDL_OPTIONS` (above), and that the languages match. Videos downloaded before the change have none. |
+| The shortcut does nothing | Another extension may use it: set a different one (see [Keyboard shortcut](#keyboard-shortcut)). It only works on `youtube.com/watch?v=…` pages. |
 
 ## Permissions
 
@@ -103,24 +190,39 @@ All settings, including the password, are stored in this browser's extension sto
 | --- | --- |
 | `contextMenus` | The right-click menus. |
 | `storage` | Saving settings, and remembering the last error for the popup. |
-| `scripting` + `activeTab` | Reading links from the current tab, only after you open the popup or use a menu item. |
+| `scripting` + `activeTab` | Reading links from the current tab, and opening the player on it, only after you open the popup, use a menu item or press the shortcut. |
 | `notifications` | Result notifications, when the browser shows them. |
-| `https://*.youtube.com/*` | Scanning YouTube pages for links. |
+| `declarativeNetRequestWithHostAccess` | The rule that adds your credentials to the player's video requests (see above). Unlike `declarativeNetRequest`, it only acts on hosts you granted, and adds no install warning. |
+| `https://*.youtube.com/*` | Scanning YouTube pages for links, and opening the player there. |
 | Your MeTube host (optional, requested on Save) | Sending requests to MeTube. Every network call is made by the background service worker, never by the pages you visit. |
+
+The player page (`overlay/overlay.html`) is the only file YouTube pages can load from the extension
+(`web_accessible_resources`). The shortcut is declared under `commands` in the manifest, which isn't
+a permission.
 
 ## Development
 
 ```
 manifest.json
-background.js          service worker: menus, messages, all MeTube requests, badge/notifications
-lib/config.js          settings, defaults, format/quality catalog
-lib/metube.js          MeTube API client (/add, /version) and error mapping
-lib/youtube.js         YouTube URL detection and normalization
-popup/                 toolbar popup (page scan + send)
-options/               settings page
-ui/base.css            shared dark theme
-icons/                 icon.svg source and PNG sizes
-tests/                 unit tests for URL handling and the manifest
+background.js            service worker entry: registers listeners, routes messages
+sw/menus.js              right-click menus
+sw/send.js               sending links to MeTube
+sw/feedback.js           badge, notifications, last result
+sw/overlay.js            opening the player; its lookup/add/probe/subtitle requests
+sw/auth-rule.js          declarativeNetRequest rule adding Authorization to the player's media
+sw/settings.js           settings check shared by the above
+lib/config.js            settings, defaults, format/quality catalog
+lib/metube.js            MeTube API client (/add, /history, /version, files) and error mapping
+lib/history.js           finding a video in /history; file and subtitle URLs
+lib/youtube.js           YouTube URL detection and normalization
+content/overlay-host.js  injected into YouTube on demand: the overlay iframe, pause, navigation
+overlay/                 the player page shown in that iframe
+vendor/media-chrome/     Media Chrome 4.19.3 (MIT), unmodified build, see its README
+popup/                   toolbar popup (page scan + send + play)
+options/                 settings page
+ui/base.css              shared dark theme
+icons/                   icon.svg source and PNG sizes
+tests/                   unit tests: URL handling, history matching, the manifest
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
 .github/workflows/     CI (tests + build) and release
 ```

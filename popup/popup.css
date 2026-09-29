@@ -229,3 +229,15 @@ main {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.current-actions {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#play-page svg {
+  width: 14px;
+  height: 14px;
+}

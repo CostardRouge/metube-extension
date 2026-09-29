@@ -1,4 +1,4 @@
-import { CATALOG, coerceOptions, loadSettings, parseBaseUrl, saveSettings } from '../lib/config.js';
+import { CATALOG, coerceOptions, loadSettings, parseBaseUrl, parseSubtitleLangs, saveSettings } from '../lib/config.js';
 
 const $ = (id) => document.getElementById(id);
 const els = {
@@ -10,6 +10,9 @@ const els = {
   format: $('format'),
   quality: $('quality'),
   folder: $('folder'),
+  subtitleLangs: $('subtitleLangs'),
+  shortcut: $('shortcut'),
+  changeShortcut: $('change-shortcut'),
   status: $('status'),
   test: $('test'),
   save: $('save'),
@@ -49,7 +52,24 @@ function readForm(baseUrl) {
     password: els.password.value,
     ...coerceOptions({ downloadType: currentType(), format: els.format.value, quality: els.quality.value }),
     folder: els.folder.value.trim(),
+    subtitleLangs: parseSubtitleLangs(els.subtitleLangs.value).langs.join(','),
   };
+}
+
+// Validated before the permission request, which must stay synchronous.
+function checkSubtitleLangs() {
+  const { invalid } = parseSubtitleLangs(els.subtitleLangs.value);
+  if (!invalid.length) return true;
+  showStatus(`Not a language code: ${invalid.join(', ')}. Use codes like fr, en or pt-BR.`, 'error');
+  els.subtitleLangs.focus();
+  return false;
+}
+
+async function renderShortcut() {
+  const commands = (await chrome.commands?.getAll()) ?? [];
+  const shortcut = commands.find((c) => c.name === 'toggle-overlay')?.shortcut;
+  els.shortcut.textContent = shortcut || 'Not set';
+  els.shortcut.classList.toggle('muted', !shortcut);
 }
 
 function showStatus(message, kind) {
@@ -134,8 +154,15 @@ async function save(permission, parsed) {
 
     if (!granted) {
       showStatus(`Saved, but: ${deniedMessage(parsed.origin)}`, 'warn');
-    } else if (parsed.origin.startsWith('http:') && (next.username || next.password)) {
-      showStatus('Saved. Note: over http:// the credentials travel unencrypted.', 'warn');
+    } else if (
+      parsed.origin.startsWith('http:') &&
+      !/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|$)/.test(parsed.origin)
+    ) {
+      const credentials = next.username || next.password ? 'the credentials travel unencrypted, and ' : '';
+      showStatus(
+        `Saved. Note: over http://, ${credentials}the player on YouTube can't load videos (it needs https://).`,
+        'warn',
+      );
     } else {
       showStatus('Saved.', 'ok');
     }
@@ -174,9 +201,14 @@ function wireEvents() {
   els.form.addEventListener('submit', (event) => {
     event.preventDefault();
     const parsed = parseUrlField();
-    if (!parsed) return;
+    if (!parsed || !checkSubtitleLangs()) return;
     save(chrome.permissions.request({ origins: [parsed.originPattern] }), parsed);
   });
+
+  // Arc redirects chrome://extensions/shortcuts to its own page.
+  els.changeShortcut.addEventListener('click', () => chrome.tabs.create({ url: 'chrome://extensions/shortcuts' }));
+  // Pick up a shortcut changed in the other tab.
+  window.addEventListener('focus', renderShortcut);
 }
 
 async function init() {
@@ -185,10 +217,12 @@ async function init() {
   els.username.value = settings.username;
   els.password.value = settings.password;
   els.folder.value = settings.folder;
+  els.subtitleLangs.value = settings.subtitleLangs.split(',').join(', ');
   const { downloadType } = coerceOptions(settings);
   els.form.elements.downloadType.value = downloadType;
   renderChoices(settings.format, settings.quality);
   wireEvents();
+  renderShortcut();
 
   if (!settings.baseUrl) {
     els.baseUrl.focus();

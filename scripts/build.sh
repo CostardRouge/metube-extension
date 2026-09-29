@@ -19,7 +19,7 @@ root=$PWD
 
 # Everything the browser loads. Tests, docs, scripts and the icon source stay out.
 # Add new top-level extension files or folders here.
-FILES=(manifest.json background.js lib options popup ui icons/*.png)
+FILES=(manifest.json background.js sw lib content overlay vendor options popup ui icons/*.png)
 
 version=${1:-$(node -p "require('./manifest.json').version")}
 # Chrome's format: 1 to 4 dot-separated integers from 0 to 65535, without leading zeros.

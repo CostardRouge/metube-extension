@@ -20,8 +20,26 @@ test('files referenced by the manifest exist', () => {
     manifest.options_ui.page,
     ...Object.values(manifest.icons),
     ...Object.values(manifest.action.default_icon),
+    ...manifest.web_accessible_resources.flatMap((entry) => entry.resources),
+    // Injected with chrome.scripting, so not listed in the manifest itself.
+    'content/overlay-host.js',
+    'vendor/media-chrome/media-chrome.js',
   ];
   for (const file of files) {
     assert.ok(existsSync(new URL(file, root)), file);
+  }
+});
+
+test('the overlay page is only exposed to YouTube', () => {
+  for (const entry of manifest.web_accessible_resources) {
+    assert.deepEqual(entry.matches, ['https://*.youtube.com/*']);
+  }
+});
+
+test('build script packages every folder the extension loads from', () => {
+  const build = readFileSync(new URL('scripts/build.sh', root), 'utf8');
+  const files = build.match(/^FILES=\((.*)\)$/m)[1].split(/\s+/);
+  for (const dir of ['sw', 'lib', 'content', 'overlay', 'vendor', 'options', 'popup', 'ui']) {
+    assert.ok(files.includes(dir), `scripts/build.sh FILES is missing ${dir}`);
   }
 });

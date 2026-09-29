@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>MeTube player</title>
+    <link rel="stylesheet" href="../ui/base.css" />
+    <link rel="stylesheet" href="overlay.css" />
+    <!-- Vendored Media Chrome (see vendor/media-chrome/README.md): defines the <media-*> elements. -->
+    <script src="../vendor/media-chrome/media-chrome.js"></script>
+    <script type="module" src="overlay.js"></script>
+  </head>
+  <body>
+    <div id="backdrop" class="backdrop"></div>
+
+    <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="title">
+      <header class="head">
+        <img src="../icons/icon-32.png" alt="" width="18" height="18" />
+        <h1 id="title" class="title">MeTube</h1>
+        <button id="open-metube-head" class="icon-btn" title="Open MeTube">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 4h6v6" /><path d="M20 4l-9 9" /><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+          </svg>
+        </button>
+        <button id="close" class="icon-btn" title="Close (Esc)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+      </header>
+
+      <div class="stage">
+        <section id="status" class="status" aria-live="polite">
+          <div id="status-spinner" class="spinner big"></div>
+          <div id="status-text" class="status-text">Looking up this video in MeTube…</div>
+          <div id="progress" class="progress" hidden><div id="progress-bar" class="progress-bar"></div></div>
+          <div id="status-detail" class="status-detail muted"></div>
+          <div class="status-actions">
+            <button id="retry" class="btn primary" hidden>Retry</button>
+            <button id="open-options" class="btn" hidden>Open settings</button>
+            <button id="open-metube" class="btn" hidden>Open MeTube</button>
+          </div>
+        </section>
+
+        <media-controller
+          id="player"
+          tabindex="-1"
+          hidden
+          keyboardforwardseekoffset="5"
+          keyboardbackwardseekoffset="5"
+        >
+          <video slot="media" id="video" playsinline preload="metadata"></video>
+          <media-loading-indicator slot="centered-chrome" noautohide></media-loading-indicator>
+
+          <media-settings-menu hidden anchor="auto">
+            <media-settings-menu-item>
+              Speed
+              <media-playback-rate-menu slot="submenu" hidden rates="0.5 0.75 1 1.25 1.5 1.75 2">
+                <div slot="title">Speed</div>
+              </media-playback-rate-menu>
+            </media-settings-menu-item>
+            <media-settings-menu-item>
+              Subtitles
+              <media-captions-menu slot="submenu" hidden>
+                <div slot="title">Subtitles</div>
+              </media-captions-menu>
+            </media-settings-menu-item>
+          </media-settings-menu>
+
+          <media-control-bar>
+            <media-play-button></media-play-button>
+            <media-mute-button></media-mute-button>
+            <media-volume-range></media-volume-range>
+            <media-time-display showduration></media-time-display>
+            <media-time-range></media-time-range>
+            <media-captions-button></media-captions-button>
+            <media-settings-menu-button></media-settings-menu-button>
+            <media-pip-button></media-pip-button>
+            <media-fullscreen-button></media-fullscreen-button>
+          </media-control-bar>
+        </media-controller>
+      </div>
+
+      <footer class="foot muted">
+        <span>Space play/pause · ←/→ 5s · F fullscreen · C subtitles · M mute · Esc close</span>
+        <span id="subtitle-info"></span>
+      </footer>
+
+      <div id="toast" class="toast" role="status" hidden></div>
+    </div>
+  </body>
+</html>

@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { dedupeLinks, findYouTubeUrlsInText, normalizeUrl, parseYouTubeUrl } from '../lib/youtube.js';
+import { dedupeLinks, findYouTubeUrlsInText, normalizeUrl, parseYouTubeUrl, watchVideoId } from '../lib/youtube.js';
 
 const ID = 'dQw4w9WgXcQ';
 const LIST = 'PLx0sYbCqOb8TBPRdmBHs5Iftvv9TPboYG';
@@ -115,4 +115,20 @@ test('dedupeLinks merges the same video regardless of form', () => {
     dedupeLinks(links).map((l) => l.url),
     [`https://www.youtube.com/watch?v=${ID}`, `https://www.youtube.com/watch?v=${ID}&list=${LIST}`],
   );
+});
+
+test('watchVideoId only accepts YouTube watch pages', () => {
+  assert.equal(watchVideoId(`https://www.youtube.com/watch?v=${ID}&list=${LIST}&t=30`), ID);
+  assert.equal(watchVideoId(`https://m.youtube.com/watch?v=${ID}`), ID);
+  for (const url of [
+    `https://www.youtube.com/shorts/${ID}`,
+    `https://youtu.be/${ID}`,
+    `https://music.youtube.com/watch?v=${ID}`,
+    'https://www.youtube.com/watch?v=tooshort',
+    `https://evil.example/watch?v=${ID}`,
+    `http://www.youtube.com/watch?v=${ID}`,
+    undefined,
+  ]) {
+    assert.equal(watchVideoId(url), null, url);
+  }
 });
