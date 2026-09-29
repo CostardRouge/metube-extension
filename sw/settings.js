@@ -1,4 +1,5 @@
 import { loadSettings, parseBaseUrl } from '../lib/config.js';
+import { t } from '../lib/i18n.js';
 import { MeTubeError } from '../lib/metube.js';
 
 /**
@@ -8,14 +9,11 @@ import { MeTubeError } from '../lib/metube.js';
 export async function requireSettings() {
   const settings = await loadSettings();
   if (!settings.baseUrl) {
-    throw new MeTubeError('config', 'MeTube is not configured yet: set its URL in the extension options.');
+    throw new MeTubeError('config', t('errNotConfigured'));
   }
   const { origin, originPattern } = parseBaseUrl(settings.baseUrl);
   if (!(await chrome.permissions.contains({ origins: [originPattern] }))) {
-    throw new MeTubeError(
-      'permission',
-      `The extension is not allowed to access ${origin}. Open the options and click Save to grant it.`,
-    );
+    throw new MeTubeError('permission', t('errNoAccessSave', origin));
   }
   return settings;
 }

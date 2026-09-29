@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>MeTube Sender – Settings</title>
+    <title data-i18n="optionsTitle">MeTube Sender – Settings</title>
     <link rel="stylesheet" href="../ui/base.css" />
     <link rel="stylesheet" href="options.css" />
     <script type="module" src="options.js"></script>
@@ -13,29 +13,29 @@
       <header class="page-head">
         <img src="../icons/icon-48.png" alt="" width="36" height="36" />
         <div>
-          <h1>MeTube Sender</h1>
-          <p class="muted">Send YouTube links to your self-hosted MeTube, and watch them there from YouTube.</p>
+          <h1 data-i18n="extName">MeTube Sender</h1>
+          <p class="muted" data-i18n="optionsTagline">Send YouTube links to your self-hosted MeTube, and watch them there from YouTube.</p>
         </div>
       </header>
 
       <form id="form" novalidate>
         <section class="card">
-          <h2>Server</h2>
+          <h2 data-i18n="optServer">Server</h2>
           <div class="field">
-            <label for="baseUrl">MeTube URL</label>
+            <label for="baseUrl" data-i18n="optBaseUrl">MeTube URL</label>
             <input id="baseUrl" type="url" placeholder="https://metube.example.com" autocomplete="url" spellcheck="false" />
-            <p class="hint">Include the path prefix if MeTube is served under one, e.g. <code>https://example.com/metube</code>.</p>
+            <p class="hint" data-i18n-html="optBaseUrlHint">Include the path prefix if MeTube is served under one, e.g. <code>https://example.com/metube</code>.</p>
           </div>
           <div class="row">
             <div class="field">
-              <label for="username">Username</label>
+              <label for="username" data-i18n="optUsername">Username</label>
               <input id="username" type="text" autocomplete="username" spellcheck="false" />
             </div>
             <div class="field">
-              <label for="password">Password</label>
+              <label for="password" data-i18n="optPassword">Password</label>
               <div class="password">
                 <input id="password" type="password" autocomplete="current-password" />
-                <button type="button" id="toggle-password" class="icon-btn" title="Show password" aria-pressed="false">
+                <button type="button" id="toggle-password" class="icon-btn" title="Show password" data-i18n-title="showPassword" aria-pressed="false">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
                   </svg>
@@ -43,72 +43,75 @@
               </div>
             </div>
           </div>
-          <p class="hint">Sent as HTTP Basic auth (e.g. Traefik <code>basicAuth</code>) with every request. Leave both empty if MeTube isn't behind auth.</p>
+          <p class="hint" data-i18n-html="optAuthHint">Sent as HTTP Basic auth (e.g. Traefik <code>basicAuth</code>) with every request. Leave both empty if MeTube isn't behind auth.</p>
         </section>
 
         <section class="card">
-          <h2>Download defaults</h2>
+          <h2 data-i18n="optDefaults">Download defaults</h2>
           <div class="field">
-            <span class="field-label" id="type-label">Download type</span>
+            <span class="field-label" id="type-label" data-i18n="optDownloadType">Download type</span>
             <div class="segmented" role="radiogroup" aria-labelledby="type-label">
-              <label><input type="radio" name="downloadType" value="video" /><span>Video</span></label>
-              <label><input type="radio" name="downloadType" value="audio" /><span>Audio</span></label>
+              <label><input type="radio" name="downloadType" value="video" /><span data-i18n="video">Video</span></label>
+              <label><input type="radio" name="downloadType" value="audio" /><span data-i18n="audio">Audio</span></label>
             </div>
           </div>
           <div class="row">
             <div class="field">
-              <label for="format">Format</label>
+              <label for="format" data-i18n="optFormat">Format</label>
               <select id="format"></select>
             </div>
             <div class="field">
-              <label for="quality">Quality</label>
+              <label for="quality" data-i18n="optQuality">Quality</label>
               <select id="quality"></select>
             </div>
           </div>
           <div class="field">
-            <label for="folder">Folder <span class="muted">(optional)</span></label>
-            <input id="folder" type="text" placeholder="e.g. youtube" spellcheck="false" />
-            <p class="hint">Sub-folder of MeTube's download directory. Needs <code>CUSTOM_DIRS</code> on the server (and <code>CREATE_CUSTOM_DIRS</code> for folders that don't exist yet).</p>
+            <label for="folder" data-i18n-html="optFolder">Folder <span class="muted">(optional)</span></label>
+            <input id="folder" type="text" placeholder="e.g. youtube" data-i18n-placeholder="optFolderPlaceholder" spellcheck="false" />
+            <p class="hint" data-i18n-html="optFolderHint">Sub-folder of MeTube's download directory. Needs <code>CUSTOM_DIRS</code> on the server (and <code>CREATE_CUSTOM_DIRS</code> for folders that don't exist yet).</p>
           </div>
-          <p class="hint">Used by the popup (whose "Audio only" toggle uses M4A at best quality) and by the player when it adds a video. Every download goes into this folder.</p>
+          <p class="hint" data-i18n="optDefaultsHint">Used by the popup (whose "Audio only" toggle uses M4A at best quality) and by the player when it adds a video. Every download goes into this folder.</p>
         </section>
 
         <section class="card" id="menu-card">
-          <h2>Right-click menu</h2>
+          <h2 data-i18n="optMenu">Right-click menu</h2>
           <div class="field">
-            <span class="field-label" id="menu-layout-label">Layout</span>
+            <span class="field-label" id="menu-layout-label" data-i18n="optMenuLayout">Layout</span>
             <div class="segmented" role="radiogroup" aria-labelledby="menu-layout-label" id="menu-layout"></div>
             <p class="hint" id="menu-layout-help"></p>
           </div>
           <div class="field">
-            <span class="field-label">Show MeTube on</span>
+            <span class="field-label" data-i18n="optMenuContexts">Show MeTube on</span>
             <div class="checks" id="menu-contexts"></div>
           </div>
 
           <div class="block" id="menu-video">
             <div class="block-head" id="menu-video-head"></div>
             <div class="chips" id="menu-video-choices"></div>
-            <label class="inline-select">One click <span id="menu-video-oneclick"></span></label>
+            <label class="inline-select"><span data-i18n="optOneClick">One click</span> <span id="menu-video-oneclick"></span></label>
           </div>
           <div class="block" id="menu-audio">
             <div class="block-head" id="menu-audio-head"></div>
             <div class="chips" id="menu-audio-choices"></div>
-            <label class="inline-select">One click <span id="menu-audio-oneclick"></span></label>
+            <label class="inline-select"><span data-i18n="optOneClick">One click</span> <span id="menu-audio-oneclick"></span></label>
           </div>
           <div class="block" id="menu-subs">
             <div class="block-head" id="menu-subs-head"></div>
-            <p class="hint">Languages: <span id="menu-subs-langs"></span>. One download per language; set them under <b>Subtitle languages</b>.</p>
+            <p class="hint">
+              <span data-i18n="optMenuSubsLangs">Languages:</span> <span id="menu-subs-langs"></span>.
+              <span data-i18n-html="optMenuSubsHint">One download per language; set them under <b>Subtitle languages</b>.</span>
+            </p>
           </div>
 
           <div class="field">
-            <span class="field-label">Other entries</span>
+            <span class="field-label" data-i18n="optMenuExtras">Other entries</span>
             <div class="checks one-column" id="menu-extras"></div>
           </div>
 
           <div class="menu-preview">
             <div class="preview-head">
-              <span class="field-label">Preview</span>
-              <div class="segmented small" role="radiogroup" aria-label="Right-click on" id="menu-preview-context"></div>
+              <span class="field-label" data-i18n="optPreview">Preview</span>
+              <div class="segmented small" role="radiogroup" aria-label="Right-click on" data-i18n-aria-label="optPreviewOn" id="menu-preview-context"></div>
             </div>
             <div class="preview-stage" id="menu-preview"></div>
             <p class="hint" id="menu-preview-caption"></p>
@@ -116,11 +119,11 @@
         </section>
 
         <section class="card">
-          <h2>Player on YouTube</h2>
+          <h2 data-i18n="optPlayer">Player on YouTube</h2>
           <div class="field">
-            <label for="subtitleLangs">Subtitle languages</label>
+            <label for="subtitleLangs" data-i18n="optSubtitleLangs">Subtitle languages</label>
             <input id="subtitleLangs" type="text" placeholder="fr, en" spellcheck="false" />
-            <p class="hint">
+            <p class="hint" data-i18n-html="optSubtitleLangsHint">
               Language codes, comma-separated. The player loads <code>&lt;video&gt;.&lt;lang&gt;.vtt</code> for each one it
               finds next to the file. MeTube only writes them with <code>writesubtitles</code> in
               <code>YTDL_OPTIONS</code> (see the README).
@@ -128,15 +131,15 @@
           </div>
           <div class="field shortcut-row">
             <div>
-              <span class="field-label">Keyboard shortcut</span>
+              <span class="field-label" data-i18n="optShortcut">Keyboard shortcut</span>
               <kbd id="shortcut">…</kbd>
             </div>
-            <button type="button" id="change-shortcut" class="btn">Change shortcut</button>
+            <button type="button" id="change-shortcut" class="btn" data-i18n="optChangeShortcut">Change shortcut</button>
           </div>
-          <p class="hint">On a YouTube video page, the shortcut (or the popup's <b>Play</b> button) opens the video from MeTube in an overlay.</p>
+          <p class="hint" data-i18n-html="optShortcutHint">On a YouTube video page, the shortcut (or the popup's <b>Play</b> button) opens the video from MeTube in an overlay.</p>
           <div class="field">
-            <label class="check"><input type="checkbox" id="endScreen" /><span>When a video ends, offer to delete it from MeTube</span></label>
-            <p class="hint">
+            <label class="check"><input type="checkbox" id="endScreen" /><span data-i18n="optEndScreen">When a video ends, offer to delete it from MeTube</span></label>
+            <p class="hint" data-i18n-html="optEndScreenHint">
               The player's trash button deletes it at any time. MeTube only erases the file from disk if it runs with
               <code>DELETE_FILE_ON_TRASHCAN=ask</code> (see the README); otherwise only its entry goes away.
             </p>
@@ -146,12 +149,12 @@
         <div id="status" class="notice" role="status" hidden></div>
 
         <div class="actions">
-          <button type="button" id="test" class="btn">Test connection</button>
-          <button type="submit" id="save" class="btn primary">Save</button>
+          <button type="button" id="test" class="btn" data-i18n="optTest">Test connection</button>
+          <button type="submit" id="save" class="btn primary" data-i18n="optSave">Save</button>
         </div>
       </form>
 
-      <footer class="page-foot muted">
+      <footer class="page-foot muted" data-i18n="optFooter">
         Saving asks for permission to access your MeTube host. Settings, password included, are stored only in this
         browser's extension storage.
       </footer>

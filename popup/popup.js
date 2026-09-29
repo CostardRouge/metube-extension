@@ -1,4 +1,5 @@
 import { describeOptions, downloadOptions, loadSettings } from '../lib/config.js';
+import { localizePage, t, tn } from '../lib/i18n.js';
 import { normalizeUrl, parseYouTubeUrl, watchVideoId } from '../lib/youtube.js';
 
 const $ = (id) => document.getElementById(id);
@@ -101,17 +102,18 @@ function updateControls() {
   els.sendSelected.disabled = state.busy || !configured || checked === 0;
   els.selectAll.disabled = state.busy || boxes.length === 0 || checked === boxes.length;
   els.selectNone.disabled = state.busy || checked === 0;
-  if (!state.busy) els.sendSelected.textContent = checked ? `Send ${checked} selected` : 'Send selected';
+  if (!state.busy) els.sendSelected.textContent = checked ? tn('popupSendCount', checked) : t('popupSendSelected');
 
   if (state.scanned && state.items.length) {
-    const noun = state.items.length === 1 ? 'link' : 'links';
-    els.count.textContent = `${state.items.length} YouTube ${noun}${checked ? ` · ${checked} selected` : ''}`;
+    const parts = [tn('popupLinkCount', state.items.length)];
+    if (checked) parts.push(tn('popupSelectedCount', checked));
+    els.count.textContent = parts.join(' · ');
   }
 }
 
 function renderDefaults() {
   if (!state.settings?.baseUrl) {
-    els.defaults.textContent = 'Not configured';
+    els.defaults.textContent = t('popupDefaultsNotConfigured');
     return;
   }
   const options = downloadOptions(state.settings, { audio: els.audioOnly.checked });
@@ -121,9 +123,9 @@ function renderDefaults() {
 function renderCurrentPage() {
   const { tab } = state;
   state.pageUrl = tab?.url ? normalizeUrl(tab.url) : null;
-  els.pageTitle.textContent = tab?.title ? cleanPageTitle(tab.title, tab.url) : 'Untitled';
+  els.pageTitle.textContent = tab?.title ? cleanPageTitle(tab.title, tab.url) : t('popupUntitled');
   els.pageTitle.title = els.pageTitle.textContent;
-  els.pageUrl.textContent = state.pageUrl ? displayUrl(state.pageUrl) : "This page can't be sent to MeTube";
+  els.pageUrl.textContent = state.pageUrl ? displayUrl(state.pageUrl) : t('popupCantSend');
   els.pageUrl.title = state.pageUrl ?? '';
   els.playPage.hidden = !watchVideoId(tab?.url);
 }
@@ -133,13 +135,13 @@ async function playInOverlay() {
     .sendMessage({ type: 'overlay:toggle', tabId: state.tab.id })
     .catch((err) => ({ ok: false, error: err.message }));
   if (res?.ok) window.close();
-  else showNotice(res?.error ?? 'The extension background did not answer.', 'error');
+  else showNotice(res?.error ?? t('errNoAnswer'), 'error');
 }
 
 function tagFor(item) {
-  if (item.kind === 'playlist') return ['Playlist', 'Whole playlist'];
-  if (item.kind === 'short') return ['Short', 'YouTube Short'];
-  if (item.list) return ['In playlist', 'Video link that also carries a playlist ID'];
+  if (item.kind === 'playlist') return [t('tagPlaylist'), t('tagPlaylistTitle')];
+  if (item.kind === 'short') return [t('tagShort'), t('tagShortTitle')];
+  if (item.list) return [t('tagInPlaylist'), t('tagInPlaylistTitle')];
   return null;
 }
 
@@ -191,7 +193,7 @@ function renderList(emptyMessage) {
   els.list.hidden = items.length === 0;
   els.empty.hidden = items.length > 0;
   els.empty.textContent = emptyMessage;
-  if (!items.length) els.count.textContent = 'No links';
+  if (!items.length) els.count.textContent = t('popupNoLinks');
   updateControls();
 }
 
@@ -210,15 +212,15 @@ function collectLinks(rawLinks) {
 async function scan() {
   const { tab } = state;
   if (!tab?.id || !/^https?:/.test(tab.url ?? '')) {
-    renderList("This page can't be scanned.");
+    renderList(t('popupCantScan'));
     return;
   }
   try {
     const [injection] = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: scanPage });
     state.items = collectLinks(injection?.result?.links ?? []);
-    renderList('No YouTube links found on this page.');
+    renderList(t('popupNoYouTubeLinks'));
   } catch (err) {
-    renderList(`Can't scan this page: ${err.message}`);
+    renderList(t('popupScanFailed', err.message));
   }
 }
 
@@ -228,7 +230,7 @@ function setBusy(busy, button) {
     button.dataset.label = button.textContent;
     const spinner = document.createElement('span');
     spinner.className = 'spinner';
-    button.replaceChildren(spinner, document.createTextNode('Sending…'));
+    button.replaceChildren(spinner, document.createTextNode(t('popupSending')));
   } else if (button?.dataset.label) {
     button.textContent = button.dataset.label;
   }
@@ -245,7 +247,7 @@ function markResults(results) {
     li.classList.toggle('sent', result.ok);
     li.classList.toggle('failed', !result.ok);
     status.textContent = result.ok ? '✓' : '✕';
-    status.title = result.ok ? 'Sent' : result.error;
+    status.title = result.ok ? t('popupSent') : result.error;
     if (result.ok) box.checked = false;
   }
 }
@@ -263,7 +265,7 @@ async function send(urls, button) {
   setBusy(false, button);
 
   if (!response || response.ok === false) {
-    showNotice(response?.error ?? 'The extension background did not answer.', 'error');
+    showNotice(response?.error ?? t('errNoAnswer'), 'error');
     return;
   }
   const { results } = response;
@@ -273,10 +275,10 @@ async function send(urls, button) {
   const failed = results.filter((r) => !r.ok);
   const sent = results.length - failed.length;
   if (!failed.length) {
-    showNotice(`Sent ${sent} ${sent === 1 ? 'link' : 'links'} to MeTube${audio ? ' (audio)' : ''}.`, 'ok');
+    showNotice(audio ? tn('popupSentAudioCount', sent) : tn('popupSentCount', sent), 'ok');
   } else {
-    const prefix = results.length === 1 ? 'Not sent' : `${failed.length} of ${results.length} failed`;
-    showNotice(`${prefix}: ${failed[0].error}`, 'error');
+    const prefix = results.length === 1 ? t('popupNotSent') : t('countFailed', failed.length, results.length);
+    showNotice(t('withReason', prefix, failed[0].error), 'error');
     // The error is on screen now: clear the red badge.
     chrome.action.setBadgeText({ text: '' });
   }
@@ -287,8 +289,8 @@ async function showLastFailure() {
   const { lastResult } = await chrome.storage.session.get('lastResult');
   if (lastResult?.failed?.length) {
     const { failed, total } = lastResult;
-    const prefix = total === 1 ? 'Last send failed' : `Last send: ${failed.length} of ${total} failed`;
-    showNotice(`${prefix}: ${failed[0].error}`, 'error');
+    const prefix = total === 1 ? t('popupLastFailed') : t('popupLastCountFailed', failed.length, total);
+    showNotice(t('withReason', prefix, failed[0].error), 'error');
   }
   chrome.action.setBadgeText({ text: '' });
 }
@@ -343,6 +345,7 @@ function wireEvents() {
 }
 
 async function init() {
+  localizePage();
   wireEvents();
   const [settings, [tab]] = await Promise.all([
     loadSettings(),

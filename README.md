@@ -32,6 +32,7 @@ It's plain JavaScript, HTML and CSS with no build step: load the folder as-is. I
 - **Player on YouTube**: on a video page, press **Alt+Shift+M** (or **Play** in the popup) to watch
   the video from MeTube in an overlay, then delete it from MeTube once watched. See
   [Player on YouTube](#player-on-youtube).
+- **English and French**: the extension follows the browser's language. See [Languages](#languages).
 
 ## Install
 
@@ -158,6 +159,7 @@ On a `youtube.com/watch?v=…` page, press the shortcut or click **Play** in the
 The player has play/pause, seeking, volume, speed (0.5× to 2×, in the **⋯** menu),
 subtitles, picture-in-picture and fullscreen. Keyboard: **Space** or **K** play/pause, **←/→**
 seek 5 seconds, **F** fullscreen, **C** subtitles on/off, **M** mute, **Del** delete, **Esc** close.
+Double-click the picture to enter or leave fullscreen, like on YouTube.
 
 Esc (or the shortcut again, or a click outside the video) closes the overlay. YouTube stays paused.
 The overlay also closes when you navigate to another video.
@@ -280,6 +282,24 @@ The player page (`overlay/overlay.html`) is the only file YouTube pages can load
 (`web_accessible_resources`). The shortcut is declared under `commands` in the manifest, which isn't
 a permission.
 
+## Languages
+
+The extension is in English and French, and follows the browser's language: menus, popup,
+settings, player (Media Chrome's own labels included), notifications and error messages. Numbers
+and sizes are written the local way (`1.2 GB`, `1,2 Go`), and subtitle languages get their names
+in that language (`French`, `Français`). A browser in any other language gets English.
+
+- **Chrome on Windows**: Settings › Languages, **Display Google Chrome in this language**, then
+  relaunch Chrome.
+- **Chrome on macOS, and Arc**: they use the system language. To change it for one app only:
+  System Settings › General › Language & Region › Applications.
+- **Chrome on Linux**: the system locale (`LANGUAGE`/`LANG`).
+
+The texts live in `_locales/<language>/messages.json`. To add a language, copy `_locales/en/`
+to its code (`de`, `pt_BR`…) and translate the `message` values (the tests check that every
+language has the same messages, placeholders and markup). Media Chrome's labels come from
+`vendor/media-chrome/lang/`, loaded in `overlay/media-chrome.js`.
+
 ## Development
 
 ```
@@ -292,18 +312,20 @@ sw/overlay.js            opening the player; its lookup/add/probe/subtitle/delet
 sw/auth-rule.js          declarativeNetRequest rule adding Authorization to the player's media
 sw/settings.js           settings check shared by the above
 lib/config.js            settings, defaults, format/quality catalog
+lib/i18n.js              messages (chrome.i18n), plurals, number and language name formatting
 lib/menu.js              menu settings and the chrome.contextMenus items built from them
 lib/metube.js            MeTube API client (/add, /delete, /history, /version, files), errors
 lib/history.js           finding a video in /history; file and subtitle URLs
 lib/youtube.js           YouTube URL detection and normalization
 content/overlay-host.js  injected into YouTube on demand: the overlay iframe, pause, navigation
 overlay/                 the player page shown in that iframe
-vendor/media-chrome/     Media Chrome 4.19.3 (MIT), unmodified build, see its README
+vendor/media-chrome/     Media Chrome 4.19.3 (MIT), unmodified ES modules, see its README
+_locales/                English (default) and French messages
 popup/                   toolbar popup (page scan + send + play)
 options/                 settings page (menu-editor.js: the right-click menu section)
 ui/base.css              shared dark theme
 icons/                   icon.svg source and PNG sizes
-tests/                   unit tests: URL handling, history matching, menus, the manifest
+tests/                   unit tests: URL handling, history matching, menus, messages, the manifest
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
 .github/workflows/     CI (tests + build) and release
 ```

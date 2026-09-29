@@ -1,8 +1,12 @@
 // Run with: node --test
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import { describeProgress, fileUrl, findDownload, formatSize, subtitleUrls } from '../lib/history.js';
+import { useMessages } from '../lib/i18n.js';
+
+useMessages(JSON.parse(readFileSync(new URL('../_locales/en/messages.json', import.meta.url), 'utf8')));
 
 const ID = 'dQw4w9WgXcQ';
 const BASE = 'https://metube.example.com/mt';

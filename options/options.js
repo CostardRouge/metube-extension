@@ -1,4 +1,14 @@
-import { CATALOG, coerceOptions, loadSettings, parseBaseUrl, parseSubtitleLangs, saveSettings } from '../lib/config.js';
+import {
+  CATALOG,
+  coerceOptions,
+  formatLabel,
+  loadSettings,
+  parseBaseUrl,
+  parseSubtitleLangs,
+  qualityLabel,
+  saveSettings,
+} from '../lib/config.js';
+import { localizePage, t } from '../lib/i18n.js';
 import { createMenuEditor } from './menu-editor.js';
 
 const $ = (id) => document.getElementById(id);
@@ -40,13 +50,17 @@ function fillSelect(select, entries, value) {
 function renderChoices(format, quality) {
   const type = currentType();
   const coerced = coerceOptions({ downloadType: type, format, quality });
-  const formats = CATALOG[type].formats;
+  const formats = CATALOG[type];
   fillSelect(
     els.format,
-    Object.entries(formats).map(([value, def]) => [value, def.label]),
+    Object.keys(formats).map((format) => [format, formatLabel(format)]),
     coerced.format,
   );
-  fillSelect(els.quality, formats[coerced.format].qualities, coerced.quality);
+  fillSelect(
+    els.quality,
+    formats[coerced.format].map((quality) => [quality, qualityLabel(type, quality)]),
+    coerced.quality,
+  );
   lastChoice[type] = { format: coerced.format, quality: coerced.quality };
 }
 
@@ -67,7 +81,7 @@ function readForm(baseUrl) {
 function checkSubtitleLangs() {
   const { invalid } = parseSubtitleLangs(els.subtitleLangs.value);
   if (!invalid.length) return true;
-  showStatus(`Not a language code: ${invalid.join(', ')}. Use codes like fr, en or pt-BR.`, 'error');
+  showStatus(t('optBadLangs', invalid.join(', ')), 'error');
   els.subtitleLangs.focus();
   return false;
 }
@@ -75,7 +89,7 @@ function checkSubtitleLangs() {
 async function renderShortcut() {
   const commands = (await chrome.commands?.getAll()) ?? [];
   const shortcut = commands.find((c) => c.name === 'toggle-overlay')?.shortcut;
-  els.shortcut.textContent = shortcut || 'Not set';
+  els.shortcut.textContent = shortcut || t('optShortcutNotSet');
   els.shortcut.classList.toggle('muted', !shortcut);
   shortcutText = shortcut ?? '';
   menuEditor?.refresh();
@@ -109,12 +123,12 @@ function parseUrlField() {
 }
 
 function deniedMessage(origin) {
-  return `Access to ${origin} was not granted, so the extension can't reach MeTube. Click Save or Test again and allow it.`;
+  return t('optDenied', origin);
 }
 
 async function runTest(permission, parsed) {
   setBusy(true);
-  showStatus(`Connecting to ${parsed.origin}…`, 'busy');
+  showStatus(t('optConnecting', parsed.origin), 'busy');
   try {
     if (!(await permission)) {
       showStatus(deniedMessage(parsed.origin), 'error');
@@ -122,12 +136,15 @@ async function runTest(permission, parsed) {
     }
     const res = await chrome.runtime.sendMessage({ type: 'test', settings: readForm(parsed.baseUrl) });
     if (!res?.ok) {
-      showStatus(res?.error ?? 'The extension background did not answer.', 'error');
+      showStatus(res?.error ?? t('errNoAnswer'), 'error');
       return;
     }
-    const version = res.version ? ` to MeTube ${res.version}` : '';
-    const ytdlp = res.ytdlp ? ` (yt-dlp ${res.ytdlp})` : '';
-    showStatus(`Connected${version}${ytdlp}.`, 'ok');
+    const { version, ytdlp } = res;
+    let message = t('optConnected');
+    if (version && ytdlp) message = t('optConnectedBoth', version, ytdlp);
+    else if (version) message = t('optConnectedVersion', version);
+    else if (ytdlp) message = t('optConnectedYtdlp', ytdlp);
+    showStatus(message, 'ok');
   } catch (err) {
     showStatus(err.message, 'error');
   } finally {
@@ -162,21 +179,17 @@ async function save(permission, parsed) {
     if (granted) await dropPreviousPermission(previous.baseUrl, parsed.originPattern);
 
     if (!granted) {
-      showStatus(`Saved, but: ${deniedMessage(parsed.origin)}`, 'warn');
+      showStatus(t('optSavedBut', deniedMessage(parsed.origin)), 'warn');
     } else if (
       parsed.origin.startsWith('http:') &&
       !/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|$)/.test(parsed.origin)
     ) {
-      const credentials = next.username || next.password ? 'the credentials travel unencrypted, and ' : '';
-      showStatus(
-        `Saved. Note: over http://, ${credentials}the player on YouTube can't load videos (it needs https://).`,
-        'warn',
-      );
+      showStatus(t(next.username || next.password ? 'optSavedHttpCredentials' : 'optSavedHttp'), 'warn');
     } else {
-      showStatus('Saved.', 'ok');
+      showStatus(t('optSaved'), 'ok');
     }
   } catch (err) {
-    showStatus(`Could not save: ${err.message}`, 'error');
+    showStatus(t('optSaveFailed', err.message), 'error');
   } finally {
     setBusy(false);
   }
@@ -196,7 +209,7 @@ function wireEvents() {
     const show = els.password.type === 'password';
     els.password.type = show ? 'text' : 'password';
     els.togglePassword.setAttribute('aria-pressed', String(show));
-    els.togglePassword.title = show ? 'Hide password' : 'Show password';
+    els.togglePassword.title = show ? t('hidePassword') : t('showPassword');
   });
 
   // chrome.permissions.request() needs the user gesture: it is called
@@ -224,6 +237,7 @@ function wireEvents() {
 }
 
 async function init() {
+  localizePage();
   const settings = await loadSettings();
   els.baseUrl.value = settings.baseUrl;
   els.username.value = settings.username;
@@ -248,7 +262,7 @@ async function init() {
   try {
     const { origin, originPattern } = parseBaseUrl(settings.baseUrl);
     if (!(await chrome.permissions.contains({ origins: [originPattern] }))) {
-      showStatus(`The extension can't access ${origin} yet: click Save to grant it.`, 'warn');
+      showStatus(t('optNotGranted', origin), 'warn');
     }
   } catch {
     // Stored URL invalid: the user will fix it on save.

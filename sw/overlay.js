@@ -3,6 +3,7 @@
 
 import { downloadOptions, parseSubtitleLangs } from '../lib/config.js';
 import { fileUrl, findDownload, subtitleUrls } from '../lib/history.js';
+import { t } from '../lib/i18n.js';
 import { MeTubeError, addDownload, deleteDownload, fetchText, getHistory, probeFile } from '../lib/metube.js';
 import { watchVideoId } from '../lib/youtube.js';
 import { BADGE_COLORS, notify, setBadge } from './feedback.js';
@@ -16,9 +17,9 @@ const VIDEO_ID_RE = /^[A-Za-z0-9_-]{11}$/;
  */
 export async function toggleOverlay(tab) {
   if (!tab?.id || !watchVideoId(tab.url)) {
-    const error = 'Open a YouTube video (youtube.com/watch?v=…) to play it from MeTube.';
+    const error = t('errOpenVideo');
     setBadge('!', BADGE_COLORS.warn, 5000);
-    notify('MeTube player', error);
+    notify(t('playerName'), error);
     return { ok: false, error };
   }
   await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['content/overlay-host.js'] });
@@ -32,13 +33,13 @@ export async function onCommand(command, tab) {
 }
 
 function checkVideoId(videoId) {
-  if (!VIDEO_ID_RE.test(String(videoId))) throw new Error('Invalid video ID.');
+  if (!VIDEO_ID_RE.test(String(videoId))) throw new Error(t('errInvalidVideoId'));
 }
 
 // The overlay page may only make the service worker fetch files on MeTube.
 function checkMeTubeUrl(settings, url) {
   if (typeof url !== 'string' || !url.startsWith(`${settings.baseUrl}/`)) {
-    throw new Error('Refusing to fetch a URL outside MeTube.');
+    throw new Error(t('errOutsideMeTube'));
   }
 }
 
@@ -125,7 +126,7 @@ export const OVERLAY_HANDLERS = {
     const settings = await requireSettings();
     const found = findDownload(await getHistory(settings), videoId);
     if (found.state !== 'finished' && found.state !== 'error') {
-      throw new MeTubeError('metube', "This video isn't among MeTube's finished downloads anymore.");
+      throw new MeTubeError('metube', t('errNotFinished'));
     }
     const file = found.state === 'finished' ? fileUrl(settings.baseUrl, found.item) : null;
     await deleteDownload(settings, found.item.url);

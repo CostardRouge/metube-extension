@@ -4,8 +4,10 @@
 // worker. The <video> gets its Authorization header from the
 // declarativeNetRequest rule (sw/auth-rule.js).
 
+import './media-chrome.js';
 import { describeProgress, formatSize } from '../lib/history.js';
 import { loadSettings } from '../lib/config.js';
+import { languageName, localizePage, t } from '../lib/i18n.js';
 
 const POLL_MS = 2000;
 // MeTube answers /add once the video is queued; allow some slack before
@@ -62,11 +64,9 @@ async function sw(type, payload = {}) {
   try {
     res = await chrome.runtime.sendMessage({ type, ...payload });
   } catch (err) {
-    throw Object.assign(new Error(`The extension isn't responding (${err.message}). Reload the page.`), {
-      code: 'internal',
-    });
+    throw Object.assign(new Error(t('errNotResponding', err.message)), { code: 'internal' });
   }
-  if (!res) throw Object.assign(new Error("The extension didn't answer. Reload the page."), { code: 'internal' });
+  if (!res) throw Object.assign(new Error(t('errNoAnswerReload')), { code: 'internal' });
   if (res.ok === false) throw Object.assign(new Error(res.error), { code: res.code });
   return res;
 }
@@ -75,7 +75,7 @@ async function sw(type, payload = {}) {
 // Status panel
 
 function setTitle(title) {
-  const text = title || `YouTube video ${videoId}`;
+  const text = title || t('youtubeVideo', videoId);
   els.title.textContent = text;
   els.title.title = text;
   document.title = `${text} – MeTube`;
@@ -103,7 +103,7 @@ const SETTINGS_CODES = new Set(['auth', 'config', 'permission', 'forbidden', 'no
  * @param {string} text
  * @param {{detail?: string, code?: string, retryLabel?: string, retry?: () => void}} options
  */
-function showError(text, { detail = '', code, retryLabel = 'Retry', retry } = {}) {
+function showError(text, { detail = '', code, retryLabel = t('retry'), retry } = {}) {
   clearTimeout(pollTimer);
   showStatus(text, { detail, busy: false });
   els.status.classList.add('error');
@@ -151,18 +151,18 @@ async function lookup() {
     case 'active':
     case 'pending': {
       const { text, percent } = describeProgress(result.item);
-      const detail = result.state === 'pending' ? 'It was added without auto-start: press Start in MeTube.' : '';
+      const detail = result.state === 'pending' ? t('overlayPendingDetail') : '';
       showStatus(text, { percent, detail, busy: result.state === 'active' });
       if (result.state === 'pending') els.openMetube.hidden = false;
       schedulePoll();
       return;
     }
     case 'error': {
-      const reason = result.item?.msg || result.item?.error || 'No reason given.';
-      showError("MeTube couldn't download this video.", {
+      const reason = result.item?.msg || result.item?.error || t('overlayNoReason');
+      showError(t('overlayDownloadFailed'), {
         detail: reason,
         code: 'download',
-        retryLabel: 'Try again',
+        retryLabel: t('tryAgain'),
         retry: () => add(),
       });
       return;
@@ -172,19 +172,19 @@ async function lookup() {
       if (!added) {
         await add();
       } else if (++absentPolls > MAX_ABSENT_POLLS_AFTER_ADD) {
-        showError("MeTube accepted the video, but it doesn't appear in its queue.", {
+        showError(t('overlayNotQueued'), {
           code: 'metube',
           retry: start,
         });
       } else {
-        showStatus('Waiting for MeTube to queue the video…', { percent: null });
+        showStatus(t('overlayWaitingQueue'), { percent: null });
         schedulePoll();
       }
   }
 }
 
 async function add() {
-  showStatus('Not in MeTube yet: sending it…', { percent: null });
+  showStatus(t('overlaySending'), { percent: null });
   try {
     await sw('overlay:add', { videoId });
   } catch (err) {
@@ -193,7 +193,7 @@ async function add() {
   }
   added = true;
   absentPolls = 0;
-  showStatus('Queued in MeTube', { percent: null });
+  showStatus(t('progressQueued'), { percent: null });
   schedulePoll();
 }
 
@@ -208,20 +208,20 @@ function blockedAsMixedContent(url) {
 
 async function play(result) {
   if (blockedAsMixedContent(result.fileUrl)) {
-    showError("The browser won't load http:// video inside an HTTPS page like YouTube.", {
-      detail: 'Serve MeTube over HTTPS (for example with a certificate on Traefik) to use the player.',
+    showError(t('overlayMixedContent'), {
+      detail: t('overlayMixedContentDetail'),
       code: 'metube',
     });
     return;
   }
-  showStatus('Opening the file…');
+  showStatus(t('overlayOpening'));
   try {
     await sw('overlay:probe', { url: result.fileUrl });
   } catch (err) {
     const missing = err.code === 'file_missing';
     showError(err.message, {
       code: err.code,
-      retryLabel: missing ? 'Download again' : 'Retry',
+      retryLabel: missing ? t('overlayDownloadAgain') : t('retry'),
       retry: missing ? () => add() : start,
     });
     return;
@@ -248,14 +248,6 @@ async function play(result) {
   loadSubtitles(result.subtitles);
 }
 
-function languageName(lang) {
-  try {
-    return new Intl.DisplayNames([navigator.language, 'en'], { type: 'language' }).of(lang) ?? lang;
-  } catch {
-    return lang;
-  }
-}
-
 async function loadSubtitles(candidates) {
   if (!candidates?.length) return;
   let tracks = [];
@@ -274,8 +266,8 @@ async function loadSubtitles(candidates) {
     els.video.append(track);
   }
   els.subtitleInfo.textContent = tracks.length
-    ? `Subtitles: ${tracks.map((t) => t.lang).join(', ')}`
-    : 'No subtitles found';
+    ? t('overlaySubtitlesFound', tracks.map((track) => track.lang).join(', '))
+    : t('overlayNoSubtitles');
 }
 
 els.video.addEventListener('error', () => {
@@ -283,10 +275,10 @@ els.video.addEventListener('error', () => {
   const code = els.video.error?.code;
   const text =
     code === MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED || code === MediaError.MEDIA_ERR_DECODE
-      ? "The browser can't play this file: its format or codec isn't supported."
-      : 'The video stopped loading (network error).';
+      ? t('overlayUnsupported')
+      : t('overlayNetworkError');
   showError(text, {
-    detail: code === MediaError.MEDIA_ERR_NETWORK ? '' : 'Choosing MP4 as the default video format avoids this.',
+    detail: code === MediaError.MEDIA_ERR_NETWORK ? '' : t('overlayChooseMp4'),
     code: 'media',
     retry: start,
   });
@@ -309,7 +301,7 @@ function resetPlayer() {
 function start() {
   clearTimeout(pollTimer);
   resetPlayer();
-  showStatus('Looking up this video in MeTube…');
+  showStatus(t('overlayLookingUp'));
   lookup();
 }
 
@@ -321,20 +313,20 @@ function describeFile(item) {
   const audio = item.downloadType === 'audio';
   const quality = String(item.quality ?? '');
   const parts = [];
-  if (quality === 'best') parts.push(audio ? 'Audio · best quality' : 'Best quality');
-  else if (/^\d+$/.test(quality)) parts.push(audio ? `Audio · ${quality} kbps` : `${quality}p`);
+  if (quality === 'best') parts.push(audio ? `${t('audio')} · ${t('audioBest')}` : t('qualityBestLong'));
+  else if (/^\d+$/.test(quality)) parts.push(audio ? `${t('audio')} · ${t('kbps', quality)}` : `${quality}p`);
   if (item.format && item.format !== 'any') parts.push(String(item.format).toUpperCase());
   const size = formatSize(item.size);
   if (size) parts.push(size);
   const subtitles = [...els.video.textTracks].map((track) => track.language).filter(Boolean);
-  if (subtitles.length) parts.push(`subtitles ${subtitles.join(', ')}`);
+  if (subtitles.length) parts.push(t('fileSubtitles', subtitles.join(', ')));
   return parts.join(' · ');
 }
 
 function askDelete() {
   if (!current || els.confirm.open) return;
   els.video.pause();
-  els.confirmName.textContent = current.item?.title || `YouTube video ${videoId}`;
+  els.confirmName.textContent = current.item?.title || t('youtubeVideo', videoId);
   els.confirmMeta.textContent = describeFile(current.item ?? {});
   els.confirm.returnValue = '';
   els.confirm.showModal();
@@ -347,7 +339,7 @@ async function deleteVideo() {
   if (!current) return;
   const size = formatSize(current.item?.size);
   resetPlayer();
-  showStatus('Deleting from MeTube…');
+  showStatus(t('overlayDeleting'));
   let res;
   try {
     res = await sw('overlay:delete', { videoId });
@@ -357,24 +349,18 @@ async function deleteVideo() {
   }
   if (res.fileRemoved === false) {
     // MeTube removed its entry but kept the file (DELETE_FILE_ON_TRASHCAN).
-    showStatus("Removed from MeTube's list, but the server kept the file.", {
-      busy: false,
-      detail: 'MeTube only erases files when it runs with DELETE_FILE_ON_TRASHCAN=ask (or true): see the README.',
-    });
+    showStatus(t('overlayFileKept'), { busy: false, detail: t('overlayFileKeptDetail') });
     els.status.classList.add('warn');
     retryAction = close;
-    els.retry.textContent = 'Close';
+    els.retry.textContent = t('close');
     els.retry.hidden = false;
     els.retry.focus();
     return;
   }
   const freed = formatSize(res.size) || size;
-  showStatus('Deleted from MeTube', {
-    busy: false,
-    detail: res.fileRemoved
-      ? `File erased from the server${freed ? ` · ${freed} freed` : ''}.`
-      : "Removed from MeTube's list.",
-  });
+  let detail = t('overlayRemoved');
+  if (res.fileRemoved) detail = freed ? t('overlayErasedFreed', freed) : t('overlayErased');
+  showStatus(t('overlayDeleted'), { busy: false, detail });
   els.status.classList.add('ok');
   setTimeout(close, 2500);
 }
@@ -389,7 +375,7 @@ els.confirm.addEventListener('close', () => {
 els.video.addEventListener('ended', async () => {
   if (!current || !(await settingsReady).endScreen) return;
   const size = formatSize(current.item?.size);
-  els.endText.textContent = size ? `It takes ${size} on the server. Delete it now?` : 'Delete it from MeTube now?';
+  els.endText.textContent = size ? t('overlayEndSize', size) : t('overlayEndAsk');
   els.endScreen.hidden = false;
   els.endKeep.focus();
 });
@@ -456,6 +442,20 @@ document.addEventListener('keyup', (event) => {
   if (!els.player.contains(event.target)) els.player.keyboardShortcutHandler(event);
 });
 
+// Double-click on the picture toggles fullscreen, like YouTube (not on the
+// control bar or menus, whose clicks target their own elements). Media
+// Chrome's request keeps its controls in fullscreen.
+els.player.addEventListener('dblclick', (event) => {
+  if (event.target !== els.video && event.target !== els.player) return;
+  const fullscreen = els.player.hasAttribute('mediaisfullscreen');
+  els.video.dispatchEvent(
+    new CustomEvent(fullscreen ? 'mediaexitfullscreenrequest' : 'mediaenterfullscreenrequest', {
+      bubbles: true,
+      composed: true,
+    }),
+  );
+});
+
 els.close.addEventListener('click', close);
 els.backdrop.addEventListener('click', close);
 els.retry.addEventListener('click', () => retryAction?.());
@@ -471,11 +471,11 @@ els.openMetubeHead.addEventListener('click', openMeTube);
 
 // ---------------------------------------------------------------------------
 
+localizePage();
 setTitle('');
 if (!/^[A-Za-z0-9_-]{11}$/.test(videoId)) {
-  showError('No YouTube video ID in the page address.', { code: 'internal' });
+  showError(t('overlayNoVideoId'), { code: 'internal' });
 } else {
-  if (params.has('novideo'))
-    showToast("YouTube's player wasn't found on this page: playback starts from the beginning.");
+  if (params.has('novideo')) showToast(t('overlayNoYouTubePlayer'));
   start();
 }
