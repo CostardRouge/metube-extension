@@ -1,0 +1,41 @@
+name: CI
+
+# Tests and packages the extension on every pull request and every push to main.
+# The zip is kept for 14 days as a run artifact, to try a change before it's released.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Run tests
+        run: node --test
+
+      - name: Build extension zip
+        id: build
+        run: echo "zip=$(scripts/build.sh)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload zip
+        uses: actions/upload-artifact@v7
+        with:
+          path: ${{ steps.build.outputs.zip }}
+          archive: false
+          retention-days: 14
+          if-no-files-found: error
