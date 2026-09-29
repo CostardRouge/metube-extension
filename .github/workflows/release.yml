@@ -1,0 +1,82 @@
+name: Release
+
+# Publishes a GitHub release when a version tag is pushed:
+#
+#   git tag v1.1.0
+#   git push origin v1.1.0
+#
+# The tag must point to a commit on main, and match "version" in manifest.json.
+# Nothing is released on a plain push.
+on:
+  push:
+    tags: ['v[0-9]*']
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # full history, to check the tag against main
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Check the tag is on main
+        run: |
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::$GITHUB_REF_NAME points to a commit that isn't on main. Merge the change first, then tag main."
+            exit 1
+          fi
+
+      - name: Run tests
+        run: node --test
+
+      - name: Build extension zip
+        id: build
+        run: |
+          zip=$(scripts/build.sh "${GITHUB_REF_NAME#v}")
+          (cd dist && sha256sum "$(basename "$zip")" > "$(basename "$zip").sha256")
+          echo "zip=$zip" >> "$GITHUB_OUTPUT"
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          ZIP: ${{ steps.build.outputs.zip }}
+        run: |
+          tag=$GITHUB_REF_NAME
+          name=$(basename "$ZIP")
+
+          # A release drafted by hand in the GitHub UI keeps its notes; only the files are attached.
+          if gh release view "$tag" > /dev/null 2>&1; then
+            gh release upload "$tag" "$ZIP" "$ZIP.sha256" --clobber
+            exit 0
+          fi
+
+          cat > dist/notes.md <<EOF
+          ## Install
+
+          1. Download **$name** below and unzip it into a folder you'll keep.
+          2. Open \`chrome://extensions\` (or \`arc://extensions\`) and turn on **Developer mode**.
+          3. Click **Load unpacked** and select that folder.
+
+          To update, unzip the new version into the **same** folder, replacing its files, then click the
+          reload icon on the extension's card. Loading it from another folder installs a second copy,
+          without your settings.
+
+          EOF
+          gh release create "$tag" "$ZIP" "$ZIP.sha256" \
+            --verify-tag \
+            --title "MeTube Sender $tag" \
+            --notes-file dist/notes.md \
+            --generate-notes

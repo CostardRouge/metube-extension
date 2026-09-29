@@ -26,7 +26,9 @@ It's plain JavaScript, HTML and CSS: no build step, no dependencies. Load the fo
 
 ## Install
 
-First, download this repository (**Code → Download ZIP**, then unzip it), or clone it.
+First, download `metube-sender-<version>.zip` from the latest
+[release](https://github.com/CostardRouge/metube-extension/releases/latest) and unzip it into a
+folder you'll keep. To run the unreleased code instead, clone this repository.
 
 ### Chrome
 
@@ -52,8 +54,10 @@ popup show every result.
 
 ### Updating
 
-After pulling new code, click the reload icon on the extension's card in
-`chrome://extensions` or `arc://extensions`.
+Unzip the new release into the same folder, replacing its files (or pull the new code), then
+click the reload icon on the extension's card in `chrome://extensions` or `arc://extensions`.
+Don't load it from a different folder: the browser would install it as a second extension,
+without your settings.
 
 ## Configure
 
@@ -116,11 +120,43 @@ popup/                 toolbar popup (page scan + send)
 options/               settings page
 ui/base.css            shared dark theme
 icons/                 icon.svg source and PNG sizes
-tests/                 unit tests for URL handling
+tests/                 unit tests for URL handling and the manifest
+scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
+.github/workflows/     CI (tests + build) and release
 ```
 
-Run the tests (Node 22+, no dependencies to install):
+Run the tests (Node 22+, no dependencies to install), then build the zip:
 
 ```sh
 node --test
+scripts/build.sh
 ```
+
+The **CI** workflow runs both on every pull request and every push to `main`. The zip it builds
+is attached to the workflow run for 14 days, so you can try a change before it's released.
+
+## Releasing
+
+Releases are only created from a version tag; pushing to `main` never publishes one.
+
+1. In a pull request, set `version` in `manifest.json` to the new version (e.g. `1.1.0`), then
+   merge it.
+2. Tag the merge commit on `main` and push the tag:
+
+   ```sh
+   git checkout main && git pull
+   git tag v1.1.0
+   git push origin v1.1.0
+   ```
+
+The **Release** workflow then checks that the tag is on `main` and matches `manifest.json`, runs
+the tests, builds `metube-sender-1.1.0.zip` and publishes a GitHub release with the zip, its
+SHA-256 checksum, install steps and notes generated from the merged pull requests.
+
+If the workflow fails (for example, the tag doesn't match `manifest.json`), nothing is
+published. Delete the tag (`git push --delete origin v1.1.0 && git tag -d v1.1.0`), fix the
+problem, and tag again.
+
+You can also write the release yourself on GitHub (**Releases → Draft a new release**, with a new
+`v…` tag on `main`). Publishing it creates the tag, which starts the same workflow: it attaches
+the zip and keeps your notes. If the workflow fails, the release stays published without the zip.
