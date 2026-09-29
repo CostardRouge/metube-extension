@@ -73,6 +73,27 @@
           <p class="hint">"Audio only (m4a)" in the context menu and the popup always uses M4A at best quality, into the same folder.</p>
         </section>
 
+        <section class="card">
+          <h2>Player on YouTube</h2>
+          <div class="field">
+            <label for="subtitleLangs">Subtitle languages</label>
+            <input id="subtitleLangs" type="text" placeholder="fr, en" spellcheck="false" />
+            <p class="hint">
+              Language codes, comma-separated. The player loads <code>&lt;video&gt;.&lt;lang&gt;.vtt</code> for each one it
+              finds next to the file. MeTube only writes them with <code>writesubtitles</code> in
+              <code>YTDL_OPTIONS</code> (see the README).
+            </p>
+          </div>
+          <div class="field shortcut-row">
+            <div>
+              <span class="field-label">Keyboard shortcut</span>
+              <kbd id="shortcut">…</kbd>
+            </div>
+            <button type="button" id="change-shortcut" class="btn">Change shortcut</button>
+          </div>
+          <p class="hint">On a YouTube video page, the shortcut (or the popup's <b>Play</b> button) opens the video from MeTube in an overlay.</p>
+        </section>
+
         <div id="status" class="notice" role="status" hidden></div>
 
         <div class="actions">
