@@ -3,6 +3,7 @@
 // icon's own menu.
 
 import { loadSettings, parseSubtitleLangs } from '../lib/config.js';
+import { t } from '../lib/i18n.js';
 import { buildMenuItems, menuDownloads, parseMenuItemId } from '../lib/menu.js';
 import { dedupeLinks, findYouTubeUrlsInText, normalizeUrl, parseYouTubeUrl } from '../lib/youtube.js';
 import { reportNothing } from './feedback.js';
@@ -53,11 +54,7 @@ export async function handleMenuClick(info, tab) {
   // The extension icon's menu acts on the current tab.
   const urls = (entry.toolbar ? [normalizeUrl(tab?.url)] : await targetUrls(info, tab)).filter(Boolean);
   if (!urls.length) {
-    await reportNothing(
-      !entry.toolbar && info.selectionText
-        ? 'No YouTube links found in the selection.'
-        : 'This is not an http(s) URL MeTube can download.',
-    );
+    await reportNothing(!entry.toolbar && info.selectionText ? t('errNoLinksInSelection') : t('errNotDownloadable'));
     return;
   }
   const results = await sendDownloads(urls, () => download.downloads, { label: download.label });

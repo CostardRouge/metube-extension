@@ -1,6 +1,7 @@
 // Sending URLs to MeTube, with badge/notification feedback.
 
 import { downloadOptions, parseBaseUrl } from '../lib/config.js';
+import { t } from '../lib/i18n.js';
 import { MeTubeError, addDownload, getVersion } from '../lib/metube.js';
 import { normalizeUrl } from '../lib/youtube.js';
 import { BADGE_COLORS, report, reportNothing, setBadge } from './feedback.js';
@@ -67,7 +68,9 @@ export async function sendDownloads(urls, optionsFor, { label = '' } = {}) {
 
 /** Send with the default options (or the popup's "Audio only" preset). */
 export function sendUrls(urls, { audio = false } = {}) {
-  return sendDownloads(urls, (settings) => [downloadOptions(settings, { audio })], { label: audio ? 'audio' : '' });
+  return sendDownloads(urls, (settings) => [downloadOptions(settings, { audio })], {
+    label: audio ? t('labelAudio') : '',
+  });
 }
 
 // Message handlers for the popup and the options page.
@@ -75,7 +78,7 @@ export const SEND_HANDLERS = {
   async send({ urls, audio }) {
     const clean = [...new Set((Array.isArray(urls) ? urls : []).map(normalizeUrl).filter(Boolean))];
     if (!clean.length) {
-      await reportNothing('Nothing to send.');
+      await reportNothing(t('errNothingToSend'));
       return { results: [] };
     }
     return { results: await sendUrls(clean, { audio: Boolean(audio) }) };
@@ -85,7 +88,7 @@ export const SEND_HANDLERS = {
   async test({ settings }) {
     const { baseUrl, origin, originPattern } = parseBaseUrl(settings?.baseUrl);
     if (!(await chrome.permissions.contains({ origins: [originPattern] }))) {
-      throw new MeTubeError('permission', `The extension is not allowed to access ${origin}.`);
+      throw new MeTubeError('permission', t('errNoAccess', origin));
     }
     const info = await getVersion({
       baseUrl,

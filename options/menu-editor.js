@@ -9,21 +9,29 @@ import {
   VIDEO_CHOICES,
   VIDEO_FORMATS,
   buildMenuItems,
-  languageName,
   normalizeMenu,
 } from '../lib/menu.js';
+import { languageName, t } from '../lib/i18n.js';
 
-const PREVIEW_CONTEXTS = [
+// "Video player (2nd right-click on YouTube)" → "Video player"
+const previewContexts = () => [
   ...CONTEXTS.map(({ key, label }) => ({ key, label: label.split(' (')[0] })),
-  { key: 'action', label: 'Extension icon' },
+  { key: 'action', label: t('previewContextAction') },
 ];
 
 const EXTRAS = [
-  ['settingsFirst', 'Settings and “Open MeTube” at the top of the submenu'],
-  ['openMetube', '“Open MeTube”'],
-  ['player', '“Play here with MeTube” (on YouTube video pages)'],
-  ['toolbar', 'Entries in the extension icon’s right-click menu'],
+  ['settingsFirst', 'menuExtraSettingsFirst'],
+  ['openMetube', 'menuExtraOpen'],
+  ['player', 'menuExtraPlayer'],
+  ['toolbar', 'menuExtraToolbar'],
 ];
+
+const CAPTIONS = {
+  link: 'previewCaptionLink',
+  selection: 'previewCaptionSelection',
+  page: 'previewCaptionPage',
+  video: 'previewCaptionVideo',
+};
 
 function el(tag, props = {}, children = []) {
   const node = Object.assign(document.createElement(tag), props);
@@ -97,10 +105,10 @@ export function createMenuEditor(root, initial, sources) {
 
     // Video
     $('menu-video-head').replaceChildren(
-      checkbox('Video', menu.video.enabled, (on) => update((m) => (m.video.enabled = on))),
+      checkbox(t('video'), menu.video.enabled, (on) => update((m) => (m.video.enabled = on))),
       el(
         'div',
-        { className: 'segmented small', role: 'radiogroup', ariaLabel: 'Video format' },
+        { className: 'segmented small', role: 'radiogroup', ariaLabel: t('videoFormat') },
         segmented('menuVideoFormat', VIDEO_FORMATS, menu.video.format, (key) => update((m) => (m.video.format = key))),
       ),
     );
@@ -122,7 +130,7 @@ export function createMenuEditor(root, initial, sources) {
 
     // Audio
     $('menu-audio-head').replaceChildren(
-      checkbox('Audio', menu.audio.enabled, (on) => update((m) => (m.audio.enabled = on))),
+      checkbox(t('audio'), menu.audio.enabled, (on) => update((m) => (m.audio.enabled = on))),
     );
     $('menu-audio-choices').replaceChildren(
       ...AUDIO_CHOICES.map((c) =>
@@ -142,10 +150,10 @@ export function createMenuEditor(root, initial, sources) {
 
     // Subtitles
     $('menu-subs-head').replaceChildren(
-      checkbox('Subtitles', menu.subtitles.enabled, (on) => update((m) => (m.subtitles.enabled = on))),
+      checkbox(t('subtitles'), menu.subtitles.enabled, (on) => update((m) => (m.subtitles.enabled = on))),
       el(
         'div',
-        { className: 'segmented small', role: 'radiogroup', ariaLabel: 'Subtitle format' },
+        { className: 'segmented small', role: 'radiogroup', ariaLabel: t('subtitleFormat') },
         segmented('menuSubsFormat', SUBTITLE_FORMATS, menu.subtitles.format, (key) =>
           update((m) => (m.subtitles.format = key)),
         ),
@@ -154,7 +162,7 @@ export function createMenuEditor(root, initial, sources) {
     $('menu-subs').classList.toggle('off', !menu.subtitles.enabled);
 
     $('menu-extras').replaceChildren(
-      ...EXTRAS.map(([key, label]) => checkbox(label, menu[key], (on) => update((m) => (m[key] = on)))),
+      ...EXTRAS.map(([key, labelKey]) => checkbox(t(labelKey), menu[key], (on) => update((m) => (m[key] = on)))),
     );
   }
 
@@ -162,7 +170,7 @@ export function createMenuEditor(root, initial, sources) {
     const langs = sources.langs();
     $('menu-subs-langs').textContent = langs.length
       ? langs.map((lang) => `${languageName(lang)} (${lang})`).join(', ')
-      : 'none: add some under “Subtitle languages” below';
+      : t('menuLangsNone');
   }
 
   // A light, native-looking rendering; submenus are shown expanded, indented.
@@ -213,34 +221,30 @@ export function createMenuEditor(root, initial, sources) {
           box.append(el('div', { className: 'pm-item' }, [el('span', { textContent: row.title })]));
         box.append(
           el('div', { className: 'pm-sep' }),
-          el('div', { className: 'pm-item disabled' }, [el('span', { textContent: 'Chrome’s own entries…' })]),
+          el('div', { className: 'pm-item disabled' }, [el('span', { textContent: t('previewChromeEntries') })]),
         );
       } else {
-        caption = 'No entries in the extension icon’s menu (turned off above).';
+        caption = t('previewNoToolbar');
       }
     } else {
       const rootItem = items.find((item) => item.id === 'root');
       if (rootItem?.contexts.includes(previewContext)) {
         const head = el('div', { className: 'pm-item pm-root' }, [
           el('img', { src: '../icons/icon-16.png', width: 14, height: 14, alt: '' }),
-          el('span', { textContent: 'MeTube' }),
+          el('span', { textContent: rootItem.title }),
           el('span', { className: 'pm-arrow', textContent: '›' }),
         ]);
         const sub = el('div', { className: 'pm-sub' });
         append(sub, 'root');
         box.append(head, sub);
-        if (previewContext === 'link') caption = 'Right-click on a link: the link is sent.';
-        if (previewContext === 'selection') caption = 'Right-click on selected text: every YouTube link in it is sent.';
-        if (previewContext === 'page')
-          caption = 'Right-click on a page (here, a YouTube video page): the page is sent.';
-        if (previewContext === 'video') caption = 'Second right-click on the YouTube player: that video is sent.';
+        caption = t(CAPTIONS[previewContext]);
       } else {
-        caption = 'MeTube doesn’t appear here (turned off in “Show MeTube on”).';
+        caption = t('previewHidden');
       }
     }
 
     $('menu-preview-context').replaceChildren(
-      ...segmented('menuPreview', PREVIEW_CONTEXTS, previewContext, (key) => {
+      ...segmented('menuPreview', previewContexts(), previewContext, (key) => {
         previewContext = key;
         renderPreview();
       }),

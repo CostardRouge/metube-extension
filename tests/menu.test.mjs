@@ -1,5 +1,6 @@
 // Run with: node --test
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
 import {
@@ -10,6 +11,9 @@ import {
   normalizeMenu,
   parseMenuItemId,
 } from '../lib/menu.js';
+import { useMessages } from '../lib/i18n.js';
+
+useMessages(JSON.parse(readFileSync(new URL('../_locales/en/messages.json', import.meta.url), 'utf8')));
 
 const LANGS = ['fr', 'en'];
 const menu = (patch = {}) => normalizeMenu({ ...structuredClone(MENU_DEFAULTS), ...patch });

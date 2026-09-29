@@ -1,0 +1,768 @@
+{
+  "extName": {
+    "message": "MeTube Sender"
+  },
+  "extDescription": {
+    "message": "Envoyez des vidéos YouTube vers votre MeTube auto-hébergé, et regardez ses téléchargements dans un lecteur superposé sur YouTube."
+  },
+  "actionTitle": {
+    "message": "Envoyer vers MeTube"
+  },
+  "commandToggleOverlay": {
+    "message": "Lire la vidéo YouTube en cours depuis MeTube (lecteur superposé)"
+  },
+  "language": {
+    "message": "fr",
+    "description": "Language of these messages (BCP 47): numbers, sizes and language names are formatted in it."
+  },
+  "video": {
+    "message": "Vidéo"
+  },
+  "audio": {
+    "message": "Audio"
+  },
+  "subtitles": {
+    "message": "Sous-titres"
+  },
+  "retry": {
+    "message": "Réessayer"
+  },
+  "tryAgain": {
+    "message": "Réessayer"
+  },
+  "close": {
+    "message": "Fermer"
+  },
+  "cancel": {
+    "message": "Annuler"
+  },
+  "delete": {
+    "message": "Supprimer"
+  },
+  "dismiss": {
+    "message": "Fermer"
+  },
+  "openSettings": {
+    "message": "Ouvrir les réglages"
+  },
+  "withReason": {
+    "message": "$1 : $2",
+    "description": "$1: what happened, $2: the error message."
+  },
+  "countFailed": {
+    "message": "$1 sur $2 en échec"
+  },
+  "youtubeVideo": {
+    "message": "Vidéo YouTube $1",
+    "description": "$1: the video ID."
+  },
+  "playerName": {
+    "message": "Lecteur MeTube"
+  },
+  "deleteFromMeTube": {
+    "message": "Supprimer de MeTube"
+  },
+  "errNoAnswer": {
+    "message": "L’arrière-plan de l’extension n’a pas répondu."
+  },
+  "formatAny": {
+    "message": "Tous"
+  },
+  "formatAnyLong": {
+    "message": "Tous formats"
+  },
+  "qualityBest": {
+    "message": "Meilleure"
+  },
+  "qualityBestLong": {
+    "message": "Meilleure qualité"
+  },
+  "qualityWorst": {
+    "message": "Minimale"
+  },
+  "quality4k": {
+    "message": "$1p (4K)"
+  },
+  "kbps": {
+    "message": "$1 kbit/s"
+  },
+  "audioBest": {
+    "message": "meilleure qualité"
+  },
+  "audioLossless": {
+    "message": "sans perte"
+  },
+  "audioUncompressed": {
+    "message": "non compressé"
+  },
+  "errUrlMissing": {
+    "message": "Indiquez l’URL de votre instance MeTube."
+  },
+  "errUrlInvalid": {
+    "message": "« $1 » n’est pas une URL valide."
+  },
+  "errUrlScheme": {
+    "message": "L’URL de MeTube doit commencer par http:// ou https://."
+  },
+  "errUrlCredentials": {
+    "message": "Mettez les identifiants dans les champs nom d’utilisateur et mot de passe, pas dans l’URL."
+  },
+  "layoutHybrid": {
+    "message": "Hybride"
+  },
+  "layoutHybridHelp": {
+    "message": "Vos choix par défaut en un clic ; les autres sous « Autres… »."
+  },
+  "layoutFlat": {
+    "message": "À plat"
+  },
+  "layoutFlatHelp": {
+    "message": "Tout dans un seul sous-menu, sous des titres de section : un survol, un clic."
+  },
+  "layoutSubmenus": {
+    "message": "Sous-menus"
+  },
+  "layoutSubmenusHelp": {
+    "message": "Un sous-menu par bloc : un menu court, chaque choix un niveau plus bas."
+  },
+  "contextPage": {
+    "message": "Pages"
+  },
+  "contextLink": {
+    "message": "Liens"
+  },
+  "contextSelection": {
+    "message": "Texte sélectionné"
+  },
+  "contextVideo": {
+    "message": "Lecteur vidéo (2e clic droit sur YouTube)"
+  },
+  "menuRoot": {
+    "message": "MeTube"
+  },
+  "menuPlay": {
+    "message": "Lire ici avec MeTube"
+  },
+  "menuSelectionHeader": {
+    "message": "POUR CHAQUE LIEN YOUTUBE DE LA SÉLECTION"
+  },
+  "menuSettings": {
+    "message": "Réglages MeTube…"
+  },
+  "menuOpen": {
+    "message": "Ouvrir MeTube"
+  },
+  "menuVideoOneClick": {
+    "message": "Vidéo · $1"
+  },
+  "menuAudioOneClick": {
+    "message": "Audio · $1"
+  },
+  "menuSubtitlesOneClick": {
+    "message": "Sous-titres · $1"
+  },
+  "menuMoreVideo": {
+    "message": "Autres qualités vidéo"
+  },
+  "menuMoreAudio": {
+    "message": "Autres formats audio"
+  },
+  "menuOneLanguage": {
+    "message": "Sous-titres dans une langue"
+  },
+  "menuHeaderVideo": {
+    "message": "VIDÉO"
+  },
+  "menuHeaderAudio": {
+    "message": "AUDIO"
+  },
+  "menuHeaderSubtitles": {
+    "message": "SOUS-TITRES"
+  },
+  "menuAll": {
+    "message": "Toutes : $1",
+    "description": "$1: the subtitle languages, e.g. \"French + English (SRT)\"."
+  },
+  "toolbarPlay": {
+    "message": "Lire cette vidéo ici"
+  },
+  "toolbarVideo": {
+    "message": "Télécharger cette page · $1"
+  },
+  "toolbarAudio": {
+    "message": "Audio de cette page · $1"
+  },
+  "toolbarSubtitles": {
+    "message": "Sous-titres de cette page · $1"
+  },
+  "subtitlesLabel": {
+    "message": "Sous-titres · $1",
+    "description": "$1: languages, e.g. \"French + English\"."
+  },
+  "labelAudio": {
+    "message": "audio",
+    "description": "What the popup sent with \"Audio only\" on, in a notification."
+  },
+  "optionsTitle": {
+    "message": "MeTube Sender – Réglages"
+  },
+  "optionsTagline": {
+    "message": "Envoyez des liens YouTube vers votre MeTube auto-hébergé, et regardez-les depuis YouTube."
+  },
+  "optServer": {
+    "message": "Serveur"
+  },
+  "optBaseUrl": {
+    "message": "URL de MeTube"
+  },
+  "optBaseUrlHint": {
+    "message": "Incluez le préfixe de chemin si MeTube est servi sous l’un d’eux, p. ex. <code>https://example.com/metube</code>."
+  },
+  "optUsername": {
+    "message": "Nom d’utilisateur"
+  },
+  "optPassword": {
+    "message": "Mot de passe"
+  },
+  "showPassword": {
+    "message": "Afficher le mot de passe"
+  },
+  "hidePassword": {
+    "message": "Masquer le mot de passe"
+  },
+  "optAuthHint": {
+    "message": "Envoyés en authentification HTTP Basic (p. ex. <code>basicAuth</code> de Traefik) avec chaque requête. Laissez les deux vides si MeTube n’est pas protégé par une authentification."
+  },
+  "optDefaults": {
+    "message": "Téléchargement par défaut"
+  },
+  "optDownloadType": {
+    "message": "Type de téléchargement"
+  },
+  "optFormat": {
+    "message": "Format"
+  },
+  "optQuality": {
+    "message": "Qualité"
+  },
+  "optFolder": {
+    "message": "Dossier <span class=\"muted\">(facultatif)</span>"
+  },
+  "optFolderPlaceholder": {
+    "message": "p. ex. youtube"
+  },
+  "optFolderHint": {
+    "message": "Sous-dossier du répertoire de téléchargement de MeTube. Nécessite <code>CUSTOM_DIRS</code> sur le serveur (et <code>CREATE_CUSTOM_DIRS</code> pour les dossiers qui n’existent pas encore)."
+  },
+  "optDefaultsHint": {
+    "message": "Utilisés par la fenêtre de l’extension (dont l’option « Audio seul » prend du M4A en meilleure qualité) et par le lecteur quand il ajoute une vidéo. Chaque téléchargement va dans ce dossier."
+  },
+  "optMenu": {
+    "message": "Menu du clic droit"
+  },
+  "optMenuLayout": {
+    "message": "Disposition"
+  },
+  "optMenuContexts": {
+    "message": "Afficher MeTube sur"
+  },
+  "optOneClick": {
+    "message": "En un clic"
+  },
+  "optMenuSubsLangs": {
+    "message": "Langues :"
+  },
+  "optMenuSubsHint": {
+    "message": "Un téléchargement par langue ; réglez-les dans <b>Langues des sous-titres</b>."
+  },
+  "optMenuExtras": {
+    "message": "Autres entrées"
+  },
+  "optPreview": {
+    "message": "Aperçu"
+  },
+  "optPreviewOn": {
+    "message": "Clic droit sur"
+  },
+  "optPlayer": {
+    "message": "Lecteur sur YouTube"
+  },
+  "optSubtitleLangs": {
+    "message": "Langues des sous-titres"
+  },
+  "optSubtitleLangsHint": {
+    "message": "Codes de langue, séparés par des virgules. Le lecteur charge <code>&lt;vidéo&gt;.&lt;langue&gt;.vtt</code> pour chacun qu’il trouve à côté du fichier. MeTube ne les écrit qu’avec <code>writesubtitles</code> dans <code>YTDL_OPTIONS</code> (voir le README)."
+  },
+  "optShortcut": {
+    "message": "Raccourci clavier"
+  },
+  "optChangeShortcut": {
+    "message": "Modifier le raccourci"
+  },
+  "optShortcutNotSet": {
+    "message": "Aucun"
+  },
+  "optShortcutHint": {
+    "message": "Sur une page de vidéo YouTube, le raccourci (ou le bouton <b>Lire</b> de la fenêtre de l’extension) ouvre la vidéo depuis MeTube dans un lecteur superposé."
+  },
+  "optEndScreen": {
+    "message": "À la fin d’une vidéo, proposer de la supprimer de MeTube"
+  },
+  "optEndScreenHint": {
+    "message": "Le bouton corbeille du lecteur la supprime à tout moment. MeTube n’efface le fichier du disque que s’il tourne avec <code>DELETE_FILE_ON_TRASHCAN=ask</code> (voir le README) ; sinon, seule son entrée disparaît."
+  },
+  "optTest": {
+    "message": "Tester la connexion"
+  },
+  "optSave": {
+    "message": "Enregistrer"
+  },
+  "optFooter": {
+    "message": "L’enregistrement demande l’autorisation d’accéder à l’hôte de MeTube. Les réglages, mot de passe compris, ne sont conservés que dans le stockage de l’extension de ce navigateur."
+  },
+  "optBadLangs": {
+    "message": "Code de langue non valide : $1. Utilisez des codes comme fr, en ou pt-BR."
+  },
+  "optDenied": {
+    "message": "L’accès à $1 n’a pas été accordé : l’extension ne peut pas joindre MeTube. Cliquez à nouveau sur Enregistrer ou Tester et autorisez-le."
+  },
+  "optConnecting": {
+    "message": "Connexion à $1…"
+  },
+  "optConnected": {
+    "message": "Connecté."
+  },
+  "optConnectedVersion": {
+    "message": "Connecté à MeTube $1."
+  },
+  "optConnectedYtdlp": {
+    "message": "Connecté (yt-dlp $1)."
+  },
+  "optConnectedBoth": {
+    "message": "Connecté à MeTube $1 (yt-dlp $2)."
+  },
+  "optSaved": {
+    "message": "Enregistré."
+  },
+  "optSavedBut": {
+    "message": "Enregistré, mais : $1"
+  },
+  "optSavedHttp": {
+    "message": "Enregistré. Attention : en http://, le lecteur sur YouTube ne peut pas charger les vidéos (il lui faut https://)."
+  },
+  "optSavedHttpCredentials": {
+    "message": "Enregistré. Attention : en http://, les identifiants circulent en clair, et le lecteur sur YouTube ne peut pas charger les vidéos (il lui faut https://)."
+  },
+  "optSaveFailed": {
+    "message": "Échec de l’enregistrement : $1"
+  },
+  "optNotGranted": {
+    "message": "L’extension ne peut pas encore accéder à $1 : cliquez sur Enregistrer pour l’autoriser."
+  },
+  "previewContextAction": {
+    "message": "Icône de l’extension"
+  },
+  "menuExtraSettingsFirst": {
+    "message": "Réglages et « Ouvrir MeTube » en haut du sous-menu"
+  },
+  "menuExtraOpen": {
+    "message": "« Ouvrir MeTube »"
+  },
+  "menuExtraPlayer": {
+    "message": "« Lire ici avec MeTube » (sur les pages de vidéo YouTube)"
+  },
+  "menuExtraToolbar": {
+    "message": "Entrées dans le menu du clic droit sur l’icône de l’extension"
+  },
+  "videoFormat": {
+    "message": "Format vidéo"
+  },
+  "subtitleFormat": {
+    "message": "Format des sous-titres"
+  },
+  "menuLangsNone": {
+    "message": "aucune : ajoutez-en dans « Langues des sous-titres » plus bas"
+  },
+  "previewChromeEntries": {
+    "message": "Entrées de Chrome…"
+  },
+  "previewNoToolbar": {
+    "message": "Aucune entrée dans le menu de l’icône de l’extension (désactivé plus haut)."
+  },
+  "previewCaptionLink": {
+    "message": "Clic droit sur un lien : le lien est envoyé."
+  },
+  "previewCaptionSelection": {
+    "message": "Clic droit sur du texte sélectionné : chaque lien YouTube qu’il contient est envoyé."
+  },
+  "previewCaptionPage": {
+    "message": "Clic droit sur une page (ici, une page de vidéo YouTube) : la page est envoyée."
+  },
+  "previewCaptionVideo": {
+    "message": "Second clic droit sur le lecteur YouTube : cette vidéo est envoyée."
+  },
+  "previewHidden": {
+    "message": "MeTube n’apparaît pas ici (désactivé dans « Afficher MeTube sur »)."
+  },
+  "popupSettings": {
+    "message": "Réglages"
+  },
+  "popupNotConfigured": {
+    "message": "MeTube n’est pas encore configuré."
+  },
+  "popupCurrentPage": {
+    "message": "Page actuelle"
+  },
+  "popupPlay": {
+    "message": "Lire"
+  },
+  "popupPlayTitle": {
+    "message": "Lire cette vidéo depuis MeTube dans un lecteur superposé"
+  },
+  "popupSendPage": {
+    "message": "Envoyer la page"
+  },
+  "popupScanning": {
+    "message": "Analyse de la page…"
+  },
+  "popupAll": {
+    "message": "Tout"
+  },
+  "popupNone": {
+    "message": "Aucun"
+  },
+  "popupAudioOnly": {
+    "message": "Audio seul (m4a)"
+  },
+  "popupSendSelected": {
+    "message": "Envoyer la sélection"
+  },
+  "popupSendCount_one": {
+    "message": "Envoyer $1 lien"
+  },
+  "popupSendCount_other": {
+    "message": "Envoyer $1 liens"
+  },
+  "popupLinkCount_one": {
+    "message": "$1 lien YouTube"
+  },
+  "popupLinkCount_other": {
+    "message": "$1 liens YouTube"
+  },
+  "popupSelectedCount_one": {
+    "message": "$1 sélectionné"
+  },
+  "popupSelectedCount_other": {
+    "message": "$1 sélectionnés"
+  },
+  "popupDefaultsNotConfigured": {
+    "message": "Non configuré"
+  },
+  "popupUntitled": {
+    "message": "Sans titre"
+  },
+  "popupCantSend": {
+    "message": "Cette page ne peut pas être envoyée à MeTube"
+  },
+  "tagPlaylist": {
+    "message": "Playlist"
+  },
+  "tagPlaylistTitle": {
+    "message": "Playlist entière"
+  },
+  "tagShort": {
+    "message": "Short"
+  },
+  "tagShortTitle": {
+    "message": "YouTube Short"
+  },
+  "tagInPlaylist": {
+    "message": "Dans une playlist"
+  },
+  "tagInPlaylistTitle": {
+    "message": "Lien vidéo qui porte aussi un identifiant de playlist"
+  },
+  "popupNoLinks": {
+    "message": "Aucun lien"
+  },
+  "popupCantScan": {
+    "message": "Cette page ne peut pas être analysée."
+  },
+  "popupNoYouTubeLinks": {
+    "message": "Aucun lien YouTube sur cette page."
+  },
+  "popupScanFailed": {
+    "message": "Impossible d’analyser cette page : $1"
+  },
+  "popupSending": {
+    "message": "Envoi…"
+  },
+  "popupSent": {
+    "message": "Envoyé"
+  },
+  "popupSentCount_one": {
+    "message": "$1 lien envoyé à MeTube."
+  },
+  "popupSentCount_other": {
+    "message": "$1 liens envoyés à MeTube."
+  },
+  "popupSentAudioCount_one": {
+    "message": "$1 lien envoyé à MeTube (audio)."
+  },
+  "popupSentAudioCount_other": {
+    "message": "$1 liens envoyés à MeTube (audio)."
+  },
+  "popupNotSent": {
+    "message": "Non envoyé"
+  },
+  "popupLastFailed": {
+    "message": "Dernier envoi en échec"
+  },
+  "popupLastCountFailed": {
+    "message": "Dernier envoi : $1 sur $2 en échec"
+  },
+  "errNoLinksInSelection": {
+    "message": "Aucun lien YouTube dans la sélection."
+  },
+  "errNotDownloadable": {
+    "message": "Ce n’est pas une URL http(s) que MeTube peut télécharger."
+  },
+  "errNothingToSend": {
+    "message": "Rien à envoyer."
+  },
+  "errNoAccess": {
+    "message": "L’extension n’a pas l’autorisation d’accéder à $1."
+  },
+  "errNoAccessSave": {
+    "message": "L’extension n’a pas l’autorisation d’accéder à $1. Ouvrez les options et cliquez sur Enregistrer pour l’accorder."
+  },
+  "errNotConfigured": {
+    "message": "MeTube n’est pas encore configuré : indiquez son URL dans les options de l’extension."
+  },
+  "notifySent": {
+    "message": "Envoyé à MeTube"
+  },
+  "notifyQueued_one": {
+    "message": "$1 téléchargement en file d’attente."
+  },
+  "notifyQueued_other": {
+    "message": "$1 téléchargements en file d’attente."
+  },
+  "notifyFailed": {
+    "message": "MeTube : $1 sur $2 en échec"
+  },
+  "notifyNotSent": {
+    "message": "MeTube : non envoyé"
+  },
+  "errOpenVideo": {
+    "message": "Ouvrez une vidéo YouTube (youtube.com/watch?v=…) pour la lire depuis MeTube."
+  },
+  "errInvalidVideoId": {
+    "message": "Identifiant de vidéo non valide."
+  },
+  "errOutsideMeTube": {
+    "message": "Refus de charger une URL hors de MeTube."
+  },
+  "errNotFinished": {
+    "message": "Cette vidéo ne figure plus parmi les téléchargements terminés de MeTube."
+  },
+  "errTimeout": {
+    "message": "$1 n’a pas répondu dans les $2 s."
+  },
+  "errNetwork": {
+    "message": "Impossible de joindre $1 ($2). Vérifiez l’URL et que MeTube fonctionne."
+  },
+  "errAuth": {
+    "message": "Échec de l’authentification (401) : vérifiez le nom d’utilisateur et le mot de passe."
+  },
+  "errForbidden": {
+    "message": "Accès refusé (403) par $1."
+  },
+  "errNotFound": {
+    "message": "Introuvable (404) : $1. Vérifiez l’URL de base, préfixe de chemin compris."
+  },
+  "errBadRequest": {
+    "message": "MeTube a refusé la requête (400) : $1"
+  },
+  "errHttp": {
+    "message": "$1 a répondu HTTP $2.",
+    "description": "$1: host, $2: status code and text."
+  },
+  "errNotJson": {
+    "message": "$1 n’a pas répondu en JSON. L’URL de base est-elle juste, ou une page de connexion s’interpose-t-elle ?"
+  },
+  "errFileMissing": {
+    "message": "MeTube indique cette vidéo comme téléchargée, mais le fichier n’est plus sur le serveur (404)."
+  },
+  "errMeTube": {
+    "message": "MeTube a signalé une erreur."
+  },
+  "errUnexpectedAdd": {
+    "message": "Réponse inattendue de MeTube à /add."
+  },
+  "errDeleteFailed": {
+    "message": "MeTube n’a pas pu supprimer le téléchargement."
+  },
+  "sizeUnits": {
+    "message": "o Ko Mo Go To",
+    "description": "Byte units, space-separated, in steps of 1000."
+  },
+  "speedUnits": {
+    "message": "o/s Ko/s Mo/s Go/s",
+    "description": "Speed units, space-separated."
+  },
+  "numberWithUnit": {
+    "message": "$1 $2",
+    "description": "$1: number, $2: unit."
+  },
+  "progressDownloading": {
+    "message": "Téléchargement"
+  },
+  "progressDownloadingPercent": {
+    "message": "Téléchargement $1",
+    "description": "$1: a percentage, e.g. \"42%\"."
+  },
+  "progressLeft": {
+    "message": "encore $1",
+    "description": "$1: remaining time, e.g. \"1:20\"."
+  },
+  "progressProcessing": {
+    "message": "Traitement (fusion, conversion)…"
+  },
+  "progressPreparing": {
+    "message": "Préparation…"
+  },
+  "progressQueued": {
+    "message": "En file d’attente dans MeTube"
+  },
+  "progressScheduled": {
+    "message": "Programmé : en attente de la première ou du direct"
+  },
+  "progressPending": {
+    "message": "En attente de démarrage dans MeTube"
+  },
+  "progressStarting": {
+    "message": "Démarrage…"
+  },
+  "overlayDeleteTitle": {
+    "message": "Supprimer de MeTube (Suppr)"
+  },
+  "overlayCloseTitle": {
+    "message": "Fermer (Échap)"
+  },
+  "overlayLookingUp": {
+    "message": "Recherche de cette vidéo dans MeTube…"
+  },
+  "overlayEndTitle": {
+    "message": "Vidéo terminée"
+  },
+  "overlayWatchAgain": {
+    "message": "Revoir"
+  },
+  "overlayKeep": {
+    "message": "Garder et fermer"
+  },
+  "overlayEndHint": {
+    "message": "Suppr pour supprimer · Échap pour fermer"
+  },
+  "overlaySpeed": {
+    "message": "Vitesse"
+  },
+  "overlayKeys": {
+    "message": "Espace lecture/pause · ←/→ 5 s · F ou double-clic plein écran · C sous-titres · M muet · Suppr supprimer · Échap fermer"
+  },
+  "confirmTitle": {
+    "message": "Supprimer cette vidéo de MeTube ?"
+  },
+  "confirmText": {
+    "message": "Le fichier est effacé du serveur et la vidéo quitte la liste de MeTube. C’est irréversible : pour la revoir, il faudra la télécharger à nouveau."
+  },
+  "errNotResponding": {
+    "message": "L’extension ne répond pas ($1). Rechargez la page."
+  },
+  "errNoAnswerReload": {
+    "message": "L’extension n’a pas répondu. Rechargez la page."
+  },
+  "overlayPendingDetail": {
+    "message": "Elle a été ajoutée sans démarrage automatique : cliquez sur Start dans MeTube."
+  },
+  "overlayNoReason": {
+    "message": "Aucune raison indiquée."
+  },
+  "overlayDownloadFailed": {
+    "message": "MeTube n’a pas pu télécharger cette vidéo."
+  },
+  "overlayNotQueued": {
+    "message": "MeTube a accepté la vidéo, mais elle n’apparaît pas dans sa file d’attente."
+  },
+  "overlayWaitingQueue": {
+    "message": "En attente de la mise en file de la vidéo par MeTube…"
+  },
+  "overlaySending": {
+    "message": "Pas encore dans MeTube : envoi…"
+  },
+  "overlayMixedContent": {
+    "message": "Le navigateur ne charge pas de vidéo en http:// dans une page HTTPS comme YouTube."
+  },
+  "overlayMixedContentDetail": {
+    "message": "Servez MeTube en HTTPS (par exemple avec un certificat sur Traefik) pour utiliser le lecteur."
+  },
+  "overlayOpening": {
+    "message": "Ouverture du fichier…"
+  },
+  "overlayDownloadAgain": {
+    "message": "Télécharger à nouveau"
+  },
+  "overlaySubtitlesFound": {
+    "message": "Sous-titres : $1"
+  },
+  "overlayNoSubtitles": {
+    "message": "Aucun sous-titre trouvé"
+  },
+  "overlayUnsupported": {
+    "message": "Le navigateur ne peut pas lire ce fichier : son format ou son codec n’est pas pris en charge."
+  },
+  "overlayNetworkError": {
+    "message": "La vidéo a cessé de se charger (erreur réseau)."
+  },
+  "overlayChooseMp4": {
+    "message": "Choisir MP4 comme format vidéo par défaut évite ce problème."
+  },
+  "fileSubtitles": {
+    "message": "sous-titres $1",
+    "description": "$1: language codes, e.g. \"fr, en\"."
+  },
+  "overlayDeleting": {
+    "message": "Suppression de MeTube…"
+  },
+  "overlayFileKept": {
+    "message": "Retirée de la liste de MeTube, mais le serveur a gardé le fichier."
+  },
+  "overlayFileKeptDetail": {
+    "message": "MeTube n’efface les fichiers que s’il tourne avec DELETE_FILE_ON_TRASHCAN=ask (ou true) : voir le README."
+  },
+  "overlayDeleted": {
+    "message": "Supprimée de MeTube"
+  },
+  "overlayErased": {
+    "message": "Fichier effacé du serveur."
+  },
+  "overlayErasedFreed": {
+    "message": "Fichier effacé du serveur · $1 libérés."
+  },
+  "overlayRemoved": {
+    "message": "Retirée de la liste de MeTube."
+  },
+  "overlayEndSize": {
+    "message": "Elle occupe $1 sur le serveur. La supprimer maintenant ?"
+  },
+  "overlayEndAsk": {
+    "message": "La supprimer de MeTube maintenant ?"
+  },
+  "overlayNoVideoId": {
+    "message": "Aucun identifiant de vidéo YouTube dans l’adresse de la page."
+  },
+  "overlayNoYouTubePlayer": {
+    "message": "Le lecteur de YouTube est introuvable sur cette page : la lecture commence au début."
+  }
+}

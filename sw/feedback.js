@@ -2,6 +2,7 @@
 // popup shows when it opens.
 
 import { loadSettings } from '../lib/config.js';
+import { t, tn } from '../lib/i18n.js';
 
 const NOTIFICATION_ID = 'metube-result';
 export const BADGE_COLORS = { busy: '#5b6170', ok: '#1f9d55', error: '#d93025', warn: '#c77700' };
@@ -54,14 +55,14 @@ export async function report(results, { label = '' } = {}) {
 
   if (!failed.length) {
     setBadge(String(sent.length), BADGE_COLORS.ok, 8000);
-    notify(`Sent to MeTube${suffix}`, sent.length === 1 ? sent[0].url : `${sent.length} downloads queued.`);
+    notify(`${t('notifySent')}${suffix}`, sent.length === 1 ? sent[0].url : tn('notifyQueued', sent.length));
     return;
   }
 
   // The red "!" stays until the popup is opened (it shows the details).
   setBadge('!', BADGE_COLORS.error);
   notify(
-    sent.length ? `MeTube: ${failed.length} of ${results.length} failed${suffix}` : `MeTube: not sent${suffix}`,
+    `${sent.length ? t('notifyFailed', failed.length, results.length) : t('notifyNotSent')}${suffix}`,
     failed[0].error,
   );
 }
