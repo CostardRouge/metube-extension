@@ -238,7 +238,7 @@ function fitSubmenus() {
     sub.classList.remove('flip');
     if (getComputedStyle(sub).position !== 'absolute') continue;
     const r = sub.getBoundingClientRect();
-    if (r.right > limit && r.left - r.width - 8 > stage.left) sub.classList.add('flip');
+    if (r.right > limit && r.left - stage.left > 40) sub.classList.add('flip');
   }
 }
 
@@ -258,6 +258,7 @@ function renderMenu() {
 
 $('#layout').addEventListener('change', renderMenu);
 addEventListener('resize', fitSubmenus);
+document.fonts?.ready.then(fitSubmenus);
 
 /* -------------------------------------------------------------- teaser */
 
