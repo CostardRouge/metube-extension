@@ -8,6 +8,8 @@ It's plain JavaScript, HTML and CSS with no build step: load the folder as-is. I
 [Media Chrome](https://github.com/muxinc/media-chrome) for the player, is included in `vendor/`
 (Manifest V3 doesn't allow loading code from the internet).
 
+**Website (English and French):** <https://costardrouge.github.io/metube-extension/>
+
 ## Features
 
 - **Right-click menu** (one **MeTube** entry): download what you right-clicked on in the quality
@@ -325,9 +327,10 @@ popup/                   toolbar popup (page scan + send + play)
 options/                 settings page (menu-editor.js: the right-click menu section)
 ui/base.css              shared dark theme
 icons/                   icon.svg source and PNG sizes
-tests/                   unit tests: URL handling, history matching, menus, messages, the manifest
+tests/                   unit tests: URL handling, history matching, menus, messages, the manifest, the website
+docs/                    the website (GitHub Pages): index.html, site.css, site.js, i18n.js
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
-.github/workflows/     CI (tests + build) and release
+.github/workflows/     CI (tests + build), release, and the website's deployment
 ```
 
 Run the tests (Node 22+, no dependencies to install), then build the zip:
@@ -340,6 +343,22 @@ scripts/build.sh 1.2.0    # or a given version, written into the zip's manifest.
 
 The **CI** workflow runs both on every pull request and every push to `main`. The zip it builds
 is attached to the workflow run for 14 days, so you can try a change before it's released.
+
+## Website
+
+`docs/` holds the project's website: one page in English and French, with the install guide, the
+documentation, and an animated demo of the extension. Like the extension, it's plain HTML, CSS and
+JavaScript with no build step. To preview it, serve the folder with any static server (ES modules
+don't load from `file://`):
+
+```sh
+python3 -m http.server -d docs 8000   # then open http://localhost:8000/?lang=fr
+```
+
+English texts live in `docs/index.html` (`data-i18n` attributes), French ones in `docs/i18n.js`;
+`tests/site.test.mjs` checks that both sets match. The **Pages** workflow deploys `docs/` whenever
+it changes on `main` (its first run turns GitHub Pages on for the repository, with **GitHub
+Actions** as the source). The site lives at <https://costardrouge.github.io/metube-extension/>.
 
 ## Releasing
 
