@@ -257,8 +257,8 @@ function renderMenu() {
 }
 
 $('#layout').addEventListener('change', renderMenu);
-addEventListener('resize', fitSubmenus);
-document.fonts?.ready.then(fitSubmenus);
+// The stage's width settles after fonts load or a scrollbar appears: refit then too.
+new ResizeObserver(fitSubmenus).observe($('.menu-stage'));
 
 /* -------------------------------------------------------------- teaser */
 
