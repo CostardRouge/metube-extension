@@ -2152,10 +2152,10 @@ h1 {
   animation: menu-in 0.2s var(--ease);
 }
 
+/* Opacity only: a transform would skew the measurements fitSubmenus() makes. */
 @keyframes menu-in {
   from {
     opacity: 0;
-    transform: scale(0.97);
   }
 }
 
