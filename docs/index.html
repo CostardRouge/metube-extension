@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title data-i18n="metaTitle">MeTube Sender – YouTube to your MeTube, in one right-click</title>
+    <meta name="description" data-i18n-content="metaDescription" content="A Chrome and Arc extension that sends YouTube videos, shorts and playlists to your self-hosted MeTube, and plays its downloads in an overlay on YouTube." />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0f1115" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" data-i18n-content="metaTitle" content="MeTube Sender – YouTube to your MeTube, in one right-click" />
+    <meta property="og:description" data-i18n-content="metaDescription" content="A Chrome and Arc extension that sends YouTube videos, shorts and playlists to your self-hosted MeTube, and plays its downloads in an overlay on YouTube." />
+    <meta property="og:image" content="og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icon-128.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="site.css" />
+    <script type="module" src="site.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+    <header class="top">
+      <a class="brand" href="#top">
+        <img src="icon.svg" alt="" width="28" height="28" />
+        <span>MeTube Sender</span>
+      </a>
+      <nav class="nav" aria-label="Sections">
+        <a href="#features" data-i18n="navFeatures">Features</a>
+        <a href="#install" data-i18n="navInstall">Install</a>
+        <a href="#configure" data-i18n="navConfigure">Configure</a>
+        <a href="#menu" data-i18n="navMenu">Menu</a>
+        <a href="#player" data-i18n="navPlayer">Player</a>
+        <a href="#server" data-i18n="navServer">Server</a>
+        <a href="#troubleshooting" data-i18n="navTroubleshooting">Help</a>
+      </nav>
+      <div class="top-actions">
+        <button class="lang" id="lang" type="button" aria-label="Switch language" data-i18n-aria-label="langSwitch">
+          <span data-lang="en">EN</span><i></i><span data-lang="fr">FR</span>
+        </button>
+        <a class="gh" href="https://github.com/CostardRouge/metube-extension" aria-label="GitHub repository">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 .5a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.4-1.8-1.4-1.8-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.3 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5z"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <main id="main">
+      <!-- ============================ HERO ============================ -->
+      <section class="hero" id="top">
+        <div class="hero-text">
+          <p class="eyebrow"><span>Chrome</span><span>Arc</span><span>Manifest V3</span><span data-i18n="heroNoBuild">No build step</span></p>
+          <h1 data-i18n="heroTitle">YouTube → your MeTube,<br />in one right-click.</h1>
+          <p class="lead" data-i18n="heroLead">MeTube Sender sends videos, shorts and playlists to your self-hosted <a href="https://github.com/alexta69/metube">MeTube</a> from any page, then plays what MeTube downloaded in an overlay, right on top of YouTube.</p>
+          <div class="cta">
+            <a class="btn primary" id="download" href="https://github.com/CostardRouge/metube-extension/releases/latest">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11" /><path d="M7 10l5 5 5-5" /><path d="M5 19h14" /></svg>
+              <span id="download-label" data-i18n="heroDownload">Download the latest release</span>
+            </a>
+            <a class="btn" href="#install" data-i18n="heroInstall">Install guide</a>
+          </div>
+          <p class="hero-note muted" id="release-note" data-i18n="heroNote">Free and open source. A zip with its SHA-256 checksum on every release.</p>
+        </div>
+
+        <!-- ============================ TEASER ============================ -->
+        <div class="teaser" id="teaser" aria-label="Animated demo of the extension" data-i18n-aria-label="teaserLabel">
+          <div class="browser">
+            <div class="browser-bar">
+              <span class="dots"><i></i><i></i><i></i></span>
+              <div class="omnibox"><span class="lock">🔒</span>youtube.com/watch?v=aqz-KE-bpKQ</div>
+              <div class="ext-icons">
+                <span class="ext-icon puzzle" aria-hidden="true"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M13 3a2 2 0 0 0-2 2v1H8a2 2 0 0 0-2 2v3H5a2 2 0 1 0 0 4h1v3a2 2 0 0 0 2 2h3v-1a2 2 0 1 1 4 0v1h3a2 2 0 0 0 2-2v-3h-1a2 2 0 1 1 0-4h1V8a2 2 0 0 0-2-2h-3V5a2 2 0 0 0-2-2z"/></svg></span>
+                <span class="ext-icon metube" id="t-icon"><img src="icon.svg" alt="" width="16" height="16" /><b class="badge" id="t-badge"></b></span>
+              </div>
+            </div>
+            <div class="browser-body">
+              <div class="yt">
+                <div class="yt-main">
+                  <div class="yt-player"><span class="yt-play"></span></div>
+                  <div class="yt-title">Big Buck Bunny (2008) · 4K</div>
+                  <div class="yt-lines"><b style="width: 42%"></b><b style="width: 28%"></b></div>
+                </div>
+                <aside class="yt-side">
+                  <div class="yt-item" id="t-link1"><i></i><span><b style="width: 88%"></b><b style="width: 55%"></b></span></div>
+                  <div class="yt-item" id="t-link2"><i></i><span><b style="width: 70%"></b><b style="width: 45%"></b></span></div>
+                  <div class="yt-item" id="t-link3"><i></i><span><b style="width: 92%"></b><b style="width: 38%"></b></span></div>
+                  <div class="yt-item" id="t-link4"><i></i><span><b style="width: 64%"></b><b style="width: 50%"></b></span></div>
+                </aside>
+              </div>
+
+              <!-- Chrome's context menu -->
+              <div class="ctx" id="t-ctx">
+                <div class="ctx-item" data-i18n="ctxOpenTab">Open link in new tab</div>
+                <div class="ctx-item" data-i18n="ctxOpenWindow">Open link in new window</div>
+                <div class="ctx-item" data-i18n="ctxCopy">Copy link address</div>
+                <div class="ctx-sep"></div>
+                <div class="ctx-item has-sub" id="t-ctx-metube"><img src="icon.svg" alt="" width="14" height="14" />MeTube<span class="chev">›</span></div>
+                <div class="ctx-sep"></div>
+                <div class="ctx-item" data-i18n="ctxInspect">Inspect</div>
+              </div>
+              <div class="ctx sub" id="t-sub">
+                <div class="ctx-item" data-i18n="menuSettings">MeTube settings…</div>
+                <div class="ctx-item" data-i18n="menuOpen">Open MeTube</div>
+                <div class="ctx-sep"></div>
+                <div class="ctx-item" id="t-sub-video" data-i18n="menuVideo1080">Video · 1080p · MP4</div>
+                <div class="ctx-item" data-i18n="menuAudioM4a">Audio · M4A</div>
+                <div class="ctx-item" data-i18n="menuSubsFrEn">Subtitles · French + English (SRT)</div>
+                <div class="ctx-sep"></div>
+                <div class="ctx-item has-sub" data-i18n="menuMoreVideo">More video qualities</div>
+                <div class="ctx-item has-sub" data-i18n="menuMoreAudio">More audio formats</div>
+                <div class="ctx-item has-sub" data-i18n="menuOneLanguage">Subtitles in one language</div>
+              </div>
+
+              <!-- Toast (browser notification) -->
+              <div class="t-toast" id="t-toast">
+                <img src="icon.svg" alt="" width="18" height="18" />
+                <span id="t-toast-text"></span>
+              </div>
+
+              <!-- Popup -->
+              <div class="t-popup" id="t-popup">
+                <div class="t-popup-bar"><img src="icon.svg" alt="" width="14" height="14" /><span>MeTube</span><i class="gear"></i></div>
+                <div class="t-popup-current">
+                  <div><small data-i18n="popupCurrentPage">Current page</small><div class="t-ellipsis">Big Buck Bunny (2008) · 4K</div></div>
+                  <span class="t-btn primary" data-i18n="popupPlay">Play</span>
+                </div>
+                <div class="t-popup-head"><span id="t-popup-count" data-i18n="popupLinks">4 YouTube links</span><em id="t-all" data-i18n="popupAll">All</em><em data-i18n="popupNone">None</em></div>
+                <ul class="t-popup-list">
+                  <li><i class="chk"></i><span>Sintel (2010) · Blender Foundation</span><b class="ok">✓</b></li>
+                  <li><i class="chk"></i><span>Tears of Steel · Official trailer</span><b class="ok">✓</b></li>
+                  <li><i class="chk"></i><span>Caminandes 3 · Llamigos</span><b class="ok">✓</b></li>
+                  <li><i class="chk"></i><span>Spring · Blender Open Movie</span><b class="ok">✓</b></li>
+                </ul>
+                <div class="t-popup-foot"><label><i class="chk small"></i><span data-i18n="popupAudioOnly">Audio only (m4a)</span></label><span class="t-btn primary" id="t-send" data-i18n="popupSendSelected">Send selected</span></div>
+              </div>
+
+              <!-- Overlay player -->
+              <div class="t-overlay" id="t-overlay">
+                <div class="t-dialog">
+                  <div class="t-head"><img src="icon.svg" alt="" width="14" height="14" /><span class="t-ellipsis">Big Buck Bunny (2008) · 4K</span><i class="trash"></i><i class="x"></i></div>
+                  <div class="t-stage">
+                    <div class="t-status" id="t-status">
+                      <span class="t-spinner"></span>
+                      <span id="t-status-text" data-i18n="overlayLookingUp">Looking up this video in MeTube…</span>
+                      <div class="t-progress" id="t-progress"><b id="t-progress-bar"></b></div>
+                      <small id="t-status-detail"></small>
+                    </div>
+                    <div class="t-video" id="t-video">
+                      <div class="t-scene"><div class="t-sun"></div><div class="t-hill a"></div><div class="t-hill b"></div><div class="t-bunny"></div></div>
+                      <div class="t-sub" data-i18n="teaserSubtitle">— Subtitles, right where you left YouTube.</div>
+                      <div class="t-controls">
+                        <i class="pl"></i><i class="vol"></i><span class="t-time" id="t-time">0:00 / 9:56</span><span class="t-range"><b id="t-range"></b></span><i class="cc"></i><i class="dots3"></i><i class="fs"></i>
+                      </div>
+                    </div>
+                    <div class="t-end" id="t-end">
+                      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M8 12.5l2.5 2.5L16 9.5" /></svg>
+                      <b data-i18n="overlayEndTitle">Video finished</b>
+                      <div class="t-end-actions">
+                        <span class="t-btn danger" id="t-end-delete" data-i18n="deleteFromMeTube">Delete from MeTube</span>
+                        <span class="t-btn" data-i18n="overlayWatchAgain">Watch again</span>
+                        <span class="t-btn ghost" data-i18n="overlayKeep">Keep and close</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="t-foot" data-i18n="overlayKeys">Space play/pause · ←/→ 5s · F fullscreen · C subtitles · M mute · Del delete · Esc close</div>
+                </div>
+              </div>
+
+              <div class="t-keys" id="t-keys" aria-hidden="true"><kbd>Alt</kbd><kbd>Shift</kbd><kbd>M</kbd></div>
+            </div>
+          </div>
+
+          <div class="t-cursor" id="t-cursor" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 3l14 9-6.5 1.2L16 20l-2.5 1-3.5-6.8L5 18z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            <i class="ring"></i>
+          </div>
+
+          <div class="t-captions" aria-live="polite">
+            <p data-cap="0" data-i18n="teaser0">Any page, any YouTube link.</p>
+            <p data-cap="1" data-i18n="teaser1">One right-click, and it's on its way to MeTube, in the quality you chose.</p>
+            <p data-cap="2" data-i18n="teaser2">Or open the popup: it lists every video on the page. Tick, send.</p>
+            <p data-cap="3" data-i18n="teaser3">Then press Alt+Shift+M and watch it from MeTube, right on YouTube.</p>
+            <p data-cap="4" data-i18n="teaser4">Watched once? Delete it from MeTube. Done.</p>
+          </div>
+          <div class="t-steps" aria-hidden="true"><i data-dot="0"></i><i data-dot="1"></i><i data-dot="2"></i><i data-dot="3"></i><i data-dot="4"></i></div>
+          <button class="t-replay" id="t-replay" type="button" title="Replay" data-i18n-title="teaserReplay" aria-label="Replay">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================ FEATURES ============================ -->
+      <section class="section" id="features">
+        <header class="section-head">
+          <p class="kicker" data-i18n="featKicker">What it does</p>
+          <h2 data-i18n="featTitle">Every way to send a video, and one way to watch it.</h2>
+        </header>
+        <div class="grid features">
+          <article class="card reveal">
+            <div class="card-art">
+              <div class="mini-menu">
+                <span data-i18n="menuVideo1080">Video · 1080p · MP4</span>
+                <span data-i18n="menuAudioM4a">Audio · M4A</span>
+                <span data-i18n="menuSubsFrEn">Subtitles · French + English (SRT)</span>
+              </div>
+            </div>
+            <h3 data-i18n="featMenuTitle">Right-click menu</h3>
+            <p data-i18n="featMenuText">One <b>MeTube</b> entry on links, pages, selected text and the YouTube player. Three blocks (video, audio, subtitles), with the entries, the one-click choices and the layout you decide.</p>
+          </article>
+          <article class="card reveal">
+            <div class="card-art">
+              <div class="mini-popup">
+                <span><i></i>Sintel (2010)<b>✓</b></span>
+                <span><i></i>Tears of Steel<b>✓</b></span>
+                <span><i></i>Caminandes 3<b>✓</b></span>
+              </div>
+            </div>
+            <h3 data-i18n="featPopupTitle">Popup that scans the page</h3>
+            <p data-i18n="featPopupText">The toolbar button lists the videos, shorts and playlists linked from the current page, embedded players included, with their titles. Tick some or all, then send. <b>Audio only</b> is one toggle away.</p>
+          </article>
+          <article class="card reveal">
+            <div class="card-art">
+              <div class="mini-player"><i class="bar"></i><b></b></div>
+            </div>
+            <h3 data-i18n="featPlayerTitle">Player on YouTube</h3>
+            <p data-i18n="featPlayerText">On a video page, <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> opens the video from MeTube in an overlay: it resumes where you were, shows the download's progress if it's still running, and plays your subtitles.</p>
+          </article>
+          <article class="card reveal">
+            <div class="card-art">
+              <div class="mini-url"><s>youtu.be/aqz-KE-bpKQ?si=x7Kq…&amp;feature=share</s><em>youtube.com/watch?v=aqz-KE-bpKQ</em></div>
+            </div>
+            <h3 data-i18n="featCleanTitle">Clean URLs</h3>
+            <p data-i18n="featCleanText">YouTube links are cut down to <code>v</code>, <code>list</code> and <code>t</code>: no <code>si</code>, <code>pp</code>, <code>feature</code> or <code>index</code>. Short, mobile, live and embed links become the standard watch URL. Other sites pass through unchanged, since MeTube takes everything yt-dlp does.</p>
+          </article>
+          <article class="card reveal">
+            <div class="card-art">
+              <div class="mini-badge"><img src="icon.svg" alt="" width="26" height="26" /><b>3</b><b class="err">!</b></div>
+            </div>
+            <h3 data-i18n="featFeedbackTitle">Feedback you can see</h3>
+            <p data-i18n="featFeedbackText">The badge counts what was sent. A red <b>!</b> means something failed: open the popup to read why. When the browser shows notifications, you get one too.</p>
+          </article>
+          <article class="card reveal">
+            <div class="card-art">
+              <div class="mini-lang"><span>EN</span><span>FR</span></div>
+            </div>
+            <h3 data-i18n="featLangTitle">English and French</h3>
+            <p data-i18n="featLangText">Menus, popup, settings, player, notifications and errors follow the browser's language, numbers and sizes included (<code>1.2 GB</code>, <code>1,2 Go</code>). Adding a language is one JSON file.</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============================ INSTALL ============================ -->
+      <section class="section" id="install">
+        <header class="section-head">
+          <p class="kicker" data-i18n="installKicker">Install</p>
+          <h2 data-i18n="installTitle">Three clicks in your browser. No store needed.</h2>
+          <p class="section-lead" data-i18n="installLead">Download the latest <code>metube-sender-&lt;version&gt;.zip</code> and unzip it into a folder you'll keep. To run the unreleased code instead, clone the repository.</p>
+        </header>
+
+        <div class="install">
+          <div class="tabs" role="tablist" aria-label="Browser">
+            <button class="tab" role="tab" type="button" data-tab="chrome" aria-selected="true">Chrome</button>
+            <button class="tab" role="tab" type="button" data-tab="arc" aria-selected="false">Arc</button>
+          </div>
+
+          <div class="install-grid">
+            <ol class="steps" data-browser="chrome">
+              <li><span data-i18n="installStep1">Open <code class="browser-url">chrome://extensions</code>.</span></li>
+              <li><span data-i18n="installStep2">Turn on <b>Developer mode</b> (top-right toggle).</span></li>
+              <li><span data-i18n="installStep3">Click <b>Load unpacked</b> and select the folder that contains <code>manifest.json</code>.</span></li>
+              <li><span data-i18n="installStep4">The settings page opens. Enter your MeTube URL, <b>Save</b>, <b>Allow</b>, <b>Test connection</b>.</span></li>
+              <li data-browser="chrome"><span data-i18n="installStep5Chrome">Optional: click the puzzle icon and pin <b>MeTube Sender</b>, so its badge is always visible.</span></li>
+              <li data-browser="arc"><span data-i18n="installStep5Arc">Pin the extension (extensions menu in the sidebar / URL bar) to reach the popup and see the badge. Arc rarely shows extension notifications: the badge and the popup show every result anyway.</span></li>
+            </ol>
+
+            <div class="ext-page" aria-hidden="true">
+              <div class="ext-page-bar">
+                <span class="ext-page-url"><span class="browser-url">chrome://extensions</span></span>
+                <label class="ext-toggle"><span data-i18n="devMode">Developer mode</span><i></i></label>
+              </div>
+              <div class="ext-page-actions">
+                <span class="ext-btn hot" data-i18n="loadUnpacked">Load unpacked</span>
+                <span class="ext-btn" data-i18n="packExt">Pack extension</span>
+                <span class="ext-btn" data-i18n="updateExt">Update</span>
+              </div>
+              <div class="ext-card">
+                <img src="icon.svg" alt="" width="36" height="36" />
+                <div>
+                  <b>MeTube Sender <small id="ext-card-version">1.0.0</small></b>
+                  <p data-i18n="extDescription">Send YouTube videos to your self-hosted MeTube, and watch its downloads in an overlay player on YouTube.</p>
+                  <div class="ext-card-links"><span data-i18n="extDetails">Details</span><span data-i18n="extRemove">Remove</span><span class="ext-card-error" data-i18n="extErrors">Errors</span></div>
+                </div>
+                <i class="ext-switch"></i>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid two">
+            <article class="card small reveal">
+              <h3 data-i18n="shortcutTitle">Keyboard shortcut</h3>
+              <p data-i18n="shortcutText">The player's shortcut is <kbd>Alt</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>Option</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> on a Mac). To change it, or if another extension already took it, open <code class="browser-url">chrome://extensions</code><code>/shortcuts</code> and edit <b>Play the current YouTube video from MeTube</b>. The settings page shows the current shortcut and has a <b>Change shortcut</b> button.</p>
+            </article>
+            <article class="card small reveal">
+              <h3 data-i18n="updateTitle">Updating</h3>
+              <p data-i18n="updateText">Unzip the new release into the <b>same</b> folder, replacing its files (or pull the new code), then click the reload icon on the extension's card. Loading it from a different folder installs a second extension, without your settings.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ CONFIGURE ============================ -->
+      <section class="section" id="configure">
+        <header class="section-head">
+          <p class="kicker" data-i18n="confKicker">Configure</p>
+          <h2 data-i18n="confTitle">One URL, and you're connected.</h2>
+          <p class="section-lead" data-i18n="confLead">When you click <b>Save</b>, the browser asks for permission to access your MeTube host: click <b>Allow</b>. Then <b>Test connection</b> calls <code>/version</code> and shows the MeTube and yt-dlp versions it finds.</p>
+        </header>
+
+        <div class="configure">
+          <div class="settings-mock" aria-hidden="true">
+            <div class="sm-head"><img src="icon.svg" alt="" width="22" height="22" /><b>MeTube Sender</b><span data-i18n="optSettingsTitle">Settings</span></div>
+            <label><span data-i18n="optBaseUrl">MeTube URL</span><i class="sm-input">https://metube.example.com</i></label>
+            <div class="sm-row">
+              <label><span data-i18n="optUsername">Username</span><i class="sm-input">alice</i></label>
+              <label><span data-i18n="optPassword">Password</span><i class="sm-input">••••••••••</i></label>
+            </div>
+            <div class="sm-row">
+              <label><span data-i18n="optDownloadType">Download type</span><i class="sm-seg"><b class="on" data-i18n="video">Video</b><b data-i18n="audio">Audio</b></i></label>
+              <label><span data-i18n="optFormat">Format</span><i class="sm-input">MP4 ▾</i></label>
+              <label><span data-i18n="optQuality">Quality</span><i class="sm-input">1080p ▾</i></label>
+            </div>
+            <div class="sm-actions">
+              <button class="btn small" type="button" id="test-conn" data-i18n="optTest">Test connection</button>
+              <span class="btn small primary" data-i18n="optSave">Save</span>
+              <span class="sm-result" id="test-result"></span>
+            </div>
+          </div>
+
+          <dl class="settings">
+            <div><dt data-i18n="optBaseUrl">MeTube URL</dt><dd data-i18n="setUrl">e.g. <code>https://metube.example.com</code>. If MeTube runs under a path prefix (<code>URL_PREFIX</code>), include it: <code>https://example.com/metube</code>.</dd></div>
+            <div><dt data-i18n="setAuthName">Username / Password</dt><dd data-i18n="setAuth">Sent as <code>Authorization: Basic …</code> with every request, e.g. for Traefik <code>basicAuth</code>. Leave both empty if MeTube isn't behind auth.</dd></div>
+            <div><dt data-i18n="setDefaultsName">Download type / Format / Quality</dt><dd data-i18n="setDefaults">Defaults for every send. Video: format Any or MP4, quality Best, 2160p … 240p or Worst. Audio: M4A, MP3 or Opus, with the qualities MeTube accepts for each format.</dd></div>
+            <div><dt data-i18n="setFolderName">Folder</dt><dd data-i18n="setFolder">Optional sub-folder of MeTube's download directory. MeTube must run with <code>CUSTOM_DIRS=true</code>, plus <code>CREATE_CUSTOM_DIRS=true</code> if the folder doesn't exist yet.</dd></div>
+            <div><dt data-i18n="optMenu">Right-click menu</dt><dd data-i18n="setMenu">Layout, where it appears, and the entries of each block. See <a href="#menu">Right-click menu</a>.</dd></div>
+            <div><dt data-i18n="optSubtitleLangs">Subtitle languages</dt><dd data-i18n="setLangs">Languages the player looks for, comma-separated (default <code>fr, en</code>). They must match the <code>subtitleslangs</code> MeTube downloads. The menu's subtitles block uses the same list.</dd></div>
+            <div><dt data-i18n="setEndName">When a video ends, offer to delete it</dt><dd data-i18n="setEnd">On by default. See <a href="#deleting">Deleting a video</a>.</dd></div>
+          </dl>
+        </div>
+        <p class="note" data-i18n="confPrivacy">All settings, including the password, are stored in this browser's extension storage (<code>chrome.storage.local</code>). They are never sent anywhere except to your MeTube host.</p>
+      </section>
+
+      <!-- ============================ MENU ============================ -->
+      <section class="section" id="menu">
+        <header class="section-head">
+          <p class="kicker" data-i18n="menuKicker">Right-click menu</p>
+          <h2 data-i18n="menuTitle">Your menu, your layout.</h2>
+          <p class="section-lead" data-i18n="menuLead">Right-click a link, a page, selected text, or a YouTube video (second right-click on the player: the first one opens YouTube's own menu, which extensions can't change). Pick a layout below to see what the <b>MeTube</b> entry offers.</p>
+        </header>
+
+        <div class="menu-demo">
+          <div class="menu-controls">
+            <div class="segmented" role="radiogroup" aria-label="Layout" id="layout">
+              <label><input type="radio" name="layout" value="hybrid" checked /><span data-i18n="layoutHybrid">Hybrid</span></label>
+              <label><input type="radio" name="layout" value="flat" /><span data-i18n="layoutFlat">Flat</span></label>
+              <label><input type="radio" name="layout" value="submenus" /><span data-i18n="layoutSubmenus">Submenus</span></label>
+            </div>
+            <p class="menu-help" id="layout-help"></p>
+            <ul class="menu-notes">
+              <li data-i18n="menuNoteBlocks"><b>Blocks</b>: video (MP4 or any format, qualities from Best to 360p), audio (M4A, MP3 320/192/128, Opus, FLAC, WAV), subtitles (SRT, VTT or TXT, one download per language). Each block can be turned off and has its one-click choice.</li>
+              <li data-i18n="menuNoteContexts"><b>Show MeTube on</b>: pages, links, selected text, the video player. A text selection sends every YouTube link in it, <code>&lt;a&gt;</code> links and URLs written out as plain text alike, without duplicates.</li>
+              <li data-i18n="menuNoteExtras"><b>Other entries</b>: settings at the top or the bottom, <b>Open MeTube</b>, <b>Play here</b>, and the extension icon's own menu (play, download video/audio/subtitles, open MeTube for the current tab).</li>
+              <li data-i18n="menuNoteSubs"><b>Subtitle files</b>: the subtitles block asks MeTube for the subtitle file alone. Hand-made subtitles when the video has some, YouTube's automatic ones otherwise.</li>
+              <li data-i18n="menuNotePlace">Chrome places the MeTube entry itself, near <b>Inspect</b>: no extension can put it at the very top. The extension icon's menu is the one place where its entries come first.</li>
+            </ul>
+          </div>
+          <div class="menu-stage">
+            <div class="menu-root" id="menu-render"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ PLAYER ============================ -->
+      <section class="section" id="player">
+        <header class="section-head">
+          <p class="kicker" data-i18n="playerKicker">Player on YouTube</p>
+          <h2 data-i18n="playerTitle">Watch it from MeTube, without leaving YouTube.</h2>
+          <p class="section-lead" data-i18n="playerLead">On a <code>youtube.com/watch?v=…</code> page, press the shortcut or click <b>Play</b> in the popup. The overlay pauses YouTube's player, notes where you were, and looks the video up in MeTube's history by video ID. Then:</p>
+        </header>
+
+        <div class="grid four states">
+          <article class="card state reveal"><i class="dot ok"></i><h3 data-i18n="stateDoneTitle">Already downloaded</h3><p data-i18n="stateDoneText">Plays the file. If you had watched more than 5 seconds on YouTube, it starts from there.</p></article>
+          <article class="card state reveal"><i class="dot accent"></i><h3 data-i18n="stateQueuedTitle">Queued or downloading</h3><p data-i18n="stateQueuedText">Shows the progress, refreshed every 2 seconds, and starts playing when the download finishes.</p></article>
+          <article class="card state reveal"><i class="dot warn"></i><h3 data-i18n="stateNewTitle">Not in MeTube</h3><p data-i18n="stateNewText">Adds it with your default options, then shows the progress.</p></article>
+          <article class="card state reveal"><i class="dot err"></i><h3 data-i18n="stateFailedTitle">Failed in MeTube</h3><p data-i18n="stateFailedText">Shows MeTube's error (private, age-restricted, removed…), with <b>Try again</b>.</p></article>
+        </div>
+
+        <div class="grid two">
+          <article class="card reveal">
+            <h3 data-i18n="keysTitle">Keyboard</h3>
+            <ul class="keys">
+              <li><kbd>Space</kbd><kbd>K</kbd><span data-i18n="keyPlay">play / pause</span></li>
+              <li><kbd>←</kbd><kbd>→</kbd><span data-i18n="keySeek">seek 5 seconds</span></li>
+              <li><kbd>F</kbd><span data-i18n="keyFull">fullscreen (or double-click the picture)</span></li>
+              <li><kbd>C</kbd><span data-i18n="keySubs">subtitles on / off</span></li>
+              <li><kbd>M</kbd><span data-i18n="keyMute">mute</span></li>
+              <li><kbd>Del</kbd><span data-i18n="keyDelete">delete from MeTube</span></li>
+              <li><kbd>Esc</kbd><span data-i18n="keyClose">close (YouTube stays paused)</span></li>
+            </ul>
+            <p class="muted" data-i18n="keysNote">Play/pause, seeking, volume, speed (0.5× to 2× in the <b>⋯</b> menu), subtitles, picture-in-picture and fullscreen are in the control bar. The overlay also closes when you navigate to another video.</p>
+          </article>
+          <article class="card reveal" id="deleting">
+            <h3 data-i18n="deleteTitle">Deleting a video</h3>
+            <p data-i18n="deleteText1">The player is for watching a video once, while YouTube streaming is out of reach. Once watched, the file can go:</p>
+            <ul class="bullets">
+              <li data-i18n="deleteTrash"><b>Trash button</b> or <kbd>Del</kbd>: a confirmation shows the title, quality, size and subtitles. <b>Cancel</b> is selected, so Enter never deletes by accident.</li>
+              <li data-i18n="deleteEnd"><b>When the video ends</b> (unless turned off in the settings): <b>Delete from MeTube</b>, <b>Watch again</b>, or <b>Keep and close</b>. Nothing is deleted without a click.</li>
+            </ul>
+            <p class="muted" data-i18n="deleteNote">After deleting, the extension checks whether the file is really gone from the server and says so. MeTube only erases files when it's set up for it: see <a href="#server">Server setup</a>.</p>
+          </article>
+        </div>
+
+        <details class="more reveal">
+          <summary data-i18n="authHowTitle">How the video gets past basic auth</summary>
+          <p data-i18n="authHowText">A <code>&lt;video&gt;</code> element can't send an <code>Authorization</code> header. The extension adds one with a <code>declarativeNetRequest</code> rule, rebuilt whenever you save the settings. The rule only applies to <b>GET</b> requests for media, started by the extension's own player, to your MeTube URL. Requests made by YouTube or any other site never get your credentials, so a web page can't use them to add or delete downloads. Every other request (<code>/history</code>, <code>/add</code>, subtitle files) is sent by the service worker.</p>
+        </details>
+      </section>
+
+      <!-- ============================ SERVER ============================ -->
+      <section class="section" id="server">
+        <header class="section-head">
+          <p class="kicker" data-i18n="serverKicker">MeTube server setup</p>
+          <h2 data-i18n="serverTitle">Three lines on the server, for the full experience.</h2>
+          <p class="section-lead" data-i18n="serverLead">Sending works with any MeTube. The player wants a little more: subtitles written next to the videos, HTTPS, and permission to erase files.</p>
+        </header>
+
+        <div class="grid two">
+          <article class="card reveal">
+            <h3 data-i18n="srvSubsTitle">Subtitles</h3>
+            <p data-i18n="srvSubsText">MeTube only writes subtitle files if yt-dlp is told to. Add this to MeTube's environment, with the same languages as in the extension's settings. yt-dlp then saves <code>&lt;video&gt;.&lt;lang&gt;.vtt</code> next to each video, and the player loads each one it finds. Only videos downloaded after this change have subtitles.</p>
+            <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>YTDL_OPTIONS={"writesubtitles": true, "writeautomaticsub": true, "subtitleslangs": ["fr","en"], "subtitlesformat": "vtt"}</code></pre>
+          </article>
+          <article class="card reveal">
+            <h3 data-i18n="srvDeleteTitle">Deleting files</h3>
+            <p data-i18n="srvDeleteText">MeTube's default (<code>DELETE_FILE_ON_TRASHCAN=false</code>) only removes the entry from its list and keeps the file. For the player's delete button to erase files, add the line below. <code>true</code> also works, but then MeTube's own trash button always erases files too. With the default, the player tells you the file was kept.</p>
+            <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>DELETE_FILE_ON_TRASHCAN=ask</code></pre>
+          </article>
+          <article class="card reveal">
+            <h3 data-i18n="srvHttpsTitle">HTTPS</h3>
+            <p data-i18n="srvHttpsText">YouTube is an HTTPS page, and browsers won't load <code>http://</code> video inside it. MeTube must be reachable over <code>https://</code>, for example through Traefik with a certificate. <code>localhost</code> is the only exception.</p>
+            <h3 data-i18n="srvUrlsTitle">Default download URLs</h3>
+            <p data-i18n="srvUrlsText">The player expects MeTube's standard file URLs: <code>{MeTube URL}/download/…</code>, or <code>/audio_download/…</code> for audio. If you changed <code>PUBLIC_HOST_URL</code> to serve files from elsewhere, the player won't find them.</p>
+          </article>
+          <article class="card reveal">
+            <h3 data-i18n="srvEntryTitle">One entry per video</h3>
+            <p data-i18n="srvEntryText">MeTube keeps one history entry per video URL. Downloading the audio or the subtitles of a video that's already downloaded replaces its entry (the video file stays on disk); the player then no longer finds the video and would download it again. For subtitles to watch with, prefer <code>YTDL_OPTIONS</code>; use the menu's subtitles block to get the files themselves.</p>
+            <h3 data-i18n="srvFormatsTitle">Formats</h3>
+            <p data-i18n="srvFormatsText">The browser must be able to play the file. MP4 (H.264/AAC) and WebM play everywhere. If you get <i>can't play this file</i>, set the default video format to <b>MP4</b> in the settings.</p>
+          </article>
+        </div>
+
+        <article class="card wide reveal">
+          <h3 data-i18n="composeTitle">Example docker-compose.yml</h3>
+          <p data-i18n="composeText">A MeTube service with everything the extension can use. Put it behind your HTTPS reverse proxy.</p>
+          <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>services:
+  metube:
+    image: ghcr.io/alexta69/metube
+    container_name: metube
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./downloads:/downloads
+    environment:
+      # Optional "Folder" setting in the extension
+      - CUSTOM_DIRS=true
+      - CREATE_CUSTOM_DIRS=true
+      # Player: subtitles next to each video, same languages as the extension
+      - YTDL_OPTIONS={"writesubtitles":true,"writeautomaticsub":true,"subtitleslangs":["fr","en"],"subtitlesformat":"vtt"}
+      # Player: the delete button really erases the file
+      - DELETE_FILE_ON_TRASHCAN=ask</code></pre>
+        </article>
+
+        <details class="more reveal">
+          <summary data-i18n="linksTitle">How MeTube treats some links</summary>
+          <ul class="bullets">
+            <li data-i18n="linksT"><b><code>t=</code> timestamps</b>: current MeTube versions turn a <code>t</code> parameter into the start of a clip, so <code>watch?v=…&amp;t=90</code> downloads from 1:30 onward. To get the whole video, send a link without <code>t</code>.</li>
+            <li data-i18n="linksList"><b>Videos opened from a playlist</b> (<code>watch?v=…&amp;list=…</code>): the popup tags these <b>In playlist</b>. Whether MeTube downloads only that video or the whole playlist depends on its <i>strict playlist mode</i> (<code>DEFAULT_OPTION_PLAYLIST_STRICT_MODE</code>).</li>
+            <li data-i18n="linksPrivate">Private lists that need your YouTube login are ignored: Watch later (<code>WL</code>), Liked videos (<code>LL</code>) and Liked music (<code>LM</code>).</li>
+          </ul>
+        </details>
+      </section>
+
+      <!-- ============================ TROUBLESHOOTING ============================ -->
+      <section class="section" id="troubleshooting">
+        <header class="section-head">
+          <p class="kicker" data-i18n="tsKicker">Troubleshooting</p>
+          <h2 data-i18n="tsTitle">What the message means, and what to do.</h2>
+        </header>
+        <div class="faq">
+          <details class="reveal"><summary><i data-i18n="ts1q">Authentication failed (401)</i></summary><p data-i18n="ts1a">Check the username and password in the settings.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts2q">Can't reach host</i></summary><p data-i18n="ts2a">The URL is wrong, the server is down, or it's unreachable from this machine (VPN, DNS, TLS certificate).</p></details>
+          <details class="reveal"><summary><i data-i18n="ts3q">Not found (404)</i></summary><p data-i18n="ts3a">The URL is missing MeTube's path prefix, or points to the wrong service.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts4q">MeTube rejected the request (400): …</i></summary><p data-i18n="ts4a">MeTube refused the options; the reason comes from MeTube. Example: a folder was set but <code>CUSTOM_DIRS</code> is off.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts5q">did not answer with JSON</i></summary><p data-i18n="ts5a">Something other than MeTube answered, such as a login page from Authelia or Authentik, or a proxy error page. Basic auth is the only login method this extension supports.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts6q">not allowed to access …</i></summary><p data-i18n="ts6a">Open the settings and click <b>Save</b>, then <b>Allow</b>. If no prompt appears, go to the extension's <b>Details</b> page → <b>Site access</b> and add your MeTube site.</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPopup">Popup:</span> <i data-i18n="ts7q">Can't scan this page</i></summary><p data-i18n="ts7a">Browser pages (<code>chrome://</code>, <code>arc://</code>, the Web Store) can't be read by extensions. <b>Send page</b> still works for normal web pages.</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts8q">MeTube couldn't download this video</i></summary><p data-i18n="ts8a">MeTube's own error is shown below it (private, age-restricted, removed…). <b>Try again</b> re-adds the video.</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts9q">the file isn't on the server anymore</i></summary><p data-i18n="ts9a">The download was deleted from disk but is still in MeTube's history. <b>Download again</b> re-adds it.</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts10q">won't load http:// video</i></summary><p data-i18n="ts10a">Serve MeTube over HTTPS (see <a href="#server">Server setup</a>).</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts11q">can't play this file</i></summary><p data-i18n="ts11a">The browser doesn't support the file's format. Set the default video format to <b>MP4</b>.</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts12q">no subtitles</i></summary><p data-i18n="ts12a">Check <code>YTDL_OPTIONS</code> (see <a href="#server">Server setup</a>), and that the languages match. Videos downloaded before the change have none.</p></details>
+          <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts13q">the server kept the file</i></summary><p data-i18n="ts13a">MeTube removed the entry but not the file: run it with <code>DELETE_FILE_ON_TRASHCAN=ask</code>.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts14q">A menu entry is missing</i></summary><p data-i18n="ts14a">Check <b>Right-click menu</b> in the settings (block turned off, quality not selected, context unchecked). Subtitles need at least one <b>Subtitle language</b>.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts15q">The shortcut does nothing</i></summary><p data-i18n="ts15a">Another extension may use it: set a different one (see <a href="#install">Keyboard shortcut</a>). It only works on <code>youtube.com/watch?v=…</code> pages.</p></details>
+        </div>
+      </section>
+
+      <!-- ============================ PRIVACY ============================ -->
+      <section class="section" id="privacy">
+        <header class="section-head">
+          <p class="kicker" data-i18n="privKicker">Permissions and privacy</p>
+          <h2 data-i18n="privTitle">Nothing leaves your browser, except toward your MeTube.</h2>
+          <p class="section-lead" data-i18n="privLead">Every network call is made by the background service worker, never by the pages you visit. The player page is the only file YouTube pages can load from the extension.</p>
+        </header>
+        <ul class="perms">
+          <li class="reveal"><code>contextMenus</code><span data-i18n="permMenus">The right-click menus, including the extension icon's.</span></li>
+          <li class="reveal"><code>storage</code><span data-i18n="permStorage">Saving settings, and remembering the last error for the popup.</span></li>
+          <li class="reveal"><code>scripting</code> + <code>activeTab</code><span data-i18n="permScripting">Reading links from the current tab, and opening the player on it, only after you open the popup, use a menu item or press the shortcut.</span></li>
+          <li class="reveal"><code>notifications</code><span data-i18n="permNotif">Result notifications, when the browser shows them.</span></li>
+          <li class="reveal"><code>declarativeNetRequestWithHostAccess</code><span data-i18n="permDnr">The rule that adds your credentials to the player's video requests. Unlike <code>declarativeNetRequest</code>, it only acts on hosts you granted, and adds no install warning.</span></li>
+          <li class="reveal"><code>https://*.youtube.com/*</code><span data-i18n="permYoutube">Scanning YouTube pages for links, and opening the player there.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="permHostName">Your MeTube host</span><span data-i18n="permHost">Optional, requested on Save. Sending requests to MeTube.</span></li>
+        </ul>
+      </section>
+
+      <!-- ============================ DEVELOPMENT ============================ -->
+      <section class="section" id="dev">
+        <header class="section-head">
+          <p class="kicker" data-i18n="devKicker">Development</p>
+          <h2 data-i18n="devTitle">Plain JavaScript. Clone, load, hack.</h2>
+          <p class="section-lead" data-i18n="devLead">No build step, no dependencies to install. The only library, <a href="https://github.com/muxinc/media-chrome">Media Chrome</a> for the player, is vendored (Manifest V3 doesn't allow loading code from the internet). Tests need Node 22+.</p>
+        </header>
+        <div class="grid two">
+          <article class="card reveal">
+            <h3 data-i18n="devRunTitle">Test and build</h3>
+            <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>git clone https://github.com/CostardRouge/metube-extension.git
+cd metube-extension
+node --test              # unit tests
+scripts/build.sh         # dist/metube-sender-&lt;version&gt;.zip
+scripts/build.sh 1.2.0   # or with a given version</code></pre>
+            <p class="muted" data-i18n="devRunText">The CI workflow runs the tests and builds the zip on every pull request and push to <code>main</code>. The zip stays attached to the run for 14 days, to try a change before it's released.</p>
+          </article>
+          <article class="card reveal">
+            <h3 data-i18n="devReleaseTitle">Releasing</h3>
+            <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>git checkout main &amp;&amp; git pull
+git tag v1.1.0
+git push origin v1.1.0</code></pre>
+            <p class="muted" data-i18n="devReleaseText">Releases are only created from a version tag on <code>main</code>. The Release workflow runs the tests, builds the zip with that version written into its <code>manifest.json</code>, and publishes a GitHub release with the zip, its SHA-256 checksum and notes from the merged pull requests.</p>
+          </article>
+        </div>
+        <details class="more reveal">
+          <summary data-i18n="devTreeTitle">Where things are</summary>
+          <pre class="code tree"><code>manifest.json
+background.js            <span data-i18n="treeBackground">service worker entry: registers listeners, routes messages</span>
+sw/                      <span data-i18n="treeSw">menus, sending, feedback, player requests, the auth rule</span>
+lib/                     <span data-i18n="treeLib">settings, i18n, menu model, MeTube API client, history, YouTube URLs</span>
+content/overlay-host.js  <span data-i18n="treeContent">injected into YouTube on demand: the overlay iframe, pause, navigation</span>
+overlay/                 <span data-i18n="treeOverlay">the player page shown in that iframe</span>
+popup/  options/  ui/    <span data-i18n="treeUi">toolbar popup, settings page, shared dark theme</span>
+_locales/                <span data-i18n="treeLocales">English (default) and French messages</span>
+vendor/media-chrome/     <span data-i18n="treeVendor">Media Chrome (MIT), unmodified ES modules</span>
+tests/                   <span data-i18n="treeTests">URL handling, history matching, menus, messages, the manifest, this site</span>
+docs/                    <span data-i18n="treeDocs">this website (GitHub Pages)</span></code></pre>
+        </details>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <div class="foot-inner">
+        <div class="foot-brand">
+          <img src="icon.svg" alt="" width="22" height="22" />
+          <span>MeTube Sender</span>
+          <span class="muted" data-i18n="footTagline">for Chrome and Arc, by CostardRouge.</span>
+        </div>
+        <nav class="foot-links" aria-label="Links">
+          <a href="https://github.com/CostardRouge/metube-extension">GitHub</a>
+          <a href="https://github.com/CostardRouge/metube-extension/releases" data-i18n="footReleases">Releases</a>
+          <a href="https://github.com/CostardRouge/metube-extension/issues" data-i18n="footIssues">Issues</a>
+          <a href="https://github.com/alexta69/metube">MeTube</a>
+          <a href="https://github.com/muxinc/media-chrome">Media Chrome</a>
+        </nav>
+        <p class="muted foot-note" data-i18n="footNote">This page is plain HTML, CSS and JavaScript too, served from the repository's <code>docs/</code> folder. Not affiliated with YouTube or Google.</p>
+      </div>
+    </footer>
+  </body>
+</html>
