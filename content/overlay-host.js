@@ -94,7 +94,6 @@
     frame = document.createElement('iframe');
     frame.src = `${chrome.runtime.getURL('overlay/overlay.html')}?${params}`;
     frame.allow = 'autoplay; fullscreen; picture-in-picture';
-    frame.setAttribute('allowfullscreen', '');
     frame.title = chrome.i18n.getMessage('playerName') || 'MeTube player';
     for (const [property, value] of Object.entries(FRAME_STYLE)) {
       frame.style.setProperty(property, value, 'important');
