@@ -333,7 +333,7 @@ scripts/build.sh       packages the extension into dist/metube-sender-<version>.
 .github/workflows/     CI (tests + build), release, and the website's deployment
 ```
 
-Run the tests (Node 22+, no dependencies to install), then build the zip:
+Run the tests (Node 22 or newer, CI uses 24; no dependencies to install), then build the zip:
 
 ```sh
 node --test
