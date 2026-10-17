@@ -37,7 +37,7 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 - The overlay finds a video in `/history` by video ID, prefers the in-progress entry after a re-add, and probes the file before playing — `metube.md`.
 - Deleting from the player re-reads `/history`, then probes whether the file is really gone; it never deletes without a click — `metube.md`.
 - The right-click menu is pure (`lib/menu.js`), rebuilt from the settings on each save, previewed by the same builder in the options page — `architecture.md`.
-- The tag is the version: `release.yml` writes it into the zip's manifest; nothing is released on a push — `release.md`.
+- Versions (C13 in `second-brain`, 2026-10-17): one SemVer version in `package.json` and `manifest.json`, `CHANGELOG.md` in English as source, tags, Releases and the attached zip made by `release.yml` on `main`; a release is its own PR on the owner's word, never a pushed tag; 4.1.0 "Egret" (birds, alphabetical) with `v1`–`v4` restated as 1.0.0–4.0.0 at their commits; the settings page shows the version — `CLAUDE.md` rule 4, `release.md`.
 - The website is plain files in `docs/`, deployed by `pages.yml`, which turns Pages on itself — `release.md`.
 - Workflows on Node 24 actions and `ubuntu-24.04`, named rather than `ubuntu-latest` (Ubuntu 26 from 2026-10-19) — `release.md`.
 - MIT license (owner, 2026-10-17), like `tamalou`: the repository is public, and without a license nobody could reuse the code. `LICENSE` ships in the release zip (`FILES` in `scripts/build.sh`), since MIT asks for the notice in every copy — `release.md`.
@@ -47,6 +47,7 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 
 - 2026-10-17 — The owner runs `bin/registry-setup.sh metube-extension` in `second-brain` (from his machine, `gh` logged in) so `registry.yml`'s `send` job can report; until then it says so and stays green. Then he re-runs the `Registry` workflow on the merge commit that brought this scaffold, so its block ticks the fiche's box.
 - 2026-10-17 — The website declares an SVG icon and a 128px PNG as `apple-touch-icon` (iOS wants 180×180, opaque); the common spec's C11 asks a page for the whole set (touch icon 180×180 opaque, 192/512, maskable, favicons, manifest). Low stakes for a documentation page nobody installs; to do the day the site is touched.
+- 2026-10-17 — The backfilled releases v1.0.0–v4.0.0 wait on `second-brain`'s "Backfill releases" workflow, run once by the owner with his token; the next push to `main` (or a "Run workflow" of Release) then attaches their zips. Whether to delete the older `v1`–`v4` Releases afterwards is his call.
 - 2026-10-17 — Not in the Chrome Web Store: installation is a release zip loaded unpacked. Publishing there (fees, listing, review) is the owner's call; `scripts/build.sh` already produces an uploadable zip.
 
 ## Topic files

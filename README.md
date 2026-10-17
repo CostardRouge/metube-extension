@@ -101,6 +101,9 @@ When you click **Save**, the browser asks for permission to access your MeTube h
 All settings, including the password, are stored in this browser's extension storage
 (`chrome.storage.local`). They are never sent anywhere except to your MeTube host.
 
+The foot of the settings page shows the extension's version, to tell which release is loaded
+(see the [changelog](CHANGELOG.md)).
+
 ## Right-click menu
 
 Right-click a link, a page, selected text, or a YouTube video (second right-click on the player:
@@ -330,6 +333,8 @@ icons/                   icon.svg source and PNG sizes
 tests/                   unit tests: URL handling, history matching, menus, messages, the manifest, the website
 docs/                    the website (GitHub Pages): index.html, site.css, site.js, i18n.js
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
+CHANGELOG.md           what each release brings; package.json holds the version (no dependencies)
+.github/release.mjs    checks CHANGELOG.md against the version, makes the tags and releases
 .github/workflows/     CI (tests + build), release, the website's deployment, and the project's register report
 CLAUDE.md, MEMORY.md     instructions and long-term memory for coding agents (topic files in memory/)
 ```
@@ -338,7 +343,7 @@ Run the tests (Node 22 or newer, CI uses 24; no dependencies to install), then b
 
 ```sh
 node --test
-scripts/build.sh          # version from manifest.json
+scripts/build.sh          # version from manifest.json (the same as package.json's)
 scripts/build.sh 1.2.0    # or a given version, written into the zip's manifest.json
 ```
 
@@ -363,32 +368,33 @@ Actions** as the source). The site lives at <https://costardrouge.github.io/metu
 
 ## Releasing
 
-Releases are only created from a version tag; pushing to `main` never publishes one. Tag a
-commit on `main` and push the tag:
+The version lives in `package.json` (and the same in `manifest.json`, which the tests check), in
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html). [`CHANGELOG.md`](CHANGELOG.md) says
+what each release brings; every pull request that changes what users get adds its lines under
+`## [Unreleased]`.
+
+A release is a pull request of its own: it moves those lines under a new
+`## [x.y.z] - YYYY-MM-DD — Codename` heading (a bird, in alphabetical order) and sets the same
+version in `package.json` and `manifest.json`. Check it before pushing:
 
 ```sh
-git checkout main && git pull
-git tag v1.1.0
-git push origin v1.1.0
+node .github/release.mjs check
 ```
 
-The tag is the version: `v1.1.0` and `1.1.0` both release version `1.1.0`. Chrome accepts 1 to 4
-numbers separated by dots (`1`, `1.1`, `1.1.0`, `1.1.0.2`). Give each release a higher version
-than the previous one; the Chrome Web Store, for one, refuses a version that isn't higher.
+Once it's merged, the **Release** workflow tags the merge commit `vx.y.z`, publishes a GitHub
+release whose notes are that changelog section, then builds `metube-sender-x.y.z.zip` from the
+tag and attaches it with its SHA-256 checksum. Merging a pull request that doesn't change the
+version publishes nothing. On every pull request, the same workflow refuses a changelog that
+disagrees with `package.json` or breaks its shape.
 
-The **Release** workflow then checks that the tag is on `main`, runs the tests, builds
-`metube-sender-1.1.0.zip` with that version written into its `manifest.json`, and publishes a
-GitHub release with the zip, its SHA-256 checksum, install steps and notes generated from the
-merged pull requests. The `version` in the repository's `manifest.json` is only used when you
-load a clone unpacked or run `scripts/build.sh` without a version.
+Don't push tags or draft releases by hand: nothing would hold them to the changelog, and a tag
+pushed by hand no longer builds anything. If a run fails, fix the cause on `main`, then use **Run
+workflow** on the Release workflow: it publishes what is missing and attaches the zips that are
+missing, without touching what already exists.
 
-If the workflow fails (for example, the tag isn't a valid version), nothing is published. The
-error is shown in the run's summary. Delete the tag
-(`git push --delete origin v1.1.0 && git tag -d v1.1.0`), fix the problem, and tag again.
-
-You can also write the release yourself on GitHub (**Releases → Draft a new release**, with a new
-tag on `main`). Publishing it creates the tag, which starts the same workflow: it attaches the
-zip and keeps your notes. If the workflow fails, the release stays published without the zip.
+Chrome accepts 1 to 4 numbers separated by dots, so a pre-release such as `1.2.0-beta` can't be
+an extension version. The releases `v1` to `v4` came before this scheme; the changelog lists them
+as 1.0.0 to 4.0.0, the same builds.
 
 ## License
 

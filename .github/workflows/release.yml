@@ -1,86 +1,76 @@
 name: Release
 
-# Publishes a GitHub release when a version tag is pushed:
+# Versions and releases (COMMON-PROJECT-SPEC, C13), identical in every repo: copy it with .github/release.mjs.
+# On a pull request, `check` refuses a CHANGELOG.md that disagrees with package.json's version or breaks its shape.
+# On main, `publish` gives every CHANGELOG section that has none its tag v<version> and its GitHub Release: the
+# release pull request's merge commit for package.json's version, the named commit for a backfilled one. Merging a
+# pull request that does not bump the version publishes nothing.
+# A backfilled tag points at an older commit, whose .github/workflows differ from main's: GitHub refuses that to the
+# workflow's own token, so backfills are skipped here with a warning and published by second-brain's "Backfill
 #
-#   git tag v1.1.0
-#   git push origin v1.1.0
-#
-# The tag sets the version (with or without the leading "v"): it's written into the
-# zip's manifest.json. The tag must point to a commit on main.
-# Nothing is released on a plain push.
+# This repository's own addition, after C13's identical part: the extension's zip. The old tag-triggered release
+# workflow cannot run any more (a tag or Release made with the workflow's GITHUB_TOKEN triggers no other workflow),
+# so the zip is built here, in the same job: every Release vX.Y.Z without its metube-sender-X.Y.Z.zip gets it, built
+# from its own tag by scripts/build.sh with that version written into the zip's manifest.json. A backfilled Release
+# published by second-brain gets its zip on the next push to main, or on "Run workflow". v1 to v4 predate SemVer and
+# carry their zips already; a pre-release is not a version Chrome accepts, so it gets none.
+# releases" workflow, which holds the maintainer's token. "Run workflow" re-runs publish on main by hand.
+
 on:
+  pull_request:
   push:
-    tags: ['v[0-9]*', '[0-9]*']
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: release-${{ github.ref_name }}
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  release:
-    name: Build and publish
+  check:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0 # full history, to check the tag against main
+          fetch-depth: 0
 
-      - uses: actions/setup-node@v7
+      - run: node .github/release.mjs check
+
+  publish:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    concurrency:
+      group: release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
         with:
-          node-version: 24
+          fetch-depth: 0
 
-      - name: Check the tag is on main
-        run: |
-          if ! git merge-base --is-ancestor HEAD origin/main; then
-            echo "::error::$GITHUB_REF_NAME points to a commit that isn't on main. Merge the change first, then tag main."
-            exit 1
-          fi
-
-      - name: Run tests
-        run: node --test
-
-      - name: Build extension zip
-        id: build
-        run: |
-          version=${GITHUB_REF_NAME#v}
-          zip=$(scripts/build.sh "$version")
-          (cd dist && sha256sum "$(basename "$zip")" > "$(basename "$zip").sha256")
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "zip=$zip" >> "$GITHUB_OUTPUT"
-
-      - name: Publish release
+      - run: node .github/release.mjs publish
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          VERSION: ${{ steps.build.outputs.version }}
-          ZIP: ${{ steps.build.outputs.zip }}
+
+      - name: Attach the extension zip to every release that lacks it
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          tag=$GITHUB_REF_NAME
-          name=$(basename "$ZIP")
-
-          # A release drafted by hand in the GitHub UI keeps its notes; only the files are attached.
-          if gh release view "$tag" > /dev/null 2>&1; then
-            gh release upload "$tag" "$ZIP" "$ZIP.sha256" --clobber
-            exit 0
-          fi
-
-          cat > dist/notes.md <<EOF
-          ## Install
-
-          1. Download **$name** below and unzip it into a folder you'll keep.
-          2. Open \`chrome://extensions\` (or \`arc://extensions\`) and turn on **Developer mode**.
-          3. Click **Load unpacked** and select that folder.
-
-          To update, unzip the new version into the **same** folder, replacing its files, then click the
-          reload icon on the extension's card. Loading it from another folder installs a second copy,
-          without your settings.
-
-          EOF
-          gh release create "$tag" "$ZIP" "$ZIP.sha256" \
-            --verify-tag \
-            --title "MeTube Sender v$VERSION" \
-            --notes-file dist/notes.md \
-            --generate-notes
+          git fetch --tags --force --quiet
+          mapfile -t missing < <(gh api --paginate "repos/$GITHUB_REPOSITORY/releases" --jq '.[]
+            | .tag_name as $tag
+            | select($tag | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$"))
+            | select([.assets[].name] | index("metube-sender-\($tag[1:]).zip") | not)
+            | $tag')
+          for tag in "${missing[@]}"; do
+            version=${tag#v}
+            dir="$RUNNER_TEMP/$tag"
+            git worktree add --quiet --detach "$dir" "$tag"
+            zip=$("$dir/scripts/build.sh" "$version")
+            (cd "$dir/dist" && sha256sum "${zip##*/}" > "${zip##*/}.sha256")
+            gh release upload "$tag" "$dir/$zip" "$dir/$zip.sha256" --clobber
+            echo "Attached ${zip##*/} to $tag."
+          done

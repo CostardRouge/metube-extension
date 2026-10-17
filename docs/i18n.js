@@ -364,7 +364,7 @@ export const fr = {
     'Le workflow CI lance les tests et construit le zip à chaque pull request et chaque push sur <code>main</code>. Le zip reste attaché à l’exécution 14 jours, pour essayer un changement avant sa publication.',
   devReleaseTitle: 'Publier une version',
   devReleaseText:
-    'Les versions ne sont créées que depuis un tag de version sur <code>main</code>. Le workflow Release lance les tests, construit le zip avec cette version écrite dans son <code>manifest.json</code>, et publie une release GitHub avec le zip, sa somme SHA-256 et des notes tirées des pull requests fusionnées.',
+    'Une version est une pull request : elle range les lignes <code>Unreleased</code> de <code>CHANGELOG.md</code> sous un nouveau numéro, reporté dans <code>package.json</code> et <code>manifest.json</code>. Une fois fusionnée dans <code>main</code>, le workflow Release la tague, publie une release GitHub avec cette section pour notes, et y joint le zip et sa somme SHA-256.',
   devTreeTitle: 'Où sont les choses',
   treeBackground: 'entrée du service worker : enregistre les écouteurs, route les messages',
   treeSw: 'menus, envoi, retour, requêtes du lecteur, la règle d’authentification',

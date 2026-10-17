@@ -183,6 +183,15 @@ kbd {
   text-align: center;
 }
 
+.page-foot p {
+  margin: 0;
+}
+
+.page-foot .page-version {
+  margin-top: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
 @media (max-width: 480px) {
   .row {
     flex-direction: column;
