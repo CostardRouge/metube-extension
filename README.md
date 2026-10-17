@@ -389,3 +389,7 @@ error is shown in the run's summary. Delete the tag
 You can also write the release yourself on GitHub (**Releases → Draft a new release**, with a new
 tag on `main`). Publishing it creates the tag, which starts the same workflow: it attaches the
 zip and keeps your notes. If the workflow fails, the release stays published without the zip.
+
+## License
+
+[MIT](LICENSE). Media Chrome, in `vendor/media-chrome/`, keeps its own MIT license.

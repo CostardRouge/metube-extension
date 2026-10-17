@@ -17,9 +17,10 @@ fail() {
 cd "$(dirname "$0")/.."
 root=$PWD
 
-# Everything the browser loads. Tests, docs, scripts and the icon source stay out.
+# Everything the browser loads, plus the licence (MIT asks for it in every copy).
+# Tests, docs, scripts and the icon source stay out.
 # Add new top-level extension files or folders here.
-FILES=(manifest.json _locales background.js sw lib content overlay vendor options popup ui icons/*.png)
+FILES=(manifest.json LICENSE _locales background.js sw lib content overlay vendor options popup ui icons/*.png)
 
 version=${1:-$(node -p "require('./manifest.json').version")}
 # Chrome's format: 1 to 4 dot-separated integers from 0 to 65535, without leading zeros.
