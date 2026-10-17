@@ -320,6 +320,9 @@
   "optFooter": {
     "message": "L’enregistrement demande l’autorisation d’accéder à l’hôte de MeTube. Les réglages, mot de passe compris, ne sont conservés que dans le stockage de l’extension de ce navigateur."
   },
+  "optVersion": {
+    "message": "Version $1"
+  },
   "optBadLangs": {
     "message": "Code de langue non valide : $1. Utilisez des codes comme fr, en ou pt-BR."
   },

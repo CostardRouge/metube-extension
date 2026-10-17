@@ -320,6 +320,9 @@
   "optFooter": {
     "message": "Saving asks for permission to access your MeTube host. Settings, password included, are stored only in this browser's extension storage."
   },
+  "optVersion": {
+    "message": "Version $1"
+  },
   "optBadLangs": {
     "message": "Not a language code: $1. Use codes like fr, en or pt-BR."
   },

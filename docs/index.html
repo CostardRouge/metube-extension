@@ -554,10 +554,8 @@ scripts/build.sh 1.2.0   # or with a given version</code></pre>
           </article>
           <article class="card reveal">
             <h3 data-i18n="devReleaseTitle">Releasing</h3>
-            <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>git checkout main &amp;&amp; git pull
-git tag v1.1.0
-git push origin v1.1.0</code></pre>
-            <p class="muted" data-i18n="devReleaseText">Releases are only created from a version tag on <code>main</code>. The Release workflow runs the tests, builds the zip with that version written into its <code>manifest.json</code>, and publishes a GitHub release with the zip, its SHA-256 checksum and notes from the merged pull requests.</p>
+            <pre class="code"><button class="copy" type="button" data-i18n-aria-label="copy" aria-label="Copy"></button><code>node .github/release.mjs check</code></pre>
+            <p class="muted" data-i18n="devReleaseText">A release is a pull request: it moves the <code>Unreleased</code> lines of <code>CHANGELOG.md</code> under a new version, set in <code>package.json</code> and <code>manifest.json</code>. Once it's merged into <code>main</code>, the Release workflow tags it, publishes a GitHub release with that section as its notes, and attaches the zip and its SHA-256 checksum.</p>
           </article>
         </div>
         <details class="more reveal">

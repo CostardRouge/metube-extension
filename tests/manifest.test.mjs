@@ -13,6 +13,13 @@ test('version is valid for Chrome: 1 to 4 integers (0-65535), no leading zeros',
   }
 });
 
+test("manifest.json carries package.json's version, the one CHANGELOG.md releases", () => {
+  const pkg = JSON.parse(readFileSync(new URL('package.json', root), 'utf8'));
+  assert.equal(manifest.version, pkg.version);
+  // Semantic Versioning without a pre-release: Chrome refuses "1.2.0-beta".
+  assert.match(pkg.version, /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
+});
+
 test('files referenced by the manifest exist', () => {
   const files = [
     manifest.background.service_worker,

@@ -27,6 +27,7 @@ const els = {
   shortcut: $('shortcut'),
   changeShortcut: $('change-shortcut'),
   status: $('status'),
+  version: $('version'),
   test: $('test'),
   save: $('save'),
 };
@@ -238,6 +239,8 @@ function wireEvents() {
 
 async function init() {
   localizePage();
+  // The manifest's version: package.json's in a clone, the release's in its zip (scripts/build.sh writes it).
+  els.version.textContent = t('optVersion', chrome.runtime.getManifest().version);
   const settings = await loadSettings();
   els.baseUrl.value = settings.baseUrl;
   els.username.value = settings.username;

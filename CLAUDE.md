@@ -1,17 +1,17 @@
 # Instructions for LLM agents (Claude Code, Codex, Cursor, etc.)
 
-Agents read this file at the start of every session. These rules override the agent's default behaviour and apply for the whole session, not only the first turn. They are cut from `COMMON-PROJECT-SPEC.md` in the private `second-brain` repository (profile **site**: no server state of its own, nothing to migrate; what ships is a zip released from a tag, and a static website).
+Agents read this file at the start of every session. These rules override the agent's default behaviour and apply for the whole session, not only the first turn. They are cut from `COMMON-PROJECT-SPEC.md` in the private `second-brain` repository (profile **site**: no server state of its own, nothing to migrate; what ships is a zip attached to each release, and a static website).
 
 ## Context
 
 - **MeTube Sender** (`costardrouge/metube-extension`) — a Chrome extension (Manifest V3) that sends YouTube videos, shorts and playlists to the owner's self-hosted [MeTube](https://github.com/alexta69/metube), and plays MeTube's downloads in an overlay on top of YouTube. It runs in Chrome and in Arc, loaded unpacked. The `README.md` is the user documentation and the file map; `docs/` is the project website, published on GitHub Pages at https://costardrouge.github.io/metube-extension/.
 - **Owner**: Steeve Pommier (GitHub `CostardRouge`). He writes in **French**: answer in French. He wants results (a demo, a screen, green tests), not implementation walkthroughs. He does not write code: every line here is written by an agent from his prompts; he decides, reviews and tests by hand, in Chrome and Arc against his own MeTube.
 - **Stack**: plain JavaScript (ES modules), HTML and CSS, **no build step and no dependencies**: the folder loads as it is. The one library, Media Chrome, is vendored in `vendor/media-chrome/` because Manifest V3 forbids loading code from the network. Tests are Node's own runner (`node --test`, `tests/*.test.mjs`), Node 22 or newer, CI on 24.
-- **Commands that exist today**: `node --test` (unit tests: URL handling, history matching, menus, messages, the manifest, the website), `scripts/build.sh [version]` (packages `dist/metube-sender-<version>.zip`, the version written into the zip's `manifest.json` only), `python3 -m http.server -d docs 8000` (previews the website; ES modules do not load from `file://`). There is no linter and no formatter. **The gate is `node --test` then `scripts/build.sh`**, exactly what CI runs.
-- **CI and delivery**: `ci.yml` runs the gate on every pull request and every push to `main` and keeps the zip as a 14-day run artifact; `release.yml` publishes a GitHub release only from a version tag on `main` (the tag is the version); `pages.yml` deploys `docs/` when it changes on `main`; `registry.yml` reports the project's state (rule 3).
+- **Commands that exist today**: `node --test` (unit tests: URL handling, history matching, menus, messages, the manifest, the website), `scripts/build.sh [version]` (packages `dist/metube-sender-<version>.zip`, the version written into the zip's `manifest.json` only; by default the repository's own), `node .github/release.mjs check` (`CHANGELOG.md` against `package.json`'s version, rule 4), `python3 -m http.server -d docs 8000` (previews the website; ES modules do not load from `file://`). There is no linter and no formatter. **The gate is `node --test` then `scripts/build.sh`**, exactly what CI runs.
+- **CI and delivery**: `ci.yml` runs the gate on every pull request and every push to `main` and keeps the zip as a 14-day run artifact; `release.yml` checks `CHANGELOG.md` on every pull request and, on `main`, gives every changelog section its tag `vX.Y.Z` and its GitHub Release, then attaches the zip built from that tag (rule 4) — a release is a changelog section and a version merged to `main`, never a pushed tag; `pages.yml` deploys `docs/` when it changes on `main`; `registry.yml` reports the project's state (rule 3).
 - **This repository is PUBLIC** (measured 2026-10-17). So rule 3's public-repo restriction applies: a Registry block carries only `Project:`, ticked boxes and one `Log:` line — never a `Last point:` nor an open box. `registry.yml` reads the visibility itself, so nothing here needs changing if the repo goes private.
 - Several agent sessions may run **in parallel** on this repo. Git history must stay readable: **one commit = one task**.
-- **Local sessions: never `git push`** — the developer tests locally and pushes himself. **Cloud / web sessions (ephemeral container): push the working branch and open a pull request**, it is the only way the code gets out. Never push to `main` either way, and never push a tag: a tag is a release, and releasing is the owner's call.
+- **Local sessions: never `git push`** — the developer tests locally and pushes himself. **Cloud / web sessions (ephemeral container): push the working branch and open a pull request**, it is the only way the code gets out. Never push to `main` either way, and never push a tag: only `release.yml` makes tags, and releasing is the owner's call.
 
 ## Rule 1 — Automatic commit at the end of every task (MANDATORY)
 
@@ -131,6 +131,65 @@ A change a returning reader does not need — tooling, a typo, a refactor —
 carries no block. A question, an exploration or an explanation changes no
 state and writes no block.
 
+## Rule 4 — Versions and releases (MANDATORY)
+
+The project carries **one version**, `version` in the root `package.json`, in
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html): `MAJOR.MINOR.PATCH`.
+`CHANGELOG.md` says what each release brings to the people who use the
+project, newest first, in the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
+shape. **It is written in English, like the code, even when the project
+speaks French.** Each release has a **codename**: here a bird, in alphabetical
+order (1.0.0 Albatross … 4.1.0 Egret; the next starts with F or later).
+
+- **Every pull request that changes what users get** adds its lines under
+  `## [Unreleased]` (`### Added`, `### Changed`, `### Fixed`, `### Removed`,
+  `### Security`), written for a user, not a developer. Tooling, a refactor or
+  a test adds nothing there. It does not touch the version.
+- **A release is its own pull request**, made when the owner asks for one: it
+  moves the `Unreleased` lines under `## [x.y.z] - YYYY-MM-DD — Codename` and
+  sets `package.json` to the same version, nothing else. PATCH for fixes only;
+  MINOR for anything new; MAJOR when something users relied on stops working
+  (stored data that does not carry over, a link, a protocol, a removed
+  feature). Before 1.0.0, MINOR covers both. A new MINOR or MAJOR takes a new
+  codename, never reused; a PATCH keeps its minor's. When a milestone ends or
+  `Unreleased` holds something worth announcing, say so in the final message:
+  the owner decides when to release.
+- **Never tag nor publish a release by hand.** On `main`,
+  `.github/workflows/release.yml` gives every section that has none its tag
+  `vX.Y.Z` and its GitHub Release; on every pull request its `check` job
+  refuses a `CHANGELOG.md` that disagrees with `package.json` or breaks the
+  shape. Run `node .github/release.mjs check` before pushing a release.
+- **A backfilled release** — a version given after the fact to a past state —
+  is a section placed at its rank in the file, with
+  `<!-- commit: <full sha> -->` right under its heading; the workflow tags that
+  commit. It never rewrites a section that already has its release. GitHub
+  refuses the workflow's own token a tag on a commit whose workflows differ
+  from `main`'s, so here a backfill is skipped with a warning and the rest
+  still ships; `second-brain`'s "Backfill releases" workflow, which holds the
+  owner's token, publishes it (`release.mjs backfill`).
+- **A repo that serves a page shows its version** where a user can find it (a
+  footer, an about line, a settings screen), read from `package.json` at build
+  time, so a phone in hand says which build it runs.
+
+Here, for an extension with no build step:
+
+- **`manifest.json` carries the same version** as `package.json`
+  (`tests/manifest.test.mjs` holds them together), so a release pull request
+  sets both. No pre-release (`1.2.0-beta`): Chrome refuses it as a version.
+- **The zip is part of the release.** `release.mjs` and the C13 part of
+  `release.yml` are identical in every repo; this repo's `release.yml` adds one
+  step after `publish` that builds `scripts/build.sh <version>` from each
+  `vX.Y.Z` tag whose Release lacks its zip and attaches it with its `.sha256`.
+  A tag or Release made with the workflow's token triggers no other workflow,
+  which is why the zip is built in the same job
+  and not by a tag-triggered workflow.
+- **The version shows** at the foot of the settings page, read from the
+  manifest at run time (`chrome.runtime.getManifest()`): the repository's in a
+  clone, the release's in its zip.
+- `v1` to `v4` are the four releases published before Semantic Versioning, with
+  Chrome's one-number versions; `CHANGELOG.md` restates them as 1.0.0 to 4.0.0
+  at the same commits. Never move nor delete a tag.
+
 ## Verification — trust the disk, not the context
 
 - A tool answering "success" is not proof. Before saying a change is done, prove it through the repo: `git status --porcelain`, `git diff`, `grep` for the expected value, `git show HEAD:<file>` compared to the file on disk.
@@ -141,7 +200,7 @@ state and writes no block.
 ## Other rules
 
 - Never rewrite history (`rebase -i`, `commit --amend`, `reset --hard`, `push --force`, `filter-repo`) without an explicit request. Do not modify `.git/config`, the hooks or branch settings.
-- **No build step, no runtime dependency, no remote code.** Everything the browser runs is in the repository. A new library is vendored unmodified with its license and version (`vendor/<name>/README.md` says how to update it); a `package.json` would only be added for tooling that never ships.
+- **No build step, no runtime dependency, no remote code.** Everything the browser runs is in the repository. A new library is vendored unmodified with its license and version (`vendor/<name>/README.md` says how to update it); `package.json` holds the version and nothing else (rule 4) — no dependency, and it never ships.
 - **Every network call to MeTube is made by the service worker** (`lib/metube.js`, through `sw/`), never by the pages the user visits. The one exception is the player's `<video>`, whose credentials come from the `declarativeNetRequest` rule in `sw/auth-rule.js`, scoped to `GET` media requests started by the extension to the configured MeTube URL. Never widen that rule: YouTube must never get the user's credentials.
 - **Logic that can be pure is pure** and lives in `lib/` with a unit test (`lib/menu.js`, `lib/history.js`, `lib/youtube.js` take no `chrome.*` call); `sw/`, `popup/`, `options/`, `overlay/` and `content/` adapt it to the browser.
 - **The YouTube page is touched as little as possible**: `content/overlay-host.js` reads the address and the first `<video>`, nothing of YouTube's markup, so a YouTube redesign does not break the extension. Keep it that way.
@@ -154,3 +213,4 @@ state and writes no block.
 - `AGENTS.md`: a symlink to this file, for tools that do not read `CLAUDE.md`.
 - `MEMORY.md` + `memory/`: project long-term memory (rule 2).
 - `README.md`: the user documentation, the file map, development and release procedures.
+- `CHANGELOG.md`: what each release brings (rule 4); `.github/release.mjs` + `.github/workflows/release.yml` tag and publish it.
