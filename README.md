@@ -330,7 +330,8 @@ icons/                   icon.svg source and PNG sizes
 tests/                   unit tests: URL handling, history matching, menus, messages, the manifest, the website
 docs/                    the website (GitHub Pages): index.html, site.css, site.js, i18n.js
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
-.github/workflows/     CI (tests + build), release, and the website's deployment
+.github/workflows/     CI (tests + build), release, the website's deployment, and the project's register report
+CLAUDE.md, MEMORY.md     instructions and long-term memory for coding agents (topic files in memory/)
 ```
 
 Run the tests (Node 22 or newer, CI uses 24; no dependencies to install), then build the zip:
