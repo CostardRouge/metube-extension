@@ -1,0 +1,12 @@
+# The extension has no dependency (COMMON-PROJECT-SPEC C14 here: package.json holds the version and nothing else,
+# Biome runs through npx at an exact version named in ci.yml and CLAUDE.md), so only the workflows' actions move.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ['*']

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "files": {
+    "includes": [
+      "background.js",
+      "lib/**",
+      "sw/**",
+      "popup/**",
+      "options/**",
+      "overlay/**",
+      "content/**",
+      "tests/**",
+      "docs/*.js"
+    ]
+  },
+  "formatter": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "noDescendingSpecificity": "off"
+      }
+    }
+  }
+}

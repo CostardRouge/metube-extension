@@ -339,16 +339,18 @@ CHANGELOG.md           what each release brings; package.json holds the version 
 CLAUDE.md, MEMORY.md     instructions and long-term memory for coding agents (topic files in memory/)
 ```
 
-Run the tests (Node 22 or newer, CI uses 24; no dependencies to install), then build the zip:
+Lint, run the tests (Node 22 or newer; `.nvmrc` says 24, what CI uses; no dependencies to
+install — the linter is fetched by `npx`), then build the zip:
 
 ```sh
+npx --yes @biomejs/biome@2.5.15 lint .   # Biome's recommended rules, see biome.json
 node --test
 scripts/build.sh          # version from manifest.json (the same as package.json's)
 scripts/build.sh 1.2.0    # or a given version, written into the zip's manifest.json
 ```
 
-The **CI** workflow runs both on every pull request and every push to `main`. The zip it builds
-is attached to the workflow run for 14 days, so you can try a change before it's released.
+The **CI** workflow runs all three on every pull request and every push to `main`. The zip it
+builds is attached to the workflow run for 14 days, so you can try a change before it's released.
 
 ## Website
 

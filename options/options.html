@@ -36,7 +36,7 @@
               <div class="password">
                 <input id="password" type="password" autocomplete="current-password" />
                 <button type="button" id="toggle-password" class="icon-btn" title="Show password" data-i18n-title="showPassword" aria-pressed="false">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" /><circle cx="12" cy="12" r="3" />
                   </svg>
                 </button>
@@ -88,11 +88,13 @@
           <div class="block" id="menu-video">
             <div class="block-head" id="menu-video-head"></div>
             <div class="chips" id="menu-video-choices"></div>
+            <!-- biome-ignore lint/a11y/noLabelWithoutControl: menu-editor.js puts the select inside the label at run time -->
             <label class="inline-select"><span data-i18n="optOneClick">One click</span> <span id="menu-video-oneclick"></span></label>
           </div>
           <div class="block" id="menu-audio">
             <div class="block-head" id="menu-audio-head"></div>
             <div class="chips" id="menu-audio-choices"></div>
+            <!-- biome-ignore lint/a11y/noLabelWithoutControl: menu-editor.js puts the select inside the label at run time -->
             <label class="inline-select"><span data-i18n="optOneClick">One click</span> <span id="menu-audio-oneclick"></span></label>
           </div>
           <div class="block" id="menu-subs">

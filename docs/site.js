@@ -201,7 +201,7 @@ function buildMenu(items) {
       continue;
     }
     const el = document.createElement('div');
-    el.className = 'm-item' + (item.oneclick ? ' oneclick' : '') + (item.sub ? ' has-sub' : '') + (item.open ? ' open' : '');
+    el.className = `m-item${item.oneclick ? ' oneclick' : ''}${item.sub ? ' has-sub' : ''}${item.open ? ' open' : ''}`;
     el.textContent = item.label;
     if (item.hint) {
       const hint = document.createElement('span');

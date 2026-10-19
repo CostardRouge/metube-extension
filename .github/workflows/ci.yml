@@ -1,6 +1,6 @@
 name: CI
 
-# Tests and packages the extension on every pull request and every push to main.
+# Lints, tests and packages the extension on every pull request and every push to main.
 # The zip is kept for 14 days as a run artifact, to try a change before it's released.
 on:
   pull_request:
@@ -23,7 +23,11 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: 24
+          node-version-file: .nvmrc
+
+      # Biome at the exact version CLAUDE.md names, fetched by npx: the extension keeps no dependency.
+      - name: Lint
+        run: npx --yes @biomejs/biome@2.5.15 lint .
 
       - name: Run tests
         run: node --test
