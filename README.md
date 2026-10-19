@@ -368,7 +368,9 @@ English texts live in `docs/index.html` (`data-i18n` attributes), French ones in
 `tests/site.test.mjs` checks that both sets match. The page's icons (`docs/*.png` and
 `docs/manifest.webmanifest`) are drawn from `docs/icon.svg`, `icon-apple.svg` and
 `icon-maskable.svg` by `scripts/icons.mjs` (`npm i --no-save sharp && node scripts/icons.mjs`);
-after changing a source, run it and commit the PNGs — the tests check their sizes. The **Pages** workflow deploys `docs/` whenever
+after changing a source, run it and commit the PNGs — the tests check their sizes. The page's font,
+Instrument Sans, is served from `docs/fonts/` (two variable woff2 files with their SIL Open Font
+License), so a visit loads nothing from a font service. The **Pages** workflow deploys `docs/` whenever
 it changes on `main` (its first run turns GitHub Pages on for the repository, with **GitHub
 Actions** as the source). The site lives at <https://costardrouge.github.io/metube-extension/>.
 
