@@ -46,7 +46,6 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 ## Open items
 
 - 2026-10-17 — The owner runs `bin/registry-setup.sh metube-extension` in `second-brain` (from his machine, `gh` logged in) so `registry.yml`'s `send` job can report; until then it says so and stays green. Then he re-runs the `Registry` workflow on the merge commit that brought this scaffold, so its block ticks the fiche's box.
-- 2026-10-17 — The website declares an SVG icon and a 128px PNG as `apple-touch-icon` (iOS wants 180×180, opaque); the common spec's C11 asks a page for the whole set (touch icon 180×180 opaque, 192/512, maskable, favicons, manifest). Low stakes for a documentation page nobody installs; to do the day the site is touched.
 - 2026-10-17 — The backfilled releases v1.0.0–v4.0.0 wait on `second-brain`'s "Backfill releases" workflow, run once by the owner with his token; the next push to `main` (or a "Run workflow" of Release) then attaches their zips. Whether to delete the older `v1`–`v4` Releases afterwards is his call.
 - 2026-10-17 — Not in the Chrome Web Store: installation is a release zip loaded unpacked. Publishing there (fees, listing, review) is the owner's call; `scripts/build.sh` already produces an uploadable zip.
 
