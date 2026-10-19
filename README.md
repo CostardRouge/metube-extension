@@ -356,7 +356,7 @@ builds is attached to the workflow run for 14 days, so you can try a change befo
 ## Website
 
 `docs/` holds the project's website: one page in English and French, with the install guide, the
-documentation, and an animated demo of the extension. Like the extension, it's plain HTML, CSS and
+documentation, an animated demo of the extension and a legal notice. Like the extension, it's plain HTML, CSS and
 JavaScript with no build step. To preview it, serve the folder with any static server (ES modules
 don't load from `file://`):
 

@@ -377,10 +377,27 @@ export const fr = {
   treeTests: 'traitement des URL, recherche dans l’historique, menus, messages, le manifest, ce site',
   treeDocs: 'ce site web (GitHub Pages)',
 
+  // Legal notice
+  legalKicker: 'Mentions légales',
+  legalTitle: 'Qui publie cette page, qui l’héberge, et ce qu’elle sait de vous : rien.',
+  legalPubName: 'Éditeur',
+  legalPub:
+    'Steeve Pommier, particulier, à titre non commercial : l’extension et cette page sont gratuites, sans publicité, et ne vendent rien. Contact : les <a href="https://github.com/CostardRouge/metube-extension/issues">tickets</a> du dépôt.',
+  legalHostName: 'Hébergement',
+  legalHost:
+    'GitHub Pages : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis, <a href="https://github.com">github.com</a>. Comme tout hébergeur, GitHub traite votre adresse IP pour délivrer la page : voir la <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement">déclaration de confidentialité de GitHub</a>.',
+  legalMeasureName: 'Mesure d’audience',
+  legalMeasure:
+    'Aucune : cette page ne charge aucun traceur, ne dépose aucun cookie et n’affiche aucun bandeau de consentement. Elle demande à l’API de GitHub le numéro de la dernière version, et garde la langue que vous choisissez dans le stockage local de votre navigateur, sur votre appareil seulement.',
+  legalLicenceName: 'Licence',
+  legalLicence:
+    'L’extension et cette page sont des logiciels libres sous <a href="https://github.com/CostardRouge/metube-extension/blob/main/LICENSE">licence MIT</a> ; la police, Instrument Sans, sous <a href="https://github.com/CostardRouge/metube-extension/blob/main/docs/fonts/LICENSE">SIL Open Font License</a>.',
+
   // Footer
   footTagline: 'pour Chrome et Arc, par CostardRouge.',
   footReleases: 'Versions',
   footIssues: 'Tickets',
+  footLegal: 'Mentions légales',
   footNote:
     'Cette page aussi est du HTML, du CSS et du JavaScript bruts, servis depuis le dossier <code>docs/</code> du dépôt. Sans lien avec YouTube ni Google.',
   copy: 'Copier',
