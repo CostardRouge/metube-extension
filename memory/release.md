@@ -11,6 +11,7 @@ Read before touching a workflow, `scripts/build.sh`, the release procedure or th
 - 2026-10-01 — **The website is `docs/`, plain files like the extension**, deployed by `pages.yml` when `docs/**` changes on `main`; its first run turned Pages on (`enablement: true`), so nothing was clicked in the settings (#7). Its download button reads the latest release from the GitHub API and falls back to `releases/latest`.
 - 2026-10-08 — **Runners named `ubuntu-24.04`**, not `ubuntu-latest`, which moves to Ubuntu 26 from 2026-10-19: the OS move becomes a one-line choice. Actions on their Node 24 majors (#9).
 - 2026-10-09 — **CI and releases run Node 24**, the Active LTS; the tests have no dependency and still pass on 22, so the README keeps "Node 22 or newer" (#10).
+- 2026-10-19 — **The portfolio standard (`COMMON-PROJECT-SPEC.md` C14–C19 in `second-brain`, decided 2026-10-19) applied here.** C16: `.gitignore` names `.env`, `.env.*`, `.idea/`, `.vscode/` and `node_modules/` beside `dist/` and `.DS_Store`, although nothing here reads an environment or installs a package — it is what keeps a stray `npm i` or an IDE folder out of a commit, and a file of those kinds found *tracked* is reported (rule 1), never quietly avoided.
 
 ## Traps
 
