@@ -333,27 +333,30 @@ icons/                   icon.svg source and PNG sizes
 tests/                   unit tests: URL handling, history matching, menus, messages, the manifest, the website
 docs/                    the website (GitHub Pages): index.html, site.css, site.js, i18n.js
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
+scripts/icons.mjs      draws the website's icons into docs/ from its SVG sources (sharp, installed on the spot)
 CHANGELOG.md           what each release brings; package.json holds the version (no dependencies)
 .github/release.mjs    checks CHANGELOG.md against the version, makes the tags and releases
 .github/workflows/     CI (tests + build), release, the website's deployment, and the project's register report
 CLAUDE.md, MEMORY.md     instructions and long-term memory for coding agents (topic files in memory/)
 ```
 
-Run the tests (Node 22 or newer, CI uses 24; no dependencies to install), then build the zip:
+Lint, run the tests (Node 22 or newer; `.nvmrc` says 24, what CI uses; no dependencies to
+install — the linter is fetched by `npx`), then build the zip:
 
 ```sh
+npx --yes @biomejs/biome@2.5.15 lint .   # Biome's recommended rules, see biome.json
 node --test
 scripts/build.sh          # version from manifest.json (the same as package.json's)
 scripts/build.sh 1.2.0    # or a given version, written into the zip's manifest.json
 ```
 
-The **CI** workflow runs both on every pull request and every push to `main`. The zip it builds
-is attached to the workflow run for 14 days, so you can try a change before it's released.
+The **CI** workflow runs all three on every pull request and every push to `main`. The zip it
+builds is attached to the workflow run for 14 days, so you can try a change before it's released.
 
 ## Website
 
 `docs/` holds the project's website: one page in English and French, with the install guide, the
-documentation, and an animated demo of the extension. Like the extension, it's plain HTML, CSS and
+documentation, an animated demo of the extension and a legal notice. Like the extension, it's plain HTML, CSS and
 JavaScript with no build step. To preview it, serve the folder with any static server (ES modules
 don't load from `file://`):
 
@@ -362,7 +365,12 @@ python3 -m http.server -d docs 8000   # then open http://localhost:8000/?lang=fr
 ```
 
 English texts live in `docs/index.html` (`data-i18n` attributes), French ones in `docs/i18n.js`;
-`tests/site.test.mjs` checks that both sets match. The **Pages** workflow deploys `docs/` whenever
+`tests/site.test.mjs` checks that both sets match. The page's icons (`docs/*.png` and
+`docs/manifest.webmanifest`) are drawn from `docs/icon.svg`, `icon-apple.svg` and
+`icon-maskable.svg` by `scripts/icons.mjs` (`npm i --no-save sharp && node scripts/icons.mjs`);
+after changing a source, run it and commit the PNGs — the tests check their sizes. The page's font,
+Instrument Sans, is served from `docs/fonts/` (two variable woff2 files with their SIL Open Font
+License), so a visit loads nothing from a font service. The **Pages** workflow deploys `docs/` whenever
 it changes on `main` (its first run turns GitHub Pages on for the repository, with **GitHub
 Actions** as the source). The site lives at <https://costardrouge.github.io/metube-extension/>.
 

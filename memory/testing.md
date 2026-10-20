@@ -4,8 +4,9 @@ What the unit tests cover, and how changes were checked in a real browser. Read 
 
 ## Unit tests (2026-10-17)
 
-- `node --test` runs `tests/*.test.mjs` with Node's own runner, no dependency: URL detection and normalisation, history matching and ranking, file and subtitle URLs, every menu layout and context, settings validation, the id-to-`/add` mapping, sizes and plurals in both languages, every locale against English (keys, `$1…$9` placeholders, markup, every message used), the manifest (valid version, referenced files exist, the overlay exposed to YouTube only, `build.sh` packaging every folder), and the website (every key has a French text, placeholders and markup kept, local links resolve).
+- `node --test` runs `tests/*.test.mjs` with Node's own runner, no dependency: URL detection and normalisation, history matching and ranking, file and subtitle URLs, every menu layout and context, settings validation, the id-to-`/add` mapping, sizes and plurals in both languages, every locale against English (keys, `$1…$9` placeholders, markup, every message used), the manifest (valid version, referenced files exist, the overlay exposed to YouTube only, `build.sh` packaging every folder), and the website (every key has a French text, placeholders and markup kept, local links resolve, the icon set is complete: an opaque 180×180 touch icon, every declared icon at its size, a manifest with relative paths — C11's failure is silent otherwise).
 - What they cannot reach is anything with `chrome.*`: the service worker, the pages, the auth rule. That is what the browser runs below are for.
+- 2026-10-19 — **The gate starts with the lint** (`npx --yes @biomejs/biome@2.5.15 lint .`, before `node --test`, in `ci.yml` and by hand): Biome's recommended rules, the HTML pages' accessibility rules included, which is the one static check the pages get (`memory/release.md` says what it found and what is suppressed).
 
 ## Browser runs (2026-10-17)
 

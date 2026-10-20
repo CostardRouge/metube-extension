@@ -167,8 +167,8 @@ async function lookup() {
       });
       return;
     }
-    case 'absent':
     default:
+      // 'absent', or a state this version does not know.
       if (!added) {
         await add();
       } else if (++absentPolls > MAX_ABSENT_POLLS_AFTER_ADD) {

@@ -13,10 +13,12 @@
     <meta property="og:image" content="og.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" href="icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="icon-128.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="icon" href="favicon-16.png" type="image/png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-title" content="MeTube Sender" />
+    <link rel="preload" href="fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="site.css" />
     <script type="module" src="site.js"></script>
   </head>
@@ -573,6 +575,20 @@ tests/                   <span data-i18n="treeTests">URL handling, history match
 docs/                    <span data-i18n="treeDocs">this website (GitHub Pages)</span></code></pre>
         </details>
       </section>
+
+      <!-- ============================ LEGAL ============================ -->
+      <section class="section" id="legal">
+        <header class="section-head">
+          <p class="kicker" data-i18n="legalKicker">Legal notice</p>
+          <h2 data-i18n="legalTitle">Who publishes this page, who hosts it, and what it knows about you: nothing.</h2>
+        </header>
+        <ul class="perms">
+          <li class="reveal"><span class="perm-host" data-i18n="legalPubName">Publisher</span><span data-i18n="legalPub">Steeve Pommier, a private individual, on a non-commercial basis: the extension and this page are free, show no ads and sell nothing. Contact: the repository's <a href="https://github.com/CostardRouge/metube-extension/issues">issues</a>.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="legalHostName">Hosting</span><span data-i18n="legalHost">GitHub Pages: GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States, <a href="https://github.com">github.com</a>. Like any host, GitHub processes your IP address to deliver the page: see <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="legalMeasureName">Audience measurement</span><span data-i18n="legalMeasure">None: this page loads no tracker, sets no cookie and shows no consent banner. It asks GitHub's API for the latest release's number, and keeps the language you pick in your browser's local storage, on your device only.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="legalLicenceName">Licence</span><span data-i18n="legalLicence">The extension and this page are free software under the <a href="https://github.com/CostardRouge/metube-extension/blob/main/LICENSE">MIT license</a>; the font, Instrument Sans, under the <a href="https://github.com/CostardRouge/metube-extension/blob/main/docs/fonts/LICENSE">SIL Open Font License</a>.</span></li>
+        </ul>
+      </section>
     </main>
 
     <footer class="foot">
@@ -588,6 +604,7 @@ docs/                    <span data-i18n="treeDocs">this website (GitHub Pages)<
           <a href="https://github.com/CostardRouge/metube-extension/issues" data-i18n="footIssues">Issues</a>
           <a href="https://github.com/alexta69/metube">MeTube</a>
           <a href="https://github.com/muxinc/media-chrome">Media Chrome</a>
+          <a href="#legal" data-i18n="footLegal">Legal notice</a>
         </nav>
         <p class="muted foot-note" data-i18n="footNote">This page is plain HTML, CSS and JavaScript too, served from the repository's <code>docs/</code> folder. Not affiliated with YouTube or Google.</p>
       </div>

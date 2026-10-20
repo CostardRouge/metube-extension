@@ -11,6 +11,18 @@ one-number versions: the same commits and the same numbers Chrome showed (`4` is
 
 ## [Unreleased]
 
+### Added
+
+- The website carries its full icon set and a web manifest: saved to a phone's home screen, it shows the MeTube
+  Sender icon instead of a screenshot of the page.
+- The website ends with a legal notice: who publishes it, who hosts it, what it measures (nothing) and under which
+  licences the extension and the page are published.
+
+### Changed
+
+- The website serves its font itself instead of loading it from Google Fonts: opening the page no longer contacts a
+  third party.
+
 ## [4.1.0] - 2026-10-17 — Egret
 
 ### Added
