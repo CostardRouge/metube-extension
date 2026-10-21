@@ -1,12 +1,33 @@
-# The extension has no dependency (COMMON-PROJECT-SPEC C14 here: package.json holds the version and nothing else,
-# Biome runs through npx at an exact version named in ci.yml and CLAUDE.md), so only the workflows' actions move.
+# Dependabot, the portfolio's shape (COMMON-PROJECT-SPEC.md, C20), trimmed to this repository.
+# package.json holds the version and nothing else (C14 here) and Biome runs through npx at an
+# exact version named in ci.yml and CLAUDE.md, so the npm block raises nothing today: it is there
+# so that a dependency added one day is grouped and paced like everywhere else. No family group,
+# no @types/node: the extension has no package. No Dockerfile, so no docker block.
 version: 2
 updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly
+    cooldown:
+      default-days: 7
+      semver-major-days: 30
+    open-pull-requests-limit: 3
+    groups:
+      # Every minor and patch, production and development together:
+      # one pull request a month.
+      minor-and-patch:
+        update-types: [minor, patch]
+      security:
+        applies-to: security-updates
+        patterns: ['*']
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: weekly
-      day: monday
+      interval: monthly
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns: ['*']
