@@ -96,3 +96,36 @@ test('the icon set: an opaque touch icon, every icon at its size, a manifest wit
 test('the English texts on the page are not empty', () => {
   for (const key of htmlKeys) assert.ok(englishText(key).trim(), key);
 });
+
+// COMMON-PROJECT-SPEC C17: docs/llms.txt, the llmstxt.org shape (an H1, a one-line blockquote summary,
+// then `## Section` lists of `- [Title](absolute URL): what it is`), and every link it gives lands on
+// something that exists — a section of the page, a file of the site, or the repository and its files.
+const site = 'https://costardrouge.github.io/metube-extension/';
+const repo = 'https://github.com/CostardRouge/metube-extension';
+
+test('llms.txt has the llmstxt.org shape and links only to pages that exist', () => {
+  const text = readFileSync(new URL('llms.txt', root), 'utf8');
+  const lines = text.split('\n');
+  assert.equal(lines[0], '# MeTube Sender', 'starts with the H1');
+  assert.match(lines.find((line) => line.trim() && !line.startsWith('# ')) ?? '', /^> \S/, 'then a summary');
+  assert.equal(lines.filter((line) => line.startsWith('# ')).length, 1, 'one H1');
+  assert.ok(lines.some((line) => line.startsWith('## ')), 'sections');
+  for (const line of lines.filter((l) => l.startsWith('- '))) {
+    assert.match(line, /^- \[[^\]]+\]\(https:\/\/[^)]+\): \S/, line);
+  }
+  const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((m) => m[1]));
+  const links = [...text.matchAll(/\]\(([^)]+)\)/g)].map((m) => m[1]);
+  assert.ok(links.length > 0);
+  for (const link of links) {
+    if (link.startsWith(site)) {
+      const [path, anchor] = link.slice(site.length).split('#');
+      assert.ok(path === '' || existsSync(new URL(path, root)), `${link}: docs/${path}`);
+      if (anchor !== undefined) assert.ok(ids.has(anchor), `${link}: no id="${anchor}" on the page`);
+    } else if (link.startsWith(`${repo}/blob/main/`)) {
+      const file = link.slice(`${repo}/blob/main/`.length);
+      assert.ok(existsSync(new URL(`../${file}`, import.meta.url)), `${link}: ${file}`);
+    } else {
+      assert.ok([repo, `${repo}/releases/latest`, `${repo}/issues`].includes(link), `unexpected link ${link}`);
+    }
+  }
+});

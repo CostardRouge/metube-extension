@@ -331,7 +331,7 @@ options/                 settings page (menu-editor.js: the right-click menu sec
 ui/base.css              shared dark theme
 icons/                   icon.svg source and PNG sizes
 tests/                   unit tests: URL handling, history matching, menus, messages, the manifest, the website
-docs/                    the website (GitHub Pages): index.html, site.css, site.js, i18n.js
+docs/                    the website (GitHub Pages): index.html, site.css, site.js, i18n.js, llms.txt
 scripts/build.sh       packages the extension into dist/metube-sender-<version>.zip
 scripts/icons.mjs      draws the website's icons into docs/ from its SVG sources (sharp, installed on the spot)
 CHANGELOG.md           what each release brings; package.json holds the version (no dependencies)
@@ -365,7 +365,10 @@ python3 -m http.server -d docs 8000   # then open http://localhost:8000/?lang=fr
 ```
 
 English texts live in `docs/index.html` (`data-i18n` attributes), French ones in `docs/i18n.js`;
-`tests/site.test.mjs` checks that both sets match. The page's icons (`docs/*.png` and
+`tests/site.test.mjs` checks that both sets match. `docs/llms.txt` is a hand-written, plain-text
+summary of the extension for AI assistants ([llmstxt.org](https://llmstxt.org)), linking the
+page's sections, the releases and the repository; the same test checks its shape and that every
+link it gives lands on a section, a file or a page that exists, so rename a section there too. The page's icons (`docs/*.png` and
 `docs/manifest.webmanifest`) are drawn from `docs/icon.svg`, `icon-apple.svg` and
 `icon-maskable.svg` by `scripts/icons.mjs` (`npm i --no-save sharp && node scripts/icons.mjs`);
 after changing a source, run it and commit the PNGs — the tests check their sizes. The page's font,
