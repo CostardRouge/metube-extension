@@ -11,6 +11,8 @@ one-number versions: the same commits and the same numbers Chrome showed (`4` is
 
 ## [Unreleased]
 
+## [4.2.0] - 2026-10-22 — Finch
+
 ### Added
 
 - The website carries its full icon set and a web manifest: saved to a phone's home screen, it shows the MeTube
