@@ -1,0 +1,33 @@
+# MeTube Sender
+
+> A Chrome extension (Manifest V3) that sends YouTube videos, shorts and playlists to your self-hosted MeTube instance, and plays MeTube's downloads in an overlay on top of YouTube. It works in Chrome and in Arc, in English and in French.
+
+MeTube Sender is plain JavaScript, HTML and CSS with no build step and no runtime dependency; its one library, Media Chrome for the player, is vendored in the repository because Manifest V3 forbids loading code from the network. It adds a right-click menu (video qualities, audio formats and subtitle files, sent to MeTube in one click), a toolbar popup that lists the YouTube links of the current page, a badge and notifications for the result, and cleans YouTube links down to `v`, `list` and `t` before sending them. On a YouTube video page, Alt+Shift+M opens the video from MeTube in an overlay, downloading it first if needed, and offers to delete it from MeTube once watched.
+
+It is not in the Chrome Web Store: install it by downloading `metube-sender-<version>.zip` from the latest release, unzipping it into a folder you keep, and loading that folder with **Load unpacked** in `chrome://extensions` (or `arc://extensions`) with Developer mode on. Updates are unzipped over the same folder.
+
+Permissions are kept narrow: every network call to MeTube is made by the extension's service worker, never by the pages you visit; access to your MeTube host is an optional permission requested when you save the settings; and the credentials for MeTube's basic auth are added only to the player's own media requests, so YouTube and other sites never receive them. Settings, the password included, stay in the browser's extension storage and go nowhere but to your MeTube host.
+
+## Website
+
+- [MeTube Sender](https://costardrouge.github.io/metube-extension/): the project's website, in English and French, with an animated demo
+- [Features](https://costardrouge.github.io/metube-extension/#features): what the extension does
+- [Install](https://costardrouge.github.io/metube-extension/#install): loading the release zip unpacked in Chrome or Arc, the keyboard shortcut, updating
+- [Configure](https://costardrouge.github.io/metube-extension/#configure): the MeTube URL, basic auth, default formats and the connection test
+- [Right-click menu](https://costardrouge.github.io/metube-extension/#menu): the menu's layouts, blocks and entries
+- [Player on YouTube](https://costardrouge.github.io/metube-extension/#player): watching MeTube's copy in an overlay, and deleting it afterwards
+- [MeTube server setup](https://costardrouge.github.io/metube-extension/#server): the MeTube settings the player needs (subtitles, HTTPS, deleting files)
+- [Troubleshooting](https://costardrouge.github.io/metube-extension/#troubleshooting): the extension's messages and what to do about them
+- [Permissions and privacy](https://costardrouge.github.io/metube-extension/#privacy): each permission and why it is asked
+- [Legal notice](https://costardrouge.github.io/metube-extension/#legal): publisher, host, audience measurement (none) and licences
+
+## Releases
+
+- [Latest release](https://github.com/CostardRouge/metube-extension/releases/latest): the zip to load unpacked, with its SHA-256 checksum
+- [Changelog](https://github.com/CostardRouge/metube-extension/blob/main/CHANGELOG.md): what each release brings
+
+## Source
+
+- [Repository](https://github.com/CostardRouge/metube-extension): the source code, under the MIT license
+- [README](https://github.com/CostardRouge/metube-extension/blob/main/README.md): the full documentation, the file map and the development and release procedures
+- [Issues](https://github.com/CostardRouge/metube-extension/issues): questions and bug reports
