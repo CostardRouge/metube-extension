@@ -340,7 +340,7 @@ CHANGELOG.md           what each release brings; package.json holds the version 
 CLAUDE.md, MEMORY.md     instructions and long-term memory for coding agents (topic files in memory/)
 ```
 
-Lint, run the tests (Node 22 or newer; `.nvmrc` says 24, what CI uses; no dependencies to
+Lint, run the tests (Node 22 or newer; `.nvmrc` says 26, what CI uses; no dependencies to
 install — the linter is fetched by `npx`), then build the zip:
 
 ```sh
