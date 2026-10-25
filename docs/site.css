@@ -2439,6 +2439,30 @@ pre.code.tree span {
   font-weight: 600;
 }
 
+/* The audience switch under the legal notice (docs/audience.js). */
+.audience-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+  max-width: 900px;
+  margin-top: 8px;
+  padding: 12px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+}
+
+.audience-switch p {
+  flex: 1 1 320px;
+  margin: 0;
+  color: var(--muted);
+}
+
+.audience-switch [hidden] {
+  display: none;
+}
+
 /* ---------- Footer ---------- */
 
 .foot {

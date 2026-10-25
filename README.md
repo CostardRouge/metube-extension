@@ -373,7 +373,12 @@ link it gives lands on a section, a file or a page that exists, so rename a sect
 `icon-maskable.svg` by `scripts/icons.mjs` (`npm i --no-save sharp && node scripts/icons.mjs`);
 after changing a source, run it and commit the PNGs — the tests check their sizes. The page's font,
 Instrument Sans, is served from `docs/fonts/` (two variable woff2 files with their SIL Open Font
-License), so a visit loads nothing from a font service. The **Pages** workflow deploys `docs/` whenever
+License), so a visit loads nothing from a font service. The page counts its visits — never the extension — with the
+owner's self-hosted Umami at `insight.steevepommier.com` (`docs/audience.js`, the one home of the site's id): no
+cookie, no event, only on `costardrouge.github.io`, and nothing is loaded for a browser that sends Do Not Track or
+Global Privacy Control or that switched counting off with the button in the legal notice (Umami's own
+`umami.disabled` key). An empty `websiteId` in that file turns measurement off; `tests/audience.test.mjs` holds the
+legal notice to the code. The **Pages** workflow deploys `docs/` whenever
 it changes on `main` (its first run turns GitHub Pages on for the repository, with **GitHub
 Actions** as the source). The site lives at <https://costardrouge.github.io/metube-extension/>.
 

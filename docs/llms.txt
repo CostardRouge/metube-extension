@@ -19,7 +19,7 @@ Permissions are kept narrow: every network call to MeTube is made by the extensi
 - [MeTube server setup](https://costardrouge.github.io/metube-extension/#server): the MeTube settings the player needs (subtitles, HTTPS, deleting files)
 - [Troubleshooting](https://costardrouge.github.io/metube-extension/#troubleshooting): the extension's messages and what to do about them
 - [Permissions and privacy](https://costardrouge.github.io/metube-extension/#privacy): each permission and why it is asked
-- [Legal notice](https://costardrouge.github.io/metube-extension/#legal): publisher, host, audience measurement (none) and licences
+- [Legal notice](https://costardrouge.github.io/metube-extension/#legal): publisher, host, audience measurement (anonymous visit counting with a self-hosted Umami, no cookie, declinable) and licences
 
 ## Releases
 

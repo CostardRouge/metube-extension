@@ -41,6 +41,7 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 - The website is plain files in `docs/`, deployed by `pages.yml`, which turns Pages on itself — `release.md`.
 - Workflows on Node 24 actions and `ubuntu-24.04`, named rather than `ubuntu-latest` (Ubuntu 26 from 2026-10-19) — `release.md`.
 - MIT license (owner, 2026-10-17), like `tamalou`: the repository is public, and without a license nobody could reuse the code. `LICENSE` ships in the release zip (`FILES` in `scripts/build.sh`), since MIT asks for the notice in every copy — `release.md`.
+- 2026-10-25 — The website (never the extension) counts visits with the owner's self-hosted Umami, declinable (DNT, GPC, a switch in the legal notice); the website id's one home is `docs/audience.js` — `release.md`.
 - Topic memory lives in `memory/`, not `docs/memory/`, because `docs/` is published whole by `pages.yml` — `CLAUDE.md` rule 2.
 - The portfolio standard, `COMMON-PROJECT-SPEC.md` in `second-brain`, adopted 2026-10-19 (C14–C19 here): Node pinned by `.nvmrc` (26 since 2026-10-24), the 22 floor in prose because `package.json` is version-only (the portfolio's one `engines` exception); Biome 2.5.15 through `npx --yes` at an exact version as the first step of the gate, no dependency, the formatter off, two run-time facts suppressed in HTML and one CSS rule off; Dependabot on the workflows' actions alone (C20 since 2026-10-21: monthly, cooldown, grouped); the website with C11's icon set and manifest (`display: browser`), its font self-hosted (a page load contacts GitHub alone), a legal notice at its foot and a hand-written `llms.txt` held to the page by a test (2026-10-22) — `release.md`, `testing.md`.
 
@@ -49,7 +50,7 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 - 2026-10-17 — The owner runs `bin/registry-setup.sh metube-extension` in `second-brain` (from his machine, `gh` logged in) so `registry.yml`'s `send` job can report; until then it says so and stays green. Then he re-runs the `Registry` workflow on the merge commit that brought this scaffold, so its block ticks the fiche's box.
 - 2026-10-17 — The backfilled releases v1.0.0–v4.0.0 wait on `second-brain`'s "Backfill releases" workflow, run once by the owner with his token; the next push to `main` (or a "Run workflow" of Release) then attaches their zips. Whether to delete the older `v1`–`v4` Releases afterwards is his call.
 - 2026-10-17 — Not in the Chrome Web Store: installation is a release zip loaded unpacked. Publishing there (fees, listing, review) is the owner's call; `scripts/build.sh` already produces an uploadable zip.
-- 2026-10-19 — `docs/i18n.js` puts a plain space before `:` and `;` where `CLAUDE.md`'s French rule wants a no-break space (`_locales/fr/messages.json` complies); a pass over the whole file is one commit of its own, not done — `release.md`.
+- 2026-10-19 — `docs/i18n.js` puts a plain space before `:` and `;` where `CLAUDE.md`'s French rule wants a no-break space (`_locales/fr/messages.json` complies, and so do the measurement's texts since 2026-10-25); a pass over the whole file is one commit of its own, not done — `release.md`.
 
 ## Topic files
 

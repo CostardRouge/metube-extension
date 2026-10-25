@@ -1,6 +1,7 @@
 // MeTube Sender website: language switch, the teaser animation, the menu demo,
 // install tabs, copy buttons and the latest-release lookup. Plain ES module.
 
+import { counting, optedOut, privacySignal, setOptedOut, siteStorage, startAudience } from './audience.js';
 import { en, fr } from './i18n.js';
 
 const $ = (sel, root = document) => root.querySelector(sel);
@@ -49,6 +50,7 @@ function applyLanguage(next) {
   history.replaceState(null, '', url);
   renderMenu();
   renderRelease();
+  renderAudience();
 }
 
 function initialLanguage() {
@@ -95,6 +97,36 @@ async function loadRelease() {
     /* Offline or rate-limited: the button keeps its releases/latest link. */
   }
 }
+
+/* ------------------------------------------------------- audience switch */
+
+// The switch in the legal notice sets or clears Umami's own opt-out key; the
+// checks mirror the loader's in audience.js, which reads the same key.
+function renderAudience() {
+  const state = $('#audience-state');
+  const toggle = $('#audience-toggle');
+  const storage = siteStorage();
+  toggle.hidden = true;
+  if (!counting()) state.textContent = t('audienceOff');
+  else if (privacySignal()) state.textContent = t('audienceSignal');
+  else if (!storage) state.textContent = t('audienceNoStorage');
+  else if (optedOut(storage)) {
+    state.textContent = t('audienceDeclined');
+    toggle.textContent = t('audienceResume');
+    toggle.hidden = false;
+  } else {
+    state.textContent = t('audienceCounted');
+    toggle.textContent = t('audienceStop');
+    toggle.hidden = false;
+  }
+}
+
+$('#audience-toggle').addEventListener('click', () => {
+  const off = !optedOut();
+  setOptedOut(off);
+  if (!off) startAudience();
+  renderAudience();
+});
 
 /* --------------------------------------------------------- install tabs */
 

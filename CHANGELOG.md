@@ -11,6 +11,12 @@ one-number versions: the same commits and the same numbers Chrome showed (`4` is
 
 ## [Unreleased]
 
+### Added
+
+- The website counts its visits anonymously, with the publisher's self-hosted Umami: no cookie, nothing that names
+  you. It loads nothing when your browser sends Do Not Track or Global Privacy Control, and a switch in its legal
+  notice turns counting off. The extension itself still measures nothing.
+
 ## [4.2.0] - 2026-10-22 — Finch
 
 ### Added

@@ -20,6 +20,7 @@
     <meta name="apple-mobile-web-app-title" content="MeTube Sender" />
     <link rel="preload" href="fonts/instrument-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="site.css" />
+    <script type="module" src="audience.js"></script>
     <script type="module" src="site.js"></script>
   </head>
   <body>
@@ -580,14 +581,20 @@ docs/                    <span data-i18n="treeDocs">this website (GitHub Pages)<
       <section class="section" id="legal">
         <header class="section-head">
           <p class="kicker" data-i18n="legalKicker">Legal notice</p>
-          <h2 data-i18n="legalTitle">Who publishes this page, who hosts it, and what it knows about you: nothing.</h2>
+          <h2 data-i18n="legalTitle">Who publishes this page, who hosts it, and what it knows about you: very little.</h2>
         </header>
         <ul class="perms">
           <li class="reveal"><span class="perm-host" data-i18n="legalPubName">Publisher</span><span data-i18n="legalPub">Steeve Pommier, a private individual, on a non-commercial basis: the extension and this page are free, show no ads and sell nothing. Contact: the repository's <a href="https://github.com/CostardRouge/metube-extension/issues">issues</a>.</span></li>
           <li class="reveal"><span class="perm-host" data-i18n="legalHostName">Hosting</span><span data-i18n="legalHost">GitHub Pages: GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, United States, <a href="https://github.com">github.com</a>. Like any host, GitHub processes your IP address to deliver the page: see <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</span></li>
-          <li class="reveal"><span class="perm-host" data-i18n="legalMeasureName">Audience measurement</span><span data-i18n="legalMeasure">None: this page loads no tracker, sets no cookie and shows no consent banner. It asks GitHub's API for the latest release's number, and keeps the language you pick in your browser's local storage, on your device only.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="legalMeasureName">Audience measurement</span><span data-i18n="legalMeasure">Visits to this page are counted with <a href="https://umami.is">Umami</a>, self-hosted by the publisher at <code>insight.steevepommier.com</code>: no third party receives the data, and none of it serves advertising. For each visit: the page viewed (its address, without query string or fragment), the site you came from, your browser, your operating system, the type of device, your screen size, your language, and your country, derived from your IP address, which is not stored. No cookie, so no consent banner; no event, nothing that names you or follows you from one site to another. Visits only count on <code>costardrouge.github.io</code>. The extension itself measures nothing.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="legalDeclineName">Saying no</span><span data-i18n="legalDecline">The counter is not even loaded, and nothing is sent, when your browser sends <i>Do Not Track</i> or <i>Global Privacy Control</i>, or when you switch it off below; that choice is kept in this browser under the key <code>umami.disabled</code>.</span></li>
+          <li class="reveal"><span class="perm-host" data-i18n="legalDeviceName">On your device</span><span data-i18n="legalDevice">The page also asks GitHub's API for the latest release's number, and keeps the language you pick in your browser's local storage, under the key <code>lang</code>, on your device only.</span></li>
           <li class="reveal"><span class="perm-host" data-i18n="legalLicenceName">Licence</span><span data-i18n="legalLicence">The extension and this page are free software under the <a href="https://github.com/CostardRouge/metube-extension/blob/main/LICENSE">MIT license</a>; the font, Instrument Sans, under the <a href="https://github.com/CostardRouge/metube-extension/blob/main/docs/fonts/LICENSE">SIL Open Font License</a>.</span></li>
         </ul>
+        <div class="audience-switch reveal" id="audience-switch">
+          <p id="audience-state">Without JavaScript, this page cannot tell whether your visits are counted; the counter does not run without it either.</p>
+          <button type="button" class="btn small" id="audience-toggle" hidden></button>
+        </div>
       </section>
     </main>
 
