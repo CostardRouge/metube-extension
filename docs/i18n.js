@@ -32,6 +32,15 @@ export const en = {
   popupSend4: 'Send 4 selected',
   toastSent1: 'Sent to MeTube · Video · 1080p · MP4',
   toastDeleted: 'Deleted from MeTube. The file is gone from the server.',
+  audienceOff: 'This copy of the page does not count visits.',
+  audienceSignal:
+    'Your browser asks not to be tracked (Do Not Track or Global Privacy Control): the counter is not loaded, your visits are not counted.',
+  audienceNoStorage:
+    'Your visits are counted, anonymously. This browser keeps no site data, so the switch cannot be kept: send Do Not Track or Global Privacy Control to stop counting.',
+  audienceDeclined: 'Your visits are not counted in this browser: the counter is not loaded.',
+  audienceCounted: 'Your visits are counted, anonymously, in this browser.',
+  audienceStop: 'Stop counting my visits',
+  audienceResume: 'Count my visits again',
 };
 
 export const fr = {
@@ -379,7 +388,7 @@ export const fr = {
 
   // Legal notice
   legalKicker: 'Mentions légales',
-  legalTitle: 'Qui publie cette page, qui l’héberge, et ce qu’elle sait de vous : rien.',
+  legalTitle: 'Qui publie cette page, qui l’héberge, et ce qu’elle sait de vous : très peu.',
   legalPubName: 'Éditeur',
   legalPub:
     'Steeve Pommier, particulier, à titre non commercial : l’extension et cette page sont gratuites, sans publicité, et ne vendent rien. Contact : les <a href="https://github.com/CostardRouge/metube-extension/issues">tickets</a> du dépôt.',
@@ -388,7 +397,13 @@ export const fr = {
     'GitHub Pages : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis, <a href="https://github.com">github.com</a>. Comme tout hébergeur, GitHub traite votre adresse IP pour délivrer la page : voir la <a href="https://docs.github.com/fr/site-policy/privacy-policies/github-general-privacy-statement">déclaration de confidentialité de GitHub</a>.',
   legalMeasureName: 'Mesure d’audience',
   legalMeasure:
-    'Aucune : cette page ne charge aucun traceur, ne dépose aucun cookie et n’affiche aucun bandeau de consentement. Elle demande à l’API de GitHub le numéro de la dernière version, et garde la langue que vous choisissez dans le stockage local de votre navigateur, sur votre appareil seulement.',
+    'Les visites de cette page sont comptées avec <a href="https://umami.is">Umami</a>, auto-hébergé par l’éditeur à l’adresse <code>insight.steevepommier.com</code> : aucun tiers ne reçoit les données, et rien ne sert à la publicité. Pour chaque visite : la page vue (son adresse, sans paramètres ni fragment), le site d’où vous venez, votre navigateur, votre système, le type d’appareil, la taille de l’écran, votre langue, et votre pays, déduit de votre adresse IP, qui n’est pas conservée. Aucun cookie, donc aucun bandeau de consentement ; aucun événement, rien qui vous nomme ou vous suive d’un site à l’autre. Les visites ne comptent que sur <code>costardrouge.github.io</code>. L’extension elle-même ne mesure rien.',
+  legalDeclineName: 'Refuser',
+  legalDecline:
+    'Le compteur n’est même pas chargé, et rien n’est envoyé, quand votre navigateur envoie <i>Do Not Track</i> ou <i>Global Privacy Control</i>, ou quand vous le coupez ci-dessous ; ce choix est gardé dans ce navigateur sous la clé <code>umami.disabled</code>.',
+  legalDeviceName: 'Sur votre appareil',
+  legalDevice:
+    'La page demande aussi à l’API de GitHub le numéro de la dernière version, et garde la langue que vous choisissez dans le stockage local de votre navigateur, sous la clé <code>lang</code>, sur votre appareil seulement.',
   legalLicenceName: 'Licence',
   legalLicence:
     'L’extension et cette page sont des logiciels libres sous <a href="https://github.com/CostardRouge/metube-extension/blob/main/LICENSE">licence MIT</a> ; la police, Instrument Sans, sous <a href="https://github.com/CostardRouge/metube-extension/blob/main/docs/fonts/LICENSE">SIL Open Font License</a>.',
@@ -398,6 +413,17 @@ export const fr = {
   footReleases: 'Versions',
   footIssues: 'Tickets',
   footLegal: 'Mentions légales',
+
+  // Audience switch (legal notice), built by site.js
+  audienceOff: 'Cette copie de la page ne compte pas les visites.',
+  audienceSignal:
+    'Votre navigateur demande à ne pas être suivi (Do Not Track ou Global Privacy Control) : le compteur n’est pas chargé, vos visites ne sont pas comptées.',
+  audienceNoStorage:
+    'Vos visites sont comptées, anonymement. Ce navigateur ne garde aucune donnée de site, le choix ne peut donc pas être gardé : envoyez Do Not Track ou Global Privacy Control pour ne plus être compté.',
+  audienceDeclined: 'Vos visites ne sont pas comptées dans ce navigateur : le compteur n’est pas chargé.',
+  audienceCounted: 'Vos visites sont comptées, anonymement, dans ce navigateur.',
+  audienceStop: 'Ne plus compter mes visites',
+  audienceResume: 'Compter à nouveau mes visites',
   footNote:
     'Cette page aussi est du HTML, du CSS et du JavaScript bruts, servis depuis le dossier <code>docs/</code> du dépôt. Sans lien avec YouTube ni Google.',
   copy: 'Copier',
