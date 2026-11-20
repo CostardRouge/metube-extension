@@ -34,7 +34,7 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 - No build step; Media Chrome 4.19.3 vendored as its unmodified ES modules (71 files), not its single-file build, because only the modules take a translation — `architecture.md`.
 - Every MeTube request from the service worker, `credentials: 'omit'`; one `declarativeNetRequest` rule for the player's media; `declarativeNetRequestWithHostAccess`, so no install warning — `architecture.md`.
 - The MeTube host is an optional permission requested on Save, from inside the click — `architecture.md`.
-- 2026-11-20 — Behind Cloudflare Access (the owner's MeTube since 2026-11-18/19), the extension sends a service token (`CF-Access-Client-Id`/`-Secret`, settings fields) with every request and the player's media; redirects are not followed and read as "a sign-in page is in the way" — `architecture.md`.
+- 2026-11-20 — Behind Cloudflare Access (the owner's MeTube since 2026-11-18/19), the extension sends a service token (`CF-Access-Client-Id`/`-Secret`, settings fields) with every request and the player's media; redirects are not followed and read as "a sign-in page is in the way" — `architecture.md`, `cloudflare-access.md`.
 - The overlay finds a video in `/history` by video ID, prefers the in-progress entry after a re-add, and probes the file before playing — `metube.md`.
 - Deleting from the player re-reads `/history`, then probes whether the file is really gone; it never deletes without a click — `metube.md`.
 - The right-click menu is pure (`lib/menu.js`), rebuilt from the settings on each save, previewed by the same builder in the options page — `architecture.md`.
@@ -48,6 +48,7 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 
 ## Open items
 
+- 2026-11-20 — The owner's Access service token `metube-sender` expires 2027-11-20: refresh it before, and paste the new secret into the settings — `cloudflare-access.md`.
 - 2026-10-17 — The owner runs `bin/registry-setup.sh metube-extension` in `second-brain` (from his machine, `gh` logged in) so `registry.yml`'s `send` job can report; until then it says so and stays green. Then he re-runs the `Registry` workflow on the merge commit that brought this scaffold, so its block ticks the fiche's box.
 - 2026-10-17 — The backfilled releases v1.0.0–v4.0.0 wait on `second-brain`'s "Backfill releases" workflow, run once by the owner with his token; the next push to `main` (or a "Run workflow" of Release) then attaches their zips. Whether to delete the older `v1`–`v4` Releases afterwards is his call.
 - 2026-10-17 — Not in the Chrome Web Store: installation is a release zip loaded unpacked. Publishing there (fees, listing, review) is the owner's call; `scripts/build.sh` already produces an uploadable zip.
@@ -61,3 +62,4 @@ The memory was opened on 2026-10-17, three weeks into the project, and seeded fr
 | `memory/metube.md` | touching a MeTube request, the overlay's lookup, deleting, subtitles, URL normalisation |
 | `memory/release.md` | touching CI, `scripts/build.sh`, releases, the website's deployment |
 | `memory/testing.md` | checking a change in a real browser, the unit tests' scope |
+| `memory/cloudflare-access.md` | MeTube behind Cloudflare Access: the service token, the owner's setup, diagnosing a failed connection |
