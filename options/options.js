@@ -17,6 +17,8 @@ const els = {
   baseUrl: $('baseUrl'),
   username: $('username'),
   password: $('password'),
+  accessClientId: $('accessClientId'),
+  accessClientSecret: $('accessClientSecret'),
   togglePassword: $('toggle-password'),
   format: $('format'),
   quality: $('quality'),
@@ -70,6 +72,8 @@ function readForm(baseUrl) {
     baseUrl,
     username: els.username.value.trim(),
     password: els.password.value,
+    accessClientId: els.accessClientId.value.trim(),
+    accessClientSecret: els.accessClientSecret.value.trim(),
     ...coerceOptions({ downloadType: currentType(), format: els.format.value, quality: els.quality.value }),
     folder: els.folder.value.trim(),
     subtitleLangs: parseSubtitleLangs(els.subtitleLangs.value).langs.join(','),
@@ -185,7 +189,7 @@ async function save(permission, parsed) {
       parsed.origin.startsWith('http:') &&
       !/^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|$)/.test(parsed.origin)
     ) {
-      showStatus(t(next.username || next.password ? 'optSavedHttpCredentials' : 'optSavedHttp'), 'warn');
+      showStatus(t(next.username || next.password || next.accessClientSecret ? 'optSavedHttpCredentials' : 'optSavedHttp'), 'warn');
     } else {
       showStatus(t('optSaved'), 'ok');
     }
@@ -245,6 +249,8 @@ async function init() {
   els.baseUrl.value = settings.baseUrl;
   els.username.value = settings.username;
   els.password.value = settings.password;
+  els.accessClientId.value = settings.accessClientId;
+  els.accessClientSecret.value = settings.accessClientSecret;
   els.folder.value = settings.folder;
   els.subtitleLangs.value = settings.subtitleLangs.split(',').join(', ');
   els.endScreen.checked = settings.endScreen;

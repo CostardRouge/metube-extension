@@ -233,6 +233,15 @@
   "optAuthHint": {
     "message": "Sent as HTTP Basic auth (e.g. Traefik <code>basicAuth</code>) with every request. Leave both empty if MeTube isn't behind auth."
   },
+  "optAccessClientId": {
+    "message": "Access client ID"
+  },
+  "optAccessClientSecret": {
+    "message": "Access client secret"
+  },
+  "optAccessHint": {
+    "message": "For a MeTube behind Cloudflare Access: a <em>service token</em> of your Access account, allowed by a <em>Service Auth</em> policy on MeTube's application. Leave both empty otherwise."
+  },
   "optDefaults": {
     "message": "Download defaults"
   },
@@ -577,6 +586,9 @@
   },
   "errAuth": {
     "message": "Authentication failed (401): check the username and password."
+  },
+  "errRedirected": {
+    "message": "$1 redirected the request, usually to a sign-in page (Cloudflare Access, Authelia…) that the extension can't fill in. Behind Cloudflare Access, set a service token in the settings; otherwise check the URL (https://)."
   },
   "errForbidden": {
     "message": "Access denied (403) by $1."

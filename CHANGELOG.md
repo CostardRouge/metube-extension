@@ -13,9 +13,17 @@ one-number versions: the same commits and the same numbers Chrome showed (`4` is
 
 ### Added
 
+- A MeTube behind Cloudflare Access works again: the settings take a Cloudflare Access service token (client ID and
+  secret), sent with every request and with the player's video, since the extension cannot sign in on Access's page.
+  The README says how to create the token and the *Service Auth* policy that accepts it.
 - The website counts its visits anonymously, with the publisher's self-hosted Umami: no cookie, nothing that names
   you. It loads nothing when your browser sends Do Not Track or Global Privacy Control, and a switch in its legal
   notice turns counting off. The extension itself still measures nothing.
+
+### Fixed
+
+- When a sign-in page answers in MeTube's place (Cloudflare Access, Authelia…), the extension now says so instead of
+  "Can't reach … (Failed to fetch)".
 
 ## [4.2.0] - 2026-10-22 — Finch
 

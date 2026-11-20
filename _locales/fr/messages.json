@@ -233,6 +233,15 @@
   "optAuthHint": {
     "message": "Envoyés en authentification HTTP Basic (p. ex. <code>basicAuth</code> de Traefik) avec chaque requête. Laissez les deux vides si MeTube n’est pas protégé par une authentification."
   },
+  "optAccessClientId": {
+    "message": "Client ID Access"
+  },
+  "optAccessClientSecret": {
+    "message": "Client secret Access"
+  },
+  "optAccessHint": {
+    "message": "Pour un MeTube derrière Cloudflare Access : un <em>jeton de service</em> (service token) de votre compte Access, autorisé par une règle <em>Service Auth</em> sur l’application de MeTube. Sinon, laissez les deux vides."
+  },
   "optDefaults": {
     "message": "Téléchargement par défaut"
   },
@@ -577,6 +586,9 @@
   },
   "errAuth": {
     "message": "Échec de l’authentification (401) : vérifiez le nom d’utilisateur et le mot de passe."
+  },
+  "errRedirected": {
+    "message": "$1 a redirigé la requête, en général vers une page de connexion (Cloudflare Access, Authelia…) que l’extension ne peut pas remplir. Derrière Cloudflare Access, renseignez un jeton de service dans les réglages ; sinon, vérifiez l’URL (https://)."
   },
   "errForbidden": {
     "message": "Accès refusé (403) par $1."

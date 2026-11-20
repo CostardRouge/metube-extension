@@ -6,7 +6,7 @@ What MeTube (and yt-dlp behind it) does that the extension has to live with. Rea
 
 - `/add` options follow what MeTube's current validation accepts, e.g. M4A offers only best, 192 and 128 (#1); the catalogue is `lib/config.js`. Subtitles-only downloads are `download_type: "captions"`, one request per language, `subtitle_mode: "prefer_manual"` (hand-made subtitles when they exist, automatic ones otherwise) (#5).
 - Subtitle language codes follow MeTube's rule `^[A-Za-z0-9][A-Za-z0-9-]{0,34}$` (#5).
-- **Errors**: 401 bad credentials; 400 carries MeTube's reason, which **under HTTP/2 is in the body, not `statusText`** (HTTP/2 has no reason phrase); 404 wrong base URL or path prefix; a non-JSON answer means something else answered (a login page from Authelia or Authentik, a proxy error). Once an error applies to the whole batch (auth, network, permission), the remaining URLs are not attempted (#1).
+- **Errors**: 401 bad credentials; 400 carries MeTube's reason, which **under HTTP/2 is in the body, not `statusText`** (HTTP/2 has no reason phrase); 404 wrong base URL or path prefix; a non-JSON answer means something else answered (a login page from Authelia or Authentik, a proxy error); a redirect (not followed, 2026-11-20) means a sign-in page such as Cloudflare Access's — `architecture.md`. Once an error applies to the whole batch (auth, network, permission), the remaining URLs are not attempted (#1).
 - `/version` is the connection test: it reports MeTube's and yt-dlp's versions.
 
 ## Links (2026-09-29)
