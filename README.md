@@ -88,6 +88,7 @@ without your settings.
 | --- | --- |
 | **MeTube URL** | e.g. `https://metube.example.com`. If MeTube runs under a path prefix (`URL_PREFIX`), include it: `https://example.com/metube`. |
 | **Username / Password** | Sent as `Authorization: Basic …` with every request, e.g. for Traefik `basicAuth`. Leave both empty if MeTube isn't behind auth. |
+| **Access client ID / secret** | A Cloudflare Access service token, sent as `CF-Access-Client-Id` and `CF-Access-Client-Secret` with every request, for a MeTube behind Cloudflare Access. See [MeTube behind Cloudflare Access](#metube-behind-cloudflare-access). Leave both empty otherwise. |
 | **Download type / Format / Quality** | Defaults for every send. Video: format Any or MP4, quality Best, 2160p … 240p or Worst. Audio: M4A, MP3 or Opus, with the qualities MeTube accepts for each format. |
 | **Folder** | Optional sub-folder of MeTube's download directory. MeTube must run with `CUSTOM_DIRS=true`, plus `CREATE_CUSTOM_DIRS=true` if the folder doesn't exist yet. |
 | **Right-click menu** | Layout, where it appears, and the entries of each block. See [Right-click menu](#right-click-menu). |
@@ -98,8 +99,8 @@ When you click **Save**, the browser asks for permission to access your MeTube h
 **Allow**: without it the extension can't reach MeTube. Then click **Test connection**. It calls
 `/version` and shows the MeTube and yt-dlp versions it finds.
 
-All settings, including the password, are stored in this browser's extension storage
-(`chrome.storage.local`). They are never sent anywhere except to your MeTube host.
+All settings, including the password and the Access client secret, are stored in this browser's
+extension storage (`chrome.storage.local`). They are never sent anywhere except to your MeTube host.
 
 The foot of the settings page shows the extension's version, to tell which release is loaded
 (see the [changelog](CHANGELOG.md)).
@@ -227,10 +228,29 @@ to get the files themselves.
 If you get *can't play this file*, set the default video format to **MP4** in the extension's
 settings.
 
+### MeTube behind Cloudflare Access
+
+Cloudflare Access answers a request without a valid Access session with a redirect to its sign-in
+page. A browser tab follows it and you sign in; the extension's requests can't, so they fail (the
+extension says *redirected the request*). Give the extension a **service token** instead:
+
+1. In Cloudflare Zero Trust, **Access controls → Service credentials → Service Tokens → Create
+   Service Token**. Name it after the extension (e.g. `metube-sender`), pick a duration (a year, then
+   renew it). Copy the **Client ID** and the **Client Secret**: the secret is shown only once.
+2. Open MeTube's Access application → **Policies → Add a policy**: Action **Service Auth**, Include
+   **Service Token** = the token above. Keep the policies that let you sign in from a tab. An
+   *Allow* policy does not accept a service token: it has to be *Service Auth*.
+3. In the extension's settings, paste them into **Access client ID** and **Access client secret**,
+   then **Save** and **Test connection**.
+
+The token opens that one Access application and nothing else, and it is revocable from the same
+page. Treat it like a password: whoever holds it can add and delete downloads in your MeTube.
+Don't replace it with a *Bypass* policy on MeTube's API paths: that would open `/add` to anyone.
+
 ### How the video gets past basic auth
 
-A `<video>` element can't send an `Authorization` header. The extension adds one with a
-`declarativeNetRequest` rule, which it rebuilds whenever you save the settings. The rule is
+A `<video>` element can't send an `Authorization` header (nor a service token). The extension adds
+them with a `declarativeNetRequest` rule, which it rebuilds whenever you save the settings. The rule is
 limited to:
 
 - `GET` requests for media,
@@ -259,7 +279,8 @@ use them to add or delete downloads in your MeTube. Every other request, includi
 | *Can't reach host* | The URL is wrong, the server is down, or it's unreachable from this machine (VPN, DNS, TLS certificate). |
 | *Not found (404)* | The URL is missing MeTube's path prefix, or points to the wrong service. |
 | *MeTube rejected the request (400): …* | MeTube refused the options; the reason comes from MeTube. Example: a folder was set but `CUSTOM_DIRS` is off. |
-| *did not answer with JSON* | Something other than MeTube answered, such as a login page from Authelia or Authentik, or a proxy error page. Basic auth is the only login method this extension supports. |
+| *redirected the request* | A sign-in page is in front of MeTube. Behind Cloudflare Access, set a service token (see [MeTube behind Cloudflare Access](#metube-behind-cloudflare-access)); otherwise check the URL starts with `https://`. |
+| *did not answer with JSON* | Something other than MeTube answered, such as a login page from Authelia or Authentik, or a proxy error page. Basic auth and a Cloudflare Access service token are the only login methods this extension supports. |
 | *not allowed to access …* | Open the settings and click **Save**, then **Allow**. If no prompt appears, go to the extension's **Details** page → **Site access** and add your MeTube site. |
 | Popup: *Can't scan this page* | Browser pages (`chrome://`, `arc://`, the Web Store) can't be read by extensions. **Send page** still works for normal web pages. |
 | Player: *MeTube couldn't download this video* | MeTube's own error is shown below it (private, age-restricted, removed…). **Try again** re-adds the video. |

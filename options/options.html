@@ -44,6 +44,17 @@
             </div>
           </div>
           <p class="hint" data-i18n-html="optAuthHint">Sent as HTTP Basic auth (e.g. Traefik <code>basicAuth</code>) with every request. Leave both empty if MeTube isn't behind auth.</p>
+          <div class="row">
+            <div class="field">
+              <label for="accessClientId" data-i18n="optAccessClientId">Access client ID</label>
+              <input id="accessClientId" type="text" autocomplete="off" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label for="accessClientSecret" data-i18n="optAccessClientSecret">Access client secret</label>
+              <input id="accessClientSecret" type="password" autocomplete="off" />
+            </div>
+          </div>
+          <p class="hint" data-i18n-html="optAccessHint">For a MeTube behind Cloudflare Access: a <em>service token</em> of your Access account, allowed by a <em>Service Auth</em> policy on MeTube's application. Leave both empty otherwise.</p>
         </section>
 
         <section class="card">

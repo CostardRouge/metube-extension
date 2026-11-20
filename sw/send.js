@@ -94,6 +94,8 @@ export const SEND_HANDLERS = {
       baseUrl,
       username: String(settings.username ?? ''),
       password: String(settings.password ?? ''),
+      accessClientId: String(settings.accessClientId ?? ''),
+      accessClientSecret: String(settings.accessClientSecret ?? ''),
     });
     return { ok: true, version: info?.version ?? null, ytdlp: info?.['yt-dlp'] ?? null };
   },

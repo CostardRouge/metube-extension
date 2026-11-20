@@ -13,7 +13,7 @@ Permissions are kept narrow: every network call to MeTube is made by the extensi
 - [MeTube Sender](https://costardrouge.github.io/metube-extension/): the project's website, in English and French, with an animated demo
 - [Features](https://costardrouge.github.io/metube-extension/#features): what the extension does
 - [Install](https://costardrouge.github.io/metube-extension/#install): loading the release zip unpacked in Chrome or Arc, the keyboard shortcut, updating
-- [Configure](https://costardrouge.github.io/metube-extension/#configure): the MeTube URL, basic auth, default formats and the connection test
+- [Configure](https://costardrouge.github.io/metube-extension/#configure): the MeTube URL, basic auth or a Cloudflare Access service token, default formats and the connection test
 - [Right-click menu](https://costardrouge.github.io/metube-extension/#menu): the menu's layouts, blocks and entries
 - [Player on YouTube](https://costardrouge.github.io/metube-extension/#player): watching MeTube's copy in an overlay, and deleting it afterwards
 - [MeTube server setup](https://costardrouge.github.io/metube-extension/#server): the MeTube settings the player needs (subtitles, HTTPS, deleting files)

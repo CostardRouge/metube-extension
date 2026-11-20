@@ -1,5 +1,6 @@
-// <video src> can't send an Authorization header, so a declarativeNetRequest
-// rule adds it to the player's requests for MeTube files.
+// <video src> can't send an Authorization header (nor a Cloudflare Access
+// service token), so a declarativeNetRequest rule adds them to the player's
+// requests for MeTube files.
 //
 // The rule is deliberately narrow: GET requests for media, started by this
 // extension's own pages, under the MeTube base URL. Requests from YouTube or
@@ -7,13 +8,13 @@
 // MeTube (add or delete downloads) behind your back.
 
 import { loadSettings, parseBaseUrl } from '../lib/config.js';
-import { basicAuth } from '../lib/metube.js';
+import { authHeaders } from '../lib/metube.js';
 
 const RULE_ID = 1;
 
 export function buildAuthRule(settings, extensionId) {
-  const auth = basicAuth(settings.username, settings.password);
-  if (!settings.baseUrl || !auth) return null;
+  const headers = Object.entries(authHeaders(settings));
+  if (!settings.baseUrl || !headers.length) return null;
   let baseUrl;
   try {
     ({ baseUrl } = parseBaseUrl(settings.baseUrl));
@@ -25,7 +26,7 @@ export function buildAuthRule(settings, extensionId) {
     priority: 1,
     action: {
       type: 'modifyHeaders',
-      requestHeaders: [{ header: 'Authorization', operation: 'set', value: auth }],
+      requestHeaders: headers.map(([header, value]) => ({ header, operation: 'set', value })),
     },
     condition: {
       // "|" anchors the filter at the start of the URL.

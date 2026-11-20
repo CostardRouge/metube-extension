@@ -66,6 +66,10 @@ h2 {
   font-size: 12px;
 }
 
+.card > .hint + .row {
+  margin-top: 16px;
+}
+
 .card > .hint:last-child {
   margin-top: -4px;
 }

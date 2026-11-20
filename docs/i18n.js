@@ -188,6 +188,9 @@ export const fr = {
   setAuthName: 'Nom d’utilisateur / Mot de passe',
   setAuth:
     'Envoyés en <code>Authorization: Basic …</code> avec chaque requête, p. ex. pour le <code>basicAuth</code> de Traefik. Laissez les deux vides si MeTube n’est pas derrière une authentification.',
+  setAccessName: 'Client ID / client secret Access',
+  setAccess:
+    'Un <b>jeton de service</b> Cloudflare Access, envoyé en <code>CF-Access-Client-Id</code> et <code>CF-Access-Client-Secret</code> avec chaque requête, pour un MeTube derrière Cloudflare Access, dont l’extension ne peut pas remplir la page de connexion. Créez-le sous <b>Access controls → Service credentials</b>, et autorisez-le sur l’application de MeTube par une règle <b>Service Auth</b> (une règle <i>Allow</i> ne l’accepte pas). Sinon, laissez les deux vides.',
   setDefaultsName: 'Type de téléchargement / Format / Qualité',
   setDefaults:
     'Valeurs par défaut de chaque envoi. Vidéo : format Tous ou MP4, qualité Meilleure, 2160p … 240p ou Minimale. Audio : M4A, MP3 ou Opus, avec les qualités que MeTube accepte pour chaque format.',
@@ -202,7 +205,7 @@ export const fr = {
   setEndName: 'À la fin d’une vidéo, proposer de la supprimer',
   setEnd: 'Activé par défaut. Voir <a href="#deleting">Supprimer une vidéo</a>.',
   confPrivacy:
-    'Tous les réglages, mot de passe compris, sont conservés dans le stockage de l’extension de ce navigateur (<code>chrome.storage.local</code>). Ils ne sont envoyés nulle part ailleurs que vers votre hôte MeTube.',
+    'Tous les réglages, mot de passe et client secret Access compris, sont conservés dans le stockage de l’extension de ce navigateur (<code>chrome.storage.local</code>). Ils ne sont envoyés nulle part ailleurs que vers votre hôte MeTube.',
 
   // Menu
   menuKicker: 'Menu du clic droit',
@@ -320,7 +323,10 @@ export const fr = {
   ts4a: 'MeTube a refusé les options ; la raison vient de MeTube. Exemple : un dossier est réglé mais <code>CUSTOM_DIRS</code> est désactivé.',
   ts5q: 'n’a pas répondu en JSON',
   ts5a:
-    'Autre chose que MeTube a répondu, comme une page de connexion d’Authelia ou d’Authentik, ou une page d’erreur de proxy. L’authentification basique est la seule méthode de connexion que cette extension prend en charge.',
+    'Autre chose que MeTube a répondu, comme une page de connexion d’Authelia ou d’Authentik, ou une page d’erreur de proxy. L’authentification basique et un jeton de service Cloudflare Access sont les seules méthodes de connexion que cette extension prend en charge.',
+  tsRedirQ: 'a redirigé la requête',
+  tsRedirA:
+    'Une page de connexion se trouve devant MeTube. Derrière Cloudflare Access, renseignez un jeton de service dans les réglages (<b>Client ID / client secret Access</b>, plus haut) ; sinon, vérifiez que l’URL commence par <code>https://</code>.',
   ts6q: 'accès non autorisé à …',
   ts6a:
     'Ouvrez les réglages et cliquez sur <b>Enregistrer</b>, puis <b>Autoriser</b>. Si aucune demande n’apparaît, allez sur la page <b>Détails</b> de l’extension → <b>Accès au site</b> et ajoutez votre site MeTube.',

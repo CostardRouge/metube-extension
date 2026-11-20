@@ -344,6 +344,7 @@
           <dl class="settings">
             <div><dt data-i18n="optBaseUrl">MeTube URL</dt><dd data-i18n="setUrl">e.g. <code>https://metube.example.com</code>. If MeTube runs under a path prefix (<code>URL_PREFIX</code>), include it: <code>https://example.com/metube</code>.</dd></div>
             <div><dt data-i18n="setAuthName">Username / Password</dt><dd data-i18n="setAuth">Sent as <code>Authorization: Basic …</code> with every request, e.g. for Traefik <code>basicAuth</code>. Leave both empty if MeTube isn't behind auth.</dd></div>
+            <div><dt data-i18n="setAccessName">Access client ID / secret</dt><dd data-i18n="setAccess">A Cloudflare Access <b>service token</b>, sent as <code>CF-Access-Client-Id</code> and <code>CF-Access-Client-Secret</code> with every request, for a MeTube behind Cloudflare Access, whose sign-in page the extension cannot fill in. Create it under <b>Access controls → Service credentials</b>, and allow it on MeTube's application with a <b>Service Auth</b> policy (an <i>Allow</i> policy does not accept it). Leave both empty otherwise.</dd></div>
             <div><dt data-i18n="setDefaultsName">Download type / Format / Quality</dt><dd data-i18n="setDefaults">Defaults for every send. Video: format Any or MP4, quality Best, 2160p … 240p or Worst. Audio: M4A, MP3 or Opus, with the qualities MeTube accepts for each format.</dd></div>
             <div><dt data-i18n="setFolderName">Folder</dt><dd data-i18n="setFolder">Optional sub-folder of MeTube's download directory. MeTube must run with <code>CUSTOM_DIRS=true</code>, plus <code>CREATE_CUSTOM_DIRS=true</code> if the folder doesn't exist yet.</dd></div>
             <div><dt data-i18n="optMenu">Right-click menu</dt><dd data-i18n="setMenu">Layout, where it appears, and the entries of each block. See <a href="#menu">Right-click menu</a>.</dd></div>
@@ -351,7 +352,7 @@
             <div><dt data-i18n="setEndName">When a video ends, offer to delete it</dt><dd data-i18n="setEnd">On by default. See <a href="#deleting">Deleting a video</a>.</dd></div>
           </dl>
         </div>
-        <p class="note" data-i18n="confPrivacy">All settings, including the password, are stored in this browser's extension storage (<code>chrome.storage.local</code>). They are never sent anywhere except to your MeTube host.</p>
+        <p class="note" data-i18n="confPrivacy">All settings, including the password and the Access client secret, are stored in this browser's extension storage (<code>chrome.storage.local</code>). They are never sent anywhere except to your MeTube host.</p>
       </section>
 
       <!-- ============================ MENU ============================ -->
@@ -506,7 +507,8 @@
           <details class="reveal"><summary><i data-i18n="ts2q">Can't reach host</i></summary><p data-i18n="ts2a">The URL is wrong, the server is down, or it's unreachable from this machine (VPN, DNS, TLS certificate).</p></details>
           <details class="reveal"><summary><i data-i18n="ts3q">Not found (404)</i></summary><p data-i18n="ts3a">The URL is missing MeTube's path prefix, or points to the wrong service.</p></details>
           <details class="reveal"><summary><i data-i18n="ts4q">MeTube rejected the request (400): …</i></summary><p data-i18n="ts4a">MeTube refused the options; the reason comes from MeTube. Example: a folder was set but <code>CUSTOM_DIRS</code> is off.</p></details>
-          <details class="reveal"><summary><i data-i18n="ts5q">did not answer with JSON</i></summary><p data-i18n="ts5a">Something other than MeTube answered, such as a login page from Authelia or Authentik, or a proxy error page. Basic auth is the only login method this extension supports.</p></details>
+          <details class="reveal"><summary><i data-i18n="ts5q">did not answer with JSON</i></summary><p data-i18n="ts5a">Something other than MeTube answered, such as a login page from Authelia or Authentik, or a proxy error page. Basic auth and a Cloudflare Access service token are the only login methods this extension supports.</p></details>
+          <details class="reveal"><summary><i data-i18n="tsRedirQ">redirected the request</i></summary><p data-i18n="tsRedirA">A sign-in page is in front of MeTube. Behind Cloudflare Access, set a service token in the settings (<b>Access client ID / secret</b>, above); otherwise check the URL starts with <code>https://</code>.</p></details>
           <details class="reveal"><summary><i data-i18n="ts6q">not allowed to access …</i></summary><p data-i18n="ts6a">Open the settings and click <b>Save</b>, then <b>Allow</b>. If no prompt appears, go to the extension's <b>Details</b> page → <b>Site access</b> and add your MeTube site.</p></details>
           <details class="reveal"><summary><span data-i18n="tsPopup">Popup:</span> <i data-i18n="ts7q">Can't scan this page</i></summary><p data-i18n="ts7a">Browser pages (<code>chrome://</code>, <code>arc://</code>, the Web Store) can't be read by extensions. <b>Send page</b> still works for normal web pages.</p></details>
           <details class="reveal"><summary><span data-i18n="tsPlayer">Player:</span> <i data-i18n="ts8q">MeTube couldn't download this video</i></summary><p data-i18n="ts8a">MeTube's own error is shown below it (private, age-restricted, removed…). <b>Try again</b> re-adds the video.</p></details>

@@ -97,7 +97,7 @@ function showStatus(text, { detail = '', percent, busy = true } = {}) {
   els.openMetube.hidden = true;
 }
 
-const SETTINGS_CODES = new Set(['auth', 'config', 'permission', 'forbidden', 'not_found', 'bad_request']);
+const SETTINGS_CODES = new Set(['auth', 'access', 'config', 'permission', 'forbidden', 'not_found', 'bad_request']);
 
 /**
  * @param {string} text
