@@ -11,6 +11,8 @@ one-number versions: the same commits and the same numbers Chrome showed (`4` is
 
 ## [Unreleased]
 
+## [4.3.0] - 2026-11-20 — Gannet
+
 ### Added
 
 - A MeTube behind Cloudflare Access works again: the settings take a Cloudflare Access service token (client ID and
